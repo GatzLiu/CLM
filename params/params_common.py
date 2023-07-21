@@ -3,7 +3,7 @@
 ## email: jianlin.ywh@alibaba-inc.com
 
 GPU_INDEX = "0"
-DATASET = ['Amazon', 'KuaiRand'][0]
+DATASET = ['Amazon', 'KuaiRand'][1]
 MODEL = ['MF', 'NCF', 'NGCF', 'LightGCN', 'LGCN'][0]
 SAMPLER = ['MF', 'NCF', 'NGCF', 'LightGCN', 'LGCN'][0]
 LOSS_FUNCTION = ['CrossEntropy', 'BPR', 'WBPR', 'ShiftMC', 'DLNRS'][0]
