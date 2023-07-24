@@ -21,19 +21,19 @@ def test_model(sess, model, para_test):
     [train_data, test_data, user_num, item_num, TOP_K, TEST_USER_BATCH] = para_test
     para_test_one_user = [test_data, TOP_K]
     # test a batch user instead of whole user
-    user_top_items = np.zeros((TEST_USER_BATCH, max(TOP_K))).astype(dtype=int32)
-    test_batch = rd.sample(list(range(user_num)), TEST_USER_BATCH)
+    user_top_items = np.zeros((TEST_USER_BATCH, max(TOP_K))).astype(dtype=int32) # [TEST_USER_BATCH, 50]
+    test_batch = rd.sample(list(range(user_num)), TEST_USER_BATCH)  # get TEST_USER_BATCH user  [index1, index7, indexN]
     mini_batch_num = 100
     mini_batch_list = list(range(0, TEST_USER_BATCH, mini_batch_num))
     mini_batch_list.append(TEST_USER_BATCH)
     score_min = -10 ** 5
     for u in range(len(mini_batch_list) - 1):
-        u1, u2 = mini_batch_list[u], mini_batch_list[u + 1]
+        u1, u2 = mini_batch_list[u], mini_batch_list[u + 1]    # index
         user_batch = test_batch[u1: u2]
         items_in_train_data = np.zeros((u2 - u1, item_num))
         for u_index, user in enumerate(user_batch):
-            for item in train_data[user]:
-                items_in_train_data[u_index, item] = score_min
+            for item in train_data[user]:       # train_data is origin json
+                items_in_train_data[u_index, item] = score_min    # give a min value
         user_top_items_batch = sess.run(model.top_items, feed_dict={model.users: user_batch, model.items_in_train_data: items_in_train_data, model.top_k: max(TOP_K)})
         user_top_items[u1: u2] = user_top_items_batch
     result = []
