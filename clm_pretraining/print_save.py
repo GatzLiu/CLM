@@ -36,7 +36,7 @@ def read_data1111(path):
     return data, interactions, user_num, item_num
 
 def read_data(path):
-        with open(path) as f:
+    with open(path) as f:
         line = f.readline()
         data = json.loads(line)
     f.close()
