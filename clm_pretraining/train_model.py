@@ -1,8 +1,4 @@
-## split train data into batches and train the model
-## author@Wenhui Yu  2020.06.02
-## email: jianlin.ywh@alibaba-inc.com
-
-from model_MF import *
+# from model_MF import *
 from test_model import *
 from print_save import *
 from params import DIR
