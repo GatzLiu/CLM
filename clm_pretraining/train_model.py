@@ -47,7 +47,7 @@ def train_model(para):
                 else:
                     real_length = len(limit_user_real_action)
                     list_null_pos = []
-                    for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length)
+                    for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
                         list_null_pos.append(0)
                     limit_user_real_action = list_null_pos + limit_user_real_action # first 0, then item_id
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length")

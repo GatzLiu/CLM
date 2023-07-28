@@ -45,13 +45,13 @@ class model_MMOE(object):
         self.action_list = tf.reshape(self.action_list, [-1,])  # [-1, max_len] -> [bs*max_len]
         # print("2 self.action_list=", self.action_list)
         self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list)  # [bs*max_len, dim]
-        self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, max_len, self.emb_dim])  #[-1, max_len, dim]
+        self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
 
         # reshape
         self.real_length = tf.reshape(self.real_length, [-1, 1])
         self.lable_like = tf.reshape(self.lable_like, [-1, 1])
         self.lable_follow = tf.reshape(self.lable_follow, [-1, 1])
-        self.lable_comment = tf.reshape(elf.lable_comment, [-1, 1])
+        self.lable_comment = tf.reshape(self.lable_comment, [-1, 1])
         self.lable_forward = tf.reshape(self.lable_forward, [-1, 1])
         self.lable_longview = tf.reshape(self.lable_longview, [-1, 1])
 
@@ -64,7 +64,7 @@ class model_MMOE(object):
         # [-1, list_size_q=1, nh*dim]
         taget_attention_input = set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask, 
                                 col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True):
-        taget_attention_input = taget_attention_input.reshape(taget_attention_input, [-1, self.emb_dim])
+        taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
         # mmoe
         feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
@@ -80,7 +80,7 @@ class model_MMOE(object):
         forward_logit = tf.layers.dense(mmoe_output[3], 1, name='forward_predictor_mlp')
         longview_logit = tf.layers.dense(mmoe_output[4], 1, name='longview_predictor_mlp')
 
-        like_logit = tf.nn.sigmoid(like_logit,[-1, 1])
+        like_logit = tf.reshpe(like_logit,[-1, 1])
         follow_logit = tf.reshpe(follow_logit,[-1, 1])
         comment_logit = tf.reshpe(comment_logit,[-1, 1])
         forward_logit = tf.reshpe(forward_logit,[-1, 1])
@@ -138,7 +138,7 @@ class model_MMOE(object):
 
     # query_input =》 [-1, list_size_q=1, dim]     k=v=[-1, list_size_k, dim]
     # retun : [-1, list_size_q=1, nh*dim]
-    def set_attention_block(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, mask_flag_k=True):
+    def set_attention_block(self, query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, mask_flag_k=True):
         with tf.name_scope("mha_" + name):
             batch_size = tf.shape(query_input)[0]
             list_size = tf.shape(query_input)[1]
@@ -169,7 +169,7 @@ class model_MMOE(object):
 
     # inputs = [-1, L, dim]  L=1
     # return = [-1, 1, att_emb_size] ** num_tasks
-    def mmoe_layer(inputs, att_emb_size=32, num_experts = 1, num_tasks = 1):
+    def mmoe_layer(self, inputs, att_emb_size=32, num_experts = 1, num_tasks = 1):
         expert_outputs, final_outputs = [], []
         with tf.name_scope('experts_network'):
             for i in range(num_experts):
