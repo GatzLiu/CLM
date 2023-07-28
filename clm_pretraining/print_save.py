@@ -41,14 +41,14 @@ def read_data(path):
         data = json.loads(line)
     f.close()
     row_num = len(data)
-    prinit ("sample number=", row_num, ", data_path=", path)
+    print ("sample number=", row_num, ", data_path=", path)
+    # print("data[0:2]=", data[0:2])
 
-    print("data[0:2]=", data[0:2])
-    # user_num = 0;
-    # item_num = 0;
-    # interactions = []
-    # for row in data:
-    #     row[0]
-    #     interactions.append(())
-    #     user_num = max(user_num, row[0])
+    user_num = 0;
+    item_num = 0;
+    for row in data:
+        user_num = max(row[0], user_num)
+        item_num = max(row[1], item_num)
+        
+    return data, user_num, item_num
 

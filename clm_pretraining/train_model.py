@@ -10,9 +10,10 @@ def train_model(para):
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
     ## Load data
-    [train_data, train_data_interaction, user_num, item_num] = read_data(train_path)
-    test_data = read_data(validation_path)[0]
-    para_test = [train_data, test_data, user_num, item_num, para['TOP_K'], para['TEST_USER_BATCH']]
+    [train_data, user_num, item_num] = read_data(train_path)
+    print("len(train_data)=",len(train_data), ", user_num=", user_num, ", item_num=", item_num)
+    # test_data = read_data(validation_path)[0]
+    # para_test = [train_data, test_data, user_num, item_num, para['TOP_K'], para['TEST_USER_BATCH']]
 
 
 
