@@ -115,9 +115,9 @@ class model_MMOE(object):
         self.updates = self.opt.minimize(self.loss, var_list=self.var_list)
 
         ## get top k
-        self.all_ratings = tf.matmul(self.u_embeddings, self.item_embeddings, transpose_a=False, transpose_b=True)
-        self.all_ratings += self.items_in_train_data  ## set a very small value for the items appearing in the training set to make sure they are at the end of the sorted list
-        self.top_items = tf.nn.top_k(self.all_ratings, k=self.top_k, sorted=True).indices
+        # self.all_ratings = tf.matmul(self.u_embeddings, self.item_embeddings, transpose_a=False, transpose_b=True)
+        # self.all_ratings += self.items_in_train_data  ## set a very small value for the items appearing in the training set to make sure they are at the end of the sorted list
+        # self.top_items = tf.nn.top_k(self.all_ratings, k=self.top_k, sorted=True).indices
 
 
     def inner_product(self, users, items):
