@@ -5,10 +5,11 @@ dataset = 1         # 0:Amazon, 1:KuaiRand
 validate_test = 0   # 0:Validate, 1: Test
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]
-MODEL = 'MF'
+MODEL = 'MMOE'
 LR = [0.001, 0.02][dataset]
 LAMDA = [0.2, 0.01][dataset]
-EMB_DIM = 128
+ACTION_LIST_MAX_LEN = 150
+EMB_DIM = 64
 BATCH_SIZE = 10000
 TEST_USER_BATCH = {'Amazon': 4096, 'KuaiRand': 4096}[DATASET]
 SAMPLE_RATE = 1
@@ -20,4 +21,4 @@ GPU_INDEX = "0"
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'LR': LR, 'LAMDA': LAMDA, 'EMB_DIM': EMB_DIM,
             'BATCH_SIZE': BATCH_SIZE, 'TEST_USER_BATCH': TEST_USER_BATCH, 'N_EPOCH': N_EPOCH, 'IF_PRETRAIN': False,
             'TEST_VALIDATION': 'Validation', 'TOP_K': TOP_K, 'SAMPLE_RATE': SAMPLE_RATE,'LOSS_FUNCTION': 'CrossEntropy',
-            'OPTIMIZER': 'SGD', 'SAMPLER': 'MF', 'AUX_LOSS_WEIGHT': 0}
+            'OPTIMIZER': 'SGD', 'SAMPLER': 'MMOE', 'AUX_LOSS_WEIGHT': 0}

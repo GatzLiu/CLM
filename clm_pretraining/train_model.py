@@ -1,9 +1,8 @@
-# from model_MF import *
+from model_MMOE import *
 from test_model import *
 from print_save import *
 from params import DIR
 
-import tensorflow as tf # todo del
 
 def train_model(para):
     ## paths of data
@@ -21,7 +20,7 @@ def train_model(para):
     data = {'user_num': user_num, "item_num": item_num}
 
     ## define the model
-    # model = model_MMOE(data=data, para=para)
+    model = model_MMOE(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
@@ -39,18 +38,41 @@ def train_model(para):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
                 (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
-                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, user_real_action])
+                limit_user_real_action = user_real_action
+                cur_length = len(limit_user_real_action)
+                real_length = 0
+                if cur_length >= para['ACTION_LIST_MAX_LEN']:
+                    limit_user_real_action = limit_user_real_action[-para['ACTION_LIST_MAX_LEN']:]  # tail
+                    real_length = len(limit_user_real_action)
+                else:
+                    real_length = len(limit_user_real_action)
+                    list_null_pos = []
+                    for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length)
+                        list_null_pos.append(0)
+                    limit_user_real_action = list_null_pos + limit_user_real_action # first 0, then item_id
+                # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length")
+                # print("limit_user_real_action=", limit_user_real_action)
+                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, limit_user_real_action, real_length])
 
             train_batch_data = np.array(train_batch_data)
-            print("train_batch_data[0:3]=", train_batch_data[0:3])
-            print("train_batch_data[:3,0]=", train_batch_data[:3,0])
-            break
-        break
             
-    #         _, loss = sess.run([model.updates, model.loss],
-    #                            feed_dict={model.users: train_batch_data[:,0],
-    #                                       model.pos_items: train_batch_data[:,1],
-    #                                       model.neg_items: train_batch_data[:,2]})
+            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run([model.updates, 
+                                            model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
+                                            model.loss_forward, model.loss_longview],
+                               feed_dict={model.users: train_batch_data[:,0],
+                                          model.items: train_batch_data[:,1],
+                                          model.action_list: train_batch_data[:,8],
+                                          model.real_length: train_batch_data[:,9],
+                                          model.lable_like: train_batch_data[:,3],
+                                          model.lable_follow: train_batch_data[:,4],
+                                          model.lable_comment: train_batch_data[:,5],
+                                          model.lable_forward: train_batch_data[:,6],
+                                          model.lable_longview: train_batch_data[:,7],
+                                          })
+        print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        if not loss < 10 ** 10:
+            print ("ERROR, loss big, loss=", loss)
+            break
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
     #         F1_max = F1[1]
