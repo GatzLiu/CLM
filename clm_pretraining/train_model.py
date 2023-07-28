@@ -55,20 +55,22 @@ def train_model(para):
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, limit_user_real_action, real_length])
 
             train_batch_data = np.array(train_batch_data)
+            print("train_batch_data[:3,8]=", train_batch_data[:3,0])
+            print("train_batch_data[:3,8]=", train_batch_data[:3,8])
             
-            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run([model.updates, 
-                                            model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
-                                            model.loss_forward, model.loss_longview],
-                               feed_dict={model.users: train_batch_data[:,0],
-                                          model.items: train_batch_data[:,1],
-                                          model.action_list: train_batch_data[:,8],
-                                          model.real_length: train_batch_data[:,9],
-                                          model.lable_like: train_batch_data[:,3],
-                                          model.lable_follow: train_batch_data[:,4],
-                                          model.lable_comment: train_batch_data[:,5],
-                                          model.lable_forward: train_batch_data[:,6],
-                                          model.lable_longview: train_batch_data[:,7],
-                                          })
+            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
+                [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
+                model.loss_forward, model.loss_longview],
+                feed_dict={model.users: train_batch_data[:,0],
+                            model.items: train_batch_data[:,1],
+                            model.action_list: train_batch_data[:,8],
+                            model.real_length: train_batch_data[:,9],
+                            model.lable_like: train_batch_data[:,3],
+                            model.lable_follow: train_batch_data[:,4],
+                            model.lable_comment: train_batch_data[:,5],
+                            model.lable_forward: train_batch_data[:,6],
+                            model.lable_longview: train_batch_data[:,7],
+            })
         print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
