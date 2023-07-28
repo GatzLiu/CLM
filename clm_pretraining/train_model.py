@@ -57,6 +57,8 @@ def train_model(para):
             train_batch_data = np.array(train_batch_data)
             print("train_batch_data[:3,8]=", train_batch_data[:3,0])
             print("train_batch_data[:3,8]=", train_batch_data[:3,8])
+            print("type(train_batch_data[:3,8])=", type(train_batch_data[:3,0]))
+            print("type(train_batch_data[:3,8])=", type(train_batch_data[:3,8]))
             
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
                 [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
