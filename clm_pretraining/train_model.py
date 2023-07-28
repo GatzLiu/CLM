@@ -19,7 +19,7 @@ def train_model(para):
     data = {'user_num': user_num, "item_num": item_num}
 
     ## define the model
-    model = model_MMOE(data=data, para=para)
+    # model = model_MMOE(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
@@ -40,7 +40,8 @@ def train_model(para):
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, user_real_action])
 
             train_batch_data = np.array(train_batch_data)
-            print("train_batch_data[0]=", train_batch_data[0])
+            print("train_batch_data[0:3]=", train_batch_data[0:3])
+            print("train_batch_data[:3,0]=", train_batch_data[:3,0])
             break
         break
             
