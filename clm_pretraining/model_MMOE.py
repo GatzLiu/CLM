@@ -70,7 +70,8 @@ class model_MMOE(object):
         # mmoe
         self.i_embeddings = tf.reshape(self.i_embeddings, [-1, self.emb_dim])
         feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
-        feature_input = tf.reshape(feature_input, [-1, 1, tf.shape(feature_input)[-1]])
+
+        feature_input = tf.reshape(feature_input, [-1, 1, self.emb_dim*3])
         # [-1, 1, att_emb_size] ** num_tasks
         mmoe_output = self.mmoe_layer(feature_input, att_emb_size=32, num_experts=6, num_tasks=5)
 
