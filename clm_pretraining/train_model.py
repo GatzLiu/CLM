@@ -54,7 +54,7 @@ def train_model(para):
                 # print("limit_user_real_action=", limit_user_real_action)
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, limit_user_real_action, real_length])
 
-            train_batch_data = np.array(train_batch_data)
+            # train_batch_data = np.array(train_batch_data)
             print("train_batch_data[:3,0]=", train_batch_data[:3,0])
             print("train_batch_data[:3,8]=", train_batch_data[:3,8])
             print("type(train_batch_data[:3,0])=", type(train_batch_data[:3,0]))
