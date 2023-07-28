@@ -83,11 +83,11 @@ class model_MMOE(object):
         forward_logit = tf.layers.dense(mmoe_output[3], 1, name='forward_predictor_mlp')
         longview_logit = tf.layers.dense(mmoe_output[4], 1, name='longview_predictor_mlp')
 
-        like_logit = tf.reshpe(like_logit,[-1, 1])
-        follow_logit = tf.reshpe(follow_logit,[-1, 1])
-        comment_logit = tf.reshpe(comment_logit,[-1, 1])
-        forward_logit = tf.reshpe(forward_logit,[-1, 1])
-        longview_logit = tf.reshpe(longview_logit,[-1, 1])
+        like_logit = tf.reshape(like_logit,[-1, 1])
+        follow_logit = tf.reshape(follow_logit,[-1, 1])
+        comment_logit = tf.reshape(comment_logit,[-1, 1])
+        forward_logit = tf.reshape(forward_logit,[-1, 1])
+        longview_logit = tf.reshape(longview_logit,[-1, 1])
 
         # pred
         like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
