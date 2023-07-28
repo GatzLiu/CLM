@@ -68,6 +68,7 @@ class model_MMOE(object):
         taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
         # mmoe
+        self.i_embeddings = tf.reshape(self.i_embeddings, [-1, self.emb_dim])
         feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
         feature_input = tf.reshape(feature_input, [-1, 1, tf.shape(feature_input)[-1]])
         # [-1, 1, att_emb_size] ** num_tasks
