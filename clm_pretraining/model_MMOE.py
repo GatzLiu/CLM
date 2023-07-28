@@ -62,7 +62,7 @@ class model_MMOE(object):
        # target_attention
         self.i_embeddings = tf.reshape(self.i_embeddings, [-1, 1, self.emb_dim])
         # [-1, list_size_q=1, nh*dim]
-        taget_attention_input = set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
+        taget_attention_input = self.set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
                                 col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True)
         taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
@@ -70,7 +70,7 @@ class model_MMOE(object):
         feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
         feature_input = tf.reshape(feature_input, [-1, 1, tf.shape(feature_input)[-1]])
         # [-1, 1, att_emb_size] ** num_tasks
-        mmoe_output = mmoe_layer(feature_input, att_emb_size=32, num_experts=6, num_tasks=5)
+        mmoe_output = self.mmoe_layer(feature_input, att_emb_size=32, num_experts=6, num_tasks=5)
 
         # logit
         # [-1, 1, 1]
