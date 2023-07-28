@@ -50,8 +50,8 @@ def train_model(para):
                     for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
                         list_null_pos.append(0)
                     limit_user_real_action = list_null_pos + limit_user_real_action # first 0, then item_id
-                # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length")
-                # print("limit_user_real_action=", limit_user_real_action)
+                print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
+                print("limit_user_real_action=", limit_user_real_action)
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, limit_user_real_action, real_length])
 
             train_batch_data = np.array(train_batch_data)
