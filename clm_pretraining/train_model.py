@@ -3,6 +3,8 @@ from test_model import *
 from print_save import *
 from params import DIR
 
+import tensorflow as tf # todo del
+
 def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
