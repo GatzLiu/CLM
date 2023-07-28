@@ -167,6 +167,8 @@ class model_MMOE(object):
             result = tf.matmul(normalized_att_scores, values)
             result = tf.transpose(result, perm=[1, 2, 0, 3])
             mha_result = tf.reshape(result, [batch_size, list_size, nh * att_emb_size])
+        return mha_result
+
 
     # inputs = [-1, L, dim]  L=1
     # return = [-1, 1, att_emb_size] ** num_tasks
