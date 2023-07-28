@@ -64,6 +64,7 @@ class model_MMOE(object):
         # [-1, list_size_q=1, nh*dim]
         taget_attention_input = self.set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
                                 col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True)
+        print("taget_attention_input=", taget_attention_input)
         taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
         # mmoe
