@@ -49,7 +49,7 @@ def train_model(para):
                     list_null_pos = []
                     for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
                         list_null_pos.append(0)
-                    limit_user_real_action = list_null_pos + limit_user_real_action # first 0, then item_id
+                    limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
                 # print("limit_user_real_action=", limit_user_real_action)
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
