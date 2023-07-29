@@ -52,17 +52,18 @@ def train_model(para):
                     limit_user_real_action = list_null_pos + limit_user_real_action # first 0, then item_id
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
                 # print("limit_user_real_action=", limit_user_real_action)
-                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, limit_user_real_action, real_length])
+                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
+                # print(train_batch_data)
 
             train_batch_data = np.array(train_batch_data)
-            print("type(train_batch_data[:,8])= ", type(train_batch_data[:,8]))
-            train_batch_data_action_list = np.array(train_batch_data[:,8])
+            print("type(train_batch_data[:,9:])= ", type(train_batch_data[:,9:]))
+            train_batch_data_action_list = np.array(train_batch_data[:,9:])
             print ("type(train_batch_data_action_list)= ", type(train_batch_data_action_list))
             
             print("train_batch_data[:3,0]=", train_batch_data[:3,0])
-            print("train_batch_data[:3,8]=", train_batch_data[:3,8])
+            print("train_batch_data[:3,9:]=", np.array(train_batch_data[:3,9:]))
             print("type(train_batch_data[:3,0])=", type(train_batch_data[:3,0]))
-            print("type(train_batch_data[:3,8])=", type(train_batch_data[:3,8]))
+            print("type(train_batch_data[:3,9:])=", type(train_batch_data[:3,9:]))
             
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
                 [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
@@ -70,7 +71,7 @@ def train_model(para):
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
                             model.action_list: train_batch_data_action_list,
-                            model.real_length: train_batch_data[:,9],
+                            model.real_length: train_batch_data[:,8],
                             model.lable_like: train_batch_data[:,3],
                             model.lable_follow: train_batch_data[:,4],
                             model.lable_comment: train_batch_data[:,5],
