@@ -32,7 +32,7 @@ class model_MMOE(object):
         self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
         self.lable_longview = tf.placeholder(tf.int32, shape=(None,))
         print("0 tf.shape(self.action_list)=", tf.shape(self.action_list))
-        self.action_list = tf.reshape(self.action_list, [-1, 150])
+        # self.action_list = tf.reshape(self.action_list, [-1, 150])
 
         ## define trainable parameters
         self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
