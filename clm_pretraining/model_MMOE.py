@@ -112,6 +112,8 @@ class model_MMOE(object):
         # MF
         self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
         like_pred = tf.nn.sigmoid(self.scores)
+        print("tf.shape(self.lable_like)=", tf.shape(self.lable_like))
+        print("tf.shape(like_pred)=", tf.shape(like_pred))
         self.loss = tf.losses.log_loss(self.lable_like, like_pred)
 
         ## optimizer
