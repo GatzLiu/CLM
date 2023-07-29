@@ -53,6 +53,7 @@ class model_MMOE(object):
 
         # reshape
         # self.real_length = tf.reshape(self.real_length, [-1, 1])
+        self.label_like = tf.expand_dims(self.label_like, 1)
         # self.lable_like = tf.reshape(self.lable_like, [-1, 1])
         # self.lable_follow = tf.reshape(self.lable_follow, [-1, 1])
         # self.lable_comment = tf.reshape(self.lable_comment, [-1, 1])
