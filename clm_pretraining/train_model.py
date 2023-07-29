@@ -59,7 +59,7 @@ def train_model(para):
 
             train_batch_data = np.array(train_batch_data)
             train_batch_data_action_list = np.array(train_batch_data_action_list)
-            print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
+            # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
             # print("train_batch_data[:,0] = ", train_batch_data[:,0])
             # print("train_batch_data_action_list = ", train_batch_data_action_list)
             # print(np.shape(train_batch_data[:,0]))
