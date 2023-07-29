@@ -42,9 +42,9 @@ class model_MMOE(object):
         self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
         self.i_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.items) # [-1, dim]
 
-        # print("1 self.action_list=", self.action_list)
+        print("1 self.action_list=", self.action_list)
         self.action_list = tf.reshape(self.action_list, [-1])  # [-1, max_len] -> [bs*max_len]
-        # print("2 self.action_list=", self.action_list)
+        print("2 self.action_list=", self.action_list)
         self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list)  # [bs*max_len, dim]
         self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
 
