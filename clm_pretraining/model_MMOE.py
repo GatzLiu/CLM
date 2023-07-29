@@ -31,7 +31,7 @@ class model_MMOE(object):
         self.lable_comment = tf.placeholder(tf.int32, shape=(None,))
         self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
         self.lable_longview = tf.placeholder(tf.int32, shape=(None,))
-        print("0 tf.shape(self.action_list)=", tf.shape(self.action_list))
+        # print("0 tf.shape(self.action_list)=", tf.shape(self.action_list))
         # self.action_list = tf.reshape(self.action_list, [-1, 150])
 
         ## define trainable parameters
@@ -44,12 +44,12 @@ class model_MMOE(object):
         self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
         self.i_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.items) # [-1, dim]
 
-        print("1 tf.shape(self.action_list)=", tf.shape(self.action_list))
-        self.action_list = tf.reshape(self.action_list, [-1])  # [-1, max_len] -> [bs*max_len]
-        print("2 tf.shape(self.action_list)=", tf.shape(self.action_list))
+        # print("1 tf.shape(self.action_list)=", tf.shape(self.action_list))
+        # self.action_list = tf.reshape(self.action_list, [-1])  # [-1, max_len] -> [bs*max_len]
+        # print("2 tf.shape(self.action_list)=", tf.shape(self.action_list))
 
-        self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list)  # [bs*max_len, dim]
-        self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
+        # self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list)  # [bs*max_len, dim]
+        # self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
 
         # reshape
         self.real_length = tf.reshape(self.real_length, [-1, 1])
