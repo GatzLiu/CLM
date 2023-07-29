@@ -59,55 +59,60 @@ class model_MMOE(object):
         self.lable_forward = tf.reshape(self.lable_forward, [-1, 1])
         self.lable_longview = tf.reshape(self.lable_longview, [-1, 1])
 
-        # MF: try
-        mask = tf.sequence_mask(self.real_length, maxlen=self.max_len, dtype=tf.float32)
-        mask = tf.reshape(mask, [-1, self.max_len]) 
+    #     # start ---------------------
+    #     mask = tf.sequence_mask(self.real_length, maxlen=self.max_len, dtype=tf.float32)
+    #     mask = tf.reshape(mask, [-1, self.max_len]) 
 
-       # target_attention
-        self.i_embeddings = tf.reshape(self.i_embeddings, [-1, 1, self.emb_dim])
-        # [-1, list_size_q=1, nh*dim]
-        taget_attention_input = self.set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
-                                col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True)
-        print("tf.shape(taget_attention_input)=", tf.shape(taget_attention_input))
-        taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
+    #    # target_attention
+    #     self.i_embeddings = tf.reshape(self.i_embeddings, [-1, 1, self.emb_dim])
+    #     # [-1, list_size_q=1, nh*dim]
+    #     taget_attention_input = self.set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
+    #                             col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True)
+    #     print("tf.shape(taget_attention_input)=", tf.shape(taget_attention_input))
+    #     taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
-        # mmoe
-        self.i_embeddings = tf.reshape(self.i_embeddings, [-1, self.emb_dim])
-        feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
+    #     # mmoe
+    #     self.i_embeddings = tf.reshape(self.i_embeddings, [-1, self.emb_dim])
+    #     feature_input = tf.concat([self.u_embeddings, self.i_embeddings, taget_attention_input], -1)
 
-        feature_input = tf.reshape(feature_input, [-1, 1, self.emb_dim*3])
-        # [-1, 1, att_emb_size] ** num_tasks
-        mmoe_output = self.mmoe_layer(feature_input, att_emb_size=32, num_experts=6, num_tasks=5)
+    #     feature_input = tf.reshape(feature_input, [-1, 1, self.emb_dim*3])
+    #     # [-1, 1, att_emb_size] ** num_tasks
+    #     mmoe_output = self.mmoe_layer(feature_input, att_emb_size=32, num_experts=6, num_tasks=5)
 
-        # logit
-        # [-1, 1, 1]
-        like_logit = tf.layers.dense(mmoe_output[0], 1, name='like_predictor_mlp')
-        follow_logit = tf.layers.dense(mmoe_output[1], 1, name='follow_predictor_mlp')
-        comment_logit = tf.layers.dense(mmoe_output[2], 1, name='comment_predictor_mlp')
-        forward_logit = tf.layers.dense(mmoe_output[3], 1, name='forward_predictor_mlp')
-        longview_logit = tf.layers.dense(mmoe_output[4], 1, name='longview_predictor_mlp')
+    #     # logit
+    #     # [-1, 1, 1]
+    #     like_logit = tf.layers.dense(mmoe_output[0], 1, name='like_predictor_mlp')
+    #     follow_logit = tf.layers.dense(mmoe_output[1], 1, name='follow_predictor_mlp')
+    #     comment_logit = tf.layers.dense(mmoe_output[2], 1, name='comment_predictor_mlp')
+    #     forward_logit = tf.layers.dense(mmoe_output[3], 1, name='forward_predictor_mlp')
+    #     longview_logit = tf.layers.dense(mmoe_output[4], 1, name='longview_predictor_mlp')
 
-        like_logit = tf.reshape(like_logit,[-1, 1])
-        follow_logit = tf.reshape(follow_logit,[-1, 1])
-        comment_logit = tf.reshape(comment_logit,[-1, 1])
-        forward_logit = tf.reshape(forward_logit,[-1, 1])
-        longview_logit = tf.reshape(longview_logit,[-1, 1])
+    #     like_logit = tf.reshape(like_logit,[-1, 1])
+    #     follow_logit = tf.reshape(follow_logit,[-1, 1])
+    #     comment_logit = tf.reshape(comment_logit,[-1, 1])
+    #     forward_logit = tf.reshape(forward_logit,[-1, 1])
+    #     longview_logit = tf.reshape(longview_logit,[-1, 1])
 
-        # pred
-        like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
-        follow_pred = tf.nn.sigmoid(follow_logit)
-        comment_pred = tf.nn.sigmoid(comment_logit)
-        forward_pred = tf.nn.sigmoid(forward_logit)
-        longview_pred = tf.nn.sigmoid(longview_logit)
+    #     # pred
+    #     like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
+    #     follow_pred = tf.nn.sigmoid(follow_logit)
+    #     comment_pred = tf.nn.sigmoid(comment_logit)
+    #     forward_pred = tf.nn.sigmoid(forward_logit)
+    #     longview_pred = tf.nn.sigmoid(longview_logit)
 
 
-        self.loss_like = tf.losses.log_loss(self.lable_like, like_pred)
-        self.loss_follow = tf.losses.log_loss(self.lable_follow, follow_pred)
-        self.loss_comment = tf.losses.log_loss(self.lable_comment, comment_pred)
-        self.loss_forward = tf.losses.log_loss(self.lable_forward, forward_pred)
-        self.loss_longview = tf.losses.log_loss(self.lable_longview, longview_pred)
+    #     self.loss_like = tf.losses.log_loss(self.lable_like, like_pred)
+    #     self.loss_follow = tf.losses.log_loss(self.lable_follow, follow_pred)
+    #     self.loss_comment = tf.losses.log_loss(self.lable_comment, comment_pred)
+    #     self.loss_forward = tf.losses.log_loss(self.lable_forward, forward_pred)
+    #     self.loss_longview = tf.losses.log_loss(self.lable_longview, longview_pred)
 
-        self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
+    #     self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
+
+        # MF
+        self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
+        like_pred = tf.nn.sigmoid(self.scores)
+        self.loss = tf.losses.log_loss(self.lable_like, like_pred)
 
         ## optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
