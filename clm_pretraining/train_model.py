@@ -88,7 +88,7 @@ def train_model(para):
                 [model.updates, model.loss],
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
-                            model.action_list: train_batch_data[:,9:],
+                            # model.action_list: train_batch_data[:,9:],
                             # model.action_list: tmp,
                             # model.action_list: train_batch_data_action_list,
                             model.real_length: train_batch_data[:,8],
@@ -99,7 +99,8 @@ def train_model(para):
                             model.lable_longview: train_batch_data[:,7],
             })
 
-        print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        print_value([epoch + 1, loss])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
