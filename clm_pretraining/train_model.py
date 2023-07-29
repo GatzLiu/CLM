@@ -91,12 +91,12 @@ def train_model(para):
                             # model.action_list: train_batch_data[:,9:],
                             # model.action_list: tmp,
                             # model.action_list: train_batch_data_action_list,
-                            model.real_length: train_batch_data[:,8],
-                            model.lable_like: train_batch_data[:,3],
-                            model.lable_follow: train_batch_data[:,4],
-                            model.lable_comment: train_batch_data[:,5],
-                            model.lable_forward: train_batch_data[:,6],
-                            model.lable_longview: train_batch_data[:,7],
+                            # model.real_length: train_batch_data[:,8],
+                            # model.lable_like: train_batch_data[:,3],
+                            # model.lable_follow: train_batch_data[:,4],
+                            # model.lable_comment: train_batch_data[:,5],
+                            # model.lable_forward: train_batch_data[:,6],
+                            # model.lable_longview: train_batch_data[:,7],
             })
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])

@@ -25,12 +25,12 @@ class model_MMOE(object):
         self.items = tf.placeholder(tf.int32, shape=(None,))
         # self.action_list = tf.placeholder(tf.int32, shape=[None, 150]) # [-1, max_len]
         # self.action_list = tf.placeholder(tf.int32) # [-1, max_len]
-        self.real_length = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_like = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_follow = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_comment = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_longview = tf.placeholder(tf.int32, shape=(None,))
+        # self.real_length = tf.placeholder(tf.int32, shape=(None,))
+        # self.lable_like = tf.placeholder(tf.int32, shape=(None,))
+        # self.lable_follow = tf.placeholder(tf.int32, shape=(None,))
+        # self.lable_comment = tf.placeholder(tf.int32, shape=(None,))
+        # self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
+        # self.lable_longview = tf.placeholder(tf.int32, shape=(None,))
         # print("0 tf.shape(self.action_list)=", tf.shape(self.action_list))
         # self.action_list = tf.reshape(self.action_list, [-1, 150])
 
@@ -52,12 +52,12 @@ class model_MMOE(object):
         # self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
 
         # reshape
-        self.real_length = tf.reshape(self.real_length, [-1, 1])
-        self.lable_like = tf.reshape(self.lable_like, [-1, 1])
-        self.lable_follow = tf.reshape(self.lable_follow, [-1, 1])
-        self.lable_comment = tf.reshape(self.lable_comment, [-1, 1])
-        self.lable_forward = tf.reshape(self.lable_forward, [-1, 1])
-        self.lable_longview = tf.reshape(self.lable_longview, [-1, 1])
+        # self.real_length = tf.reshape(self.real_length, [-1, 1])
+        # self.lable_like = tf.reshape(self.lable_like, [-1, 1])
+        # self.lable_follow = tf.reshape(self.lable_follow, [-1, 1])
+        # self.lable_comment = tf.reshape(self.lable_comment, [-1, 1])
+        # self.lable_forward = tf.reshape(self.lable_forward, [-1, 1])
+        # self.lable_longview = tf.reshape(self.lable_longview, [-1, 1])
 
     #     # start ---------------------
     #     mask = tf.sequence_mask(self.real_length, maxlen=self.max_len, dtype=tf.float32)
@@ -112,11 +112,11 @@ class model_MMOE(object):
         # MF
         self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
         like_pred = tf.nn.sigmoid(self.scores)
-        print("tf.shape(self.lable_like)=", tf.shape(self.lable_like))
-        print("1tf.shape(like_pred)=", tf.shape(like_pred))
+        # print("tf.shape(self.lable_like)=", tf.shape(self.lable_like))
+        # print("1tf.shape(like_pred)=", tf.shape(like_pred))
         like_pred = tf.reshape(like_pred, [-1, 1])
-        print("2tf.shape(like_pred)=", tf.shape(like_pred))
-        self.loss = tf.losses.log_loss(self.lable_like, like_pred)
+        # print("2tf.shape(like_pred)=", tf.shape(like_pred))
+        self.loss = tf.losses.log_loss(tf.ones_like(like_pred), like_pred)
 
         ## optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
