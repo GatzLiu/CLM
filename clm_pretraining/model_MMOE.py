@@ -110,7 +110,7 @@ class model_MMOE(object):
     #     self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
 
         # MF
-        self.lable_like = tf.cast(self.lable_like, tf.float32)
+        # self.lable_like = tf.cast(self.lable_like, tf.float32)
         self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
         like_pred = tf.nn.sigmoid(self.scores)
         # print("tf.shape(self.lable_like)=", tf.shape(self.lable_like))
