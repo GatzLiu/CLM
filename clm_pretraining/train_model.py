@@ -53,13 +53,14 @@ def train_model(para):
                     limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
                 # print("limit_user_real_action=", limit_user_real_action)
-                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
+                train_batch_data.append([user, item, click, [like], follow, comment, forward, longview, real_length] + limit_user_real_action)
                 train_batch_data_action_list += limit_user_real_action
                 # print(train_batch_data)
 
             train_batch_data = np.array(train_batch_data)
             train_batch_data_action_list = np.array(train_batch_data_action_list)
-            # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
+            print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
+            print ("train_batch_data[:,3]=", train_batch_data[:3,3])
             # print("train_batch_data[:,0] = ", train_batch_data[:,0])
             # print("train_batch_data_action_list = ", train_batch_data_action_list)
             # print(np.shape(train_batch_data[:,0]))
