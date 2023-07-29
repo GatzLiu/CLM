@@ -100,7 +100,7 @@ def train_model(para):
             })
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
-        print_value([epoch + 1, loss])
+        print("[epoch + 1, loss] = ", [epoch + 1, loss])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
