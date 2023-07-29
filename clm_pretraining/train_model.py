@@ -63,6 +63,7 @@ def train_model(para):
             print("train_batch_data_action_list = ", train_batch_data_action_list)
             print(np.shape(train_batch_data[:,0]))
             print(np.shape(train_batch_data_action_list))
+            print("len(train_batch_data_action_list)=", len(train_batch_data_action_list))
             
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
                 [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
