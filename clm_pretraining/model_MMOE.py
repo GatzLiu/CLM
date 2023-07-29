@@ -23,7 +23,7 @@ class model_MMOE(object):
         ## placeholder
         self.users = tf.placeholder(tf.int32, shape=(None,)) # index []
         self.items = tf.placeholder(tf.int32, shape=(None,))
-        self.action_list = tf.placeholder(tf.int32, shape=[None, 150]) # [-1, max_len]
+        # self.action_list = tf.placeholder(tf.int32, shape=[None, 150]) # [-1, max_len]
         # self.action_list = tf.placeholder(tf.int32) # [-1, max_len]
         self.real_length = tf.placeholder(tf.int32, shape=(None,))
         self.lable_like = tf.placeholder(tf.int32, shape=(None,))
