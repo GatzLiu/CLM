@@ -92,7 +92,7 @@ def train_model(para):
                             # model.action_list: tmp,
                             # model.action_list: train_batch_data_action_list,
                             # model.real_length: train_batch_data[:,8],
-                            # model.lable_like: train_batch_data[:,3],
+                            model.lable_like: train_batch_data[:,3],
                             # model.lable_follow: train_batch_data[:,4],
                             # model.lable_comment: train_batch_data[:,5],
                             # model.lable_forward: train_batch_data[:,6],
