@@ -26,7 +26,7 @@ class model_MMOE(object):
         # self.action_list = tf.placeholder(tf.int32, shape=[None, 150]) # [-1, max_len]
         # self.action_list = tf.placeholder(tf.int32) # [-1, max_len]
         # self.real_length = tf.placeholder(tf.int32, shape=(None,))
-        self.lable_like = tf.placeholder(tf.int32, shape=[None, 1])
+        self.lable_like = tf.placeholder(tf.int32, shape=[None, ])
         # self.lable_follow = tf.placeholder(tf.int32, shape=(None,))
         # self.lable_comment = tf.placeholder(tf.int32, shape=(None,))
         # self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
