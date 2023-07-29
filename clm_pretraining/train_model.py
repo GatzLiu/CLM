@@ -36,6 +36,7 @@ def train_model(para):
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
+            train_batch_data_action_list = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
                 (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
                 limit_user_real_action = user_real_action
@@ -53,23 +54,22 @@ def train_model(para):
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
                 # print("limit_user_real_action=", limit_user_real_action)
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
+                train_batch_data_action_list += limit_user_real_action
                 # print(train_batch_data)
 
             train_batch_data = np.array(train_batch_data)
-            print("type(train_batch_data[:,9:])= ", type(train_batch_data[:,9:]))
-            train_batch_data_action_list = np.array(train_batch_data[:,9:])
-            print ("type(train_batch_data_action_list)= ", type(train_batch_data_action_list))
-            
-            print("train_batch_data[:3,0]=", train_batch_data[:3,0])
-            print("train_batch_data[:3,9:]=", np.array(train_batch_data[:3,9:]))
-            print("type(train_batch_data[:3,0])=", type(train_batch_data[:3,0]))
-            print("type(train_batch_data[:3,9:])=", type(train_batch_data[:3,9:]))
+            train_batch_data_action_list = np.array(train_batch_data_action_list)
+            print("train_batch_data[:,0] = ", train_batch_data[:,0])
+            print("train_batch_data_action_list = ", train_batch_data_action_list)
+            print(np.shape(train_batch_data[:,0]))
+            print(np.shape(train_batch_data_action_list))
             
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
                 [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
                 model.loss_forward, model.loss_longview],
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
+                            # model.action_list: train_batch_data[:,9:],
                             model.action_list: train_batch_data_action_list,
                             model.real_length: train_batch_data[:,8],
                             model.lable_like: train_batch_data[:,3],

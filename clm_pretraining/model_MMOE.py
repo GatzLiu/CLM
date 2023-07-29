@@ -23,7 +23,7 @@ class model_MMOE(object):
         ## placeholder
         self.users = tf.placeholder(tf.int32, shape=(None,)) # index []
         self.items = tf.placeholder(tf.int32, shape=(None,))
-        self.action_list = tf.placeholder(tf.int32, shape=(None, 150)) # [-1, max_len]
+        self.action_list = tf.placeholder(tf.int32, shape=(None,)) # [-1, max_len]
         # self.action_list = tf.placeholder(tf.int32) # [-1, max_len]
         self.real_length = tf.placeholder(tf.int32, shape=(None,))
         self.lable_like = tf.placeholder(tf.int32, shape=(None,))
@@ -31,6 +31,7 @@ class model_MMOE(object):
         self.lable_comment = tf.placeholder(tf.int32, shape=(None,))
         self.lable_forward = tf.placeholder(tf.int32, shape=(None,))
         self.lable_longview = tf.placeholder(tf.int32, shape=(None,))
+        self.action_list = tf.reshape(self.action_list, [-1, 150])
 
         ## define trainable parameters
         self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
