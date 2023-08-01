@@ -15,8 +15,8 @@ def train_model(para):
     ## Load data
     [train_data, user_num, item_num] = read_data(train_path)
     print("len(train_data)=",len(train_data), ", user_num=", user_num, ", item_num=", item_num)
-    test_data = read_data(validation_path)[0]
-    print ("test_data[0:3]=", test_data[0:3])
+    # test_data = read_data(validation_path)[0]
+    # print ("test_data[0:3]=", test_data[0:3])
     # para_test = [train_data, test_data, user_num, item_num, para['TOP_K'], para['TEST_USER_BATCH']]
 
     data = {'user_num': user_num, "item_num": item_num}
