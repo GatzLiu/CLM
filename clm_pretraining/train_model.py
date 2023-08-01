@@ -26,7 +26,6 @@ def train_model(para):
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
-    sess.run(tf.local_variables_initializer())
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -75,11 +74,11 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
-
             label_like_re = tf.reshape(label_like_re, [-1])
             like_pred = tf.reshape(like_pred, [-1])
             print("label_like_re= ", label_like_re, ", like_pred=", like_pred)
             auc_like, auc_op_like = tf.metrics.auc(label_like_re, like_pred)
+            sess.run(tf.local_variables_initializer())
             sess.run(auc_op_like)
             auc_like_value = sess.run(auc_like)
             print ("epoch + 1, auc_like_value=", auc_like_value)
