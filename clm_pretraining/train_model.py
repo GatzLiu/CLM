@@ -66,7 +66,7 @@ def train_model(para):
             # print(np.shape(train_batch_data[:,0]))
             # print(np.shape(train_batch_data_action_list))
             # print("len(train_batch_data_action_list)=", len(train_batch_data_action_list))
-            # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
+            print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
 
             # tmp = train_batch_data[:,9:]
             # tmp = np.expand_dims(tmp,0)
@@ -80,25 +80,25 @@ def train_model(para):
             #                 # model.action_list: tmp,
             #                 # model.action_list: train_batch_data_action_list,
             #                 model.real_length: train_batch_data[:,8],
-            #                 model.lable_like: train_batch_data[:,3],
-            #                 model.lable_follow: train_batch_data[:,4],
-            #                 model.lable_comment: train_batch_data[:,5],
-            #                 model.lable_forward: train_batch_data[:,6],
-            #                 model.lable_longview: train_batch_data[:,7],
+            #                 model.label_like: train_batch_data[:,3],
+            #                 model.label_follow: train_batch_data[:,4],
+            #                 model.label_comment: train_batch_data[:,5],
+            #                 model.label_forward: train_batch_data[:,6],
+            #                 model.label_longview: train_batch_data[:,7],
             # })
             _, loss = sess.run(
                 [model.updates, model.loss],
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
-                            # model.action_list: train_batch_data[:,9:],
+                            model.action_list: train_batch_data[:,9:],
                             # model.action_list: tmp,
                             # model.action_list: train_batch_data_action_list,
                             # model.real_length: train_batch_data[:,8],
-                            model.lable_like: train_batch_data[:,3],
-                            # model.lable_follow: train_batch_data[:,4],
-                            # model.lable_comment: train_batch_data[:,5],
-                            # model.lable_forward: train_batch_data[:,6],
-                            # model.lable_longview: train_batch_data[:,7],
+                            model.label_like: train_batch_data[:,3],
+                            # model.label_follow: train_batch_data[:,4],
+                            # model.label_comment: train_batch_data[:,5],
+                            # model.label_forward: train_batch_data[:,6],
+                            # model.label_longview: train_batch_data[:,7],
             })
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
