@@ -21,13 +21,15 @@ def train_model(para):
 
     data = {'user_num': user_num, "item_num": item_num}
 
-    saver = tf.train.Saver()
-
     ## define the model
     model = model_MMOE(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
+
+    # saver
+    saver = tf.train.Saver()
+
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
 
