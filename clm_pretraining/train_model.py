@@ -92,7 +92,7 @@ def train_model(para):
             break
     for row in range(len(auc_like_value_list)):
         print ("epoch+1=", row+1)
-        for col in auc_like_value_list[row]
+        for col in auc_like_value_list[row]:
            print (col, end= " ")
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
