@@ -86,23 +86,22 @@ def train_model(para):
             #                 model.label_forward: train_batch_data[:,6],
             #                 model.label_longview: train_batch_data[:,7],
             # })
-            _, loss = sess.run(
-                [model.updates, model.loss],
+            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
+                [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
+                model.loss_forward, model.loss_longview],
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
                             model.action_list: train_batch_data[:,9:],
-                            # model.action_list: tmp,
-                            # model.action_list: train_batch_data_action_list,
-                            # model.real_length: train_batch_data[:,8],
+                            model.real_length: train_batch_data[:,8],
                             model.label_like: train_batch_data[:,3],
-                            # model.label_follow: train_batch_data[:,4],
-                            # model.label_comment: train_batch_data[:,5],
-                            # model.label_forward: train_batch_data[:,6],
-                            # model.label_longview: train_batch_data[:,7],
+                            model.label_follow: train_batch_data[:,4],
+                            model.label_comment: train_batch_data[:,5],
+                            model.label_forward: train_batch_data[:,6],
+                            model.label_longview: train_batch_data[:,7],
             })
-
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
-        print("[epoch + 1, loss] = ", [epoch + 1, loss])
+        print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
+        [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
