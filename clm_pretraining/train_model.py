@@ -34,6 +34,7 @@ def train_model(para):
     ## training iteratively
     F1_max = 0
     for epoch in range(para['N_EPOCH']):
+        auc_like_value_list = []
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
@@ -74,17 +75,16 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
-            label_like_re = tf.reshape(label_like_re, [-1])
-            like_pred = tf.reshape(like_pred, [-1])
-            print("label_like_re= ", label_like_re, ", like_pred=", like_pred)
-            auc_like, auc_op_like = tf.metrics.auc(label_like_re, like_pred)
+
+            auc_like, auc_op_like = tf.metrics.auc(tf.reshape(label_like_re, [-1]), tf.reshape(like_pred, [-1]))
             sess.run(tf.local_variables_initializer())
             sess.run(auc_op_like)
             auc_like_value = sess.run(auc_like)
-            print ("epoch + 1, auc_like_value=", auc_like_value)
+            auc_like_value_list.append(auc_like_value)
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
         [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        print ("epoch + 1, auc_like_value(first, tail)=", [epoch + 1, auc_like_value_list[0], auc_like_value_list[-1])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
