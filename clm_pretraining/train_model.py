@@ -66,7 +66,7 @@ def train_model(para):
             # print(np.shape(train_batch_data[:,0]))
             # print(np.shape(train_batch_data_action_list))
             # print("len(train_batch_data_action_list)=", len(train_batch_data_action_list))
-            print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
+            # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
 
             # tmp = train_batch_data[:,9:]
             # tmp = np.expand_dims(tmp,0)
