@@ -78,6 +78,7 @@ def train_model(para):
 
             label_like_re = tf.reshape(label_like_re, [-1])
             like_pred = tf.reshape(like_pred, [-1])
+            print("label_like_re= ", label_like_re, ", like_pred=", like_pred)
             auc_like, auc_op_like = tf.metrics.auc(label_like_re, like_pred)
             sess.run(auc_op_like)
             auc_like_value = sess.run(auc_like)
