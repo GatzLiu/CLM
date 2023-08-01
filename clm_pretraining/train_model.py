@@ -26,6 +26,7 @@ def train_model(para):
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
+    sess.run(tf.local_variables_initializer())
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -36,7 +37,6 @@ def train_model(para):
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
-            # train_batch_data_action_list = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
                 (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
                 limit_user_real_action = user_real_action
@@ -54,41 +54,17 @@ def train_model(para):
                 # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
                 # print("limit_user_real_action=", limit_user_real_action)
                 train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
-                # train_batch_data_action_list += limit_user_real_action
-                # print(train_batch_data)
 
             train_batch_data = np.array(train_batch_data)
-            # train_batch_data_action_list = np.array(train_batch_data_action_list)
             # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
             # print ("train_batch_data[:,3]=", train_batch_data[:3,3])
             # print("train_batch_data[:,0] = ", train_batch_data[:,0])
-            # print("train_batch_data_action_list = ", train_batch_data_action_list)
             # print(np.shape(train_batch_data[:,0]))
-            # print(np.shape(train_batch_data_action_list))
-            # print("len(train_batch_data_action_list)=", len(train_batch_data_action_list))
             # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
 
-            # tmp = train_batch_data[:,9:]
-            # tmp = np.expand_dims(tmp,0)
-            
-            # _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
-            #     [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
-            #     model.loss_forward, model.loss_longview],
-            #     feed_dict={model.users: train_batch_data[:,0],
-            #                 model.items: train_batch_data[:,1],
-            #                 model.action_list: train_batch_data[:,9:],
-            #                 # model.action_list: tmp,
-            #                 # model.action_list: train_batch_data_action_list,
-            #                 model.real_length: train_batch_data[:,8],
-            #                 model.label_like: train_batch_data[:,3],
-            #                 model.label_follow: train_batch_data[:,4],
-            #                 model.label_comment: train_batch_data[:,5],
-            #                 model.label_forward: train_batch_data[:,6],
-            #                 model.label_longview: train_batch_data[:,7],
-            # })
-            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview = sess.run(
+            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, label_like_re, like_pred = sess.run(
                 [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
-                model.loss_forward, model.loss_longview],
+                model.loss_forward, model.loss_longview, model.label_like_re, model.like_pred],
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
                             model.action_list: train_batch_data[:,9:],
@@ -99,6 +75,10 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
+            auc_like, auc_op_like = tf.metrics.auc(label_like_re, like_pred)
+            sess.run(auc_op_like)
+            auc_like_value = sess.run(auc_like)
+            print ("epoch + 1, auc_like_value=", auc_like_value)
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
         [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])

@@ -88,18 +88,18 @@ class model_MMOE(object):
         longview_logit = tf.reshape(longview_logit, [-1, 1])
 
         # pred
-        like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
-        follow_pred = tf.nn.sigmoid(follow_logit)
-        comment_pred = tf.nn.sigmoid(comment_logit)
-        forward_pred = tf.nn.sigmoid(forward_logit)
-        longview_pred = tf.nn.sigmoid(longview_logit)
+        self.like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
+        self.follow_pred = tf.nn.sigmoid(follow_logit)
+        self.comment_pred = tf.nn.sigmoid(comment_logit)
+        self.forward_pred = tf.nn.sigmoid(forward_logit)
+        self.longview_pred = tf.nn.sigmoid(longview_logit)
 
 
-        self.loss_like = tf.losses.log_loss(self.label_like_re, like_pred)
-        self.loss_follow = tf.losses.log_loss(self.label_follow_re, follow_pred)
-        self.loss_comment = tf.losses.log_loss(self.label_comment_re, comment_pred)
-        self.loss_forward = tf.losses.log_loss(self.label_forward_re, forward_pred)
-        self.loss_longview = tf.losses.log_loss(self.label_longview_re, longview_pred)
+        self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred)
+        self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred)
+        self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred)
+        self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred)
+        self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred)
 
         self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
 
