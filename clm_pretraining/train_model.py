@@ -5,6 +5,7 @@ from params import DIR
 
 
 def train_model(para):
+    print("start")
     ## paths of data
     train_path = DIR + 'train_data.json'
     validation_path = DIR + 'validation_data.json'
