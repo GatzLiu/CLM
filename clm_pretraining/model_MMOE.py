@@ -54,7 +54,7 @@ class model_MMOE(object):
         # reshape
         # self.real_length = tf.reshape(self.real_length, [-1, 1])
         # self.lable_like = tf.expand_dims(self.lable_like, 1)
-        self.lable_like_1 = tf.reshape(self.lable_like, [-1, 1])
+        self.lable_like_re = tf.reshape(self.lable_like, [-1, 1])
         # self.lable_follow = tf.reshape(self.lable_follow, [-1, 1])
         # self.lable_comment = tf.reshape(self.lable_comment, [-1, 1])
         # self.lable_forward = tf.reshape(self.lable_forward, [-1, 1])
@@ -118,7 +118,7 @@ class model_MMOE(object):
         # print("1tf.shape(like_pred)=", tf.shape(like_pred))
         like_pred = tf.reshape(like_pred, [-1, 1])
         # print("2tf.shape(like_pred)=", tf.shape(like_pred))
-        self.loss = tf.losses.log_loss(tf.ones_like(like_pred), like_pred)
+        self.loss = tf.losses.log_loss(self.lable_like_re, like_pred)
 
         ## optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
