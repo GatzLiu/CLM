@@ -8,6 +8,7 @@ def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
     validation_path = DIR + 'validation_data.json'
+    save_model_path = '.model_ckpt/clm_model.ckpt'
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
     ## Load data
@@ -18,6 +19,8 @@ def train_model(para):
     # para_test = [train_data, test_data, user_num, item_num, para['TOP_K'], para['TEST_USER_BATCH']]
 
     data = {'user_num': user_num, "item_num": item_num}
+
+    saver = tf.train.Saver()
 
     ## define the model
     model = model_MMOE(data=data, para=para)
@@ -103,6 +106,10 @@ def train_model(para):
             break
     for epoch in range(len(list_auc_like_value)):
         print("epoch+1=", epoch+1, ", list_auc_like_value[epoch] -> AUC=", list_auc_like_value[epoch])
+
+    # save
+    saver.save(sess, save_model_path)
+
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
     #         F1_max = F1[1]

@@ -6,14 +6,14 @@ validate_test = 0   # 0:Validate, 1: Test
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]
 MODEL = 'MMOE'
-LR = [0.001, 0.02][dataset]
+LR = [0.001, 0.05][dataset]
 LAMDA = [0.2, 0.01][dataset]
 ACTION_LIST_MAX_LEN = 150
 EMB_DIM = 64
 BATCH_SIZE = 10000
 TEST_USER_BATCH = {'Amazon': 4096, 'KuaiRand': 4096}[DATASET]
 SAMPLE_RATE = 1
-N_EPOCH = 200
+N_EPOCH = 2
 TOP_K = [10, 20, 50, 100]
 DIR = './dataset/'+DATASET+'/'
 GPU_INDEX = "0"
