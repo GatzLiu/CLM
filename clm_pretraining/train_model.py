@@ -75,6 +75,9 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
+
+            label_like_re = tf.reshape(label_like_re, [-1])
+            like_pred = tf.reshape(like_pred, [-1])
             auc_like, auc_op_like = tf.metrics.auc(label_like_re, like_pred)
             sess.run(auc_op_like)
             auc_like_value = sess.run(auc_like)
