@@ -111,7 +111,8 @@ def train_model(para):
         print("epoch+1=", epoch+1, ", list_auc_like_value[epoch] -> AUC=", list_auc_like_value[epoch])
 
     # save
-    saver.save(sess, save_model_path)
+    save_path = saver.save(sess, save_model_path)
+    print("model save path = ", save_path)
 
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
