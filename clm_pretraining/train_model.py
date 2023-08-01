@@ -84,7 +84,7 @@ def train_model(para):
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
         [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
-        print ("epoch + 1, auc_like_value(first, tail)=", [epoch + 1, auc_like_value_list[0], auc_like_value_list[-1])
+        print ("epoch + 1, auc_like_value(first, tail)=", [epoch + 1, auc_like_value_list[0], auc_like_value_list[-1]])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
