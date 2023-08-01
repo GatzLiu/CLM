@@ -32,9 +32,10 @@ def train_model(para):
     batches.append(len(train_data))
 
     ## training iteratively
+    auc_like_value_list = []
     F1_max = 0
     for epoch in range(para['N_EPOCH']):
-        auc_like_value_list = []
+        auc_like_value_list_epoch = []
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
@@ -80,14 +81,19 @@ def train_model(para):
             sess.run(tf.local_variables_initializer())
             sess.run(auc_op_like)
             auc_like_value = sess.run(auc_like)
-            auc_like_value_list.append(auc_like_value)
+            auc_like_value_list_epoch.append(auc_like_value)
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        auc_like_value_list.append(auc_like_value_list_epoch)
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
         [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
-        print ("epoch + 1, auc_like_value(first, tail)=", [epoch + 1, auc_like_value_list[0], auc_like_value_list[-1]])
+        print ("epoch + 1, auc_like_value(first, tail)=", [epoch + 1, auc_like_value_list_epoch[0], auc_like_value_list_epoch[-1]])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
+    for row in range(len(auc_like_value_list)):
+        print ("epoch+1=", row+1)
+        for col in auc_like_value_list[row]
+           print (col, end= " ")
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
     #         F1_max = F1[1]
