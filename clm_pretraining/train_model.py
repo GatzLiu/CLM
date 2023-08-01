@@ -8,7 +8,7 @@ def train_model(para):
     print("start")
     ## paths of data
     train_path = DIR + 'train_data.json'
-    validation_path = DIR + 'validation_data.json'
+    validation_path = DIR + 'train_data.json'
     save_model_path = '.model_ckpt/clm_model.ckpt'
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
