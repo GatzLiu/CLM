@@ -13,8 +13,8 @@ def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
     ltr_data_path = DIR + 'kuairand_ltr_data.json'
 
-    model_path = 'model_ckpt/clm_model.ckpt-79.meta'
-    restore_path = 'model_ckpt/clm_model.ckpt-79'
+    model_path = 'model_ckpt/clm_model.ckpt.meta'
+    restore_path = 'model_ckpt/clm_model.ckpt'
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)
