@@ -31,6 +31,16 @@ class model_MMOE(object):
         self.label_forward = tf.placeholder(tf.int32, shape=(None,))
         self.label_longview = tf.placeholder(tf.int32, shape=(None,))
 
+        print ("self.users=", self.users)
+        print ("self.items=", self.items)
+        print ("self.action_list=", self.action_list)
+        print ("self.real_length=", self.real_length)
+        print ("self.label_like=", self.label_like)
+        print ("self.label_follow=", self.label_follow)
+        print ("self.label_comment=", self.label_comment)
+        print ("self.label_forward=", self.label_forward)
+        print ("self.label_longview=", self.label_longview)
+
         # reshape
         self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
@@ -39,6 +49,12 @@ class model_MMOE(object):
         self.label_comment_re = tf.reshape(self.label_comment, [-1, 1])
         self.label_forward_re = tf.reshape(self.label_forward, [-1, 1])
         self.label_longview_re = tf.reshape(self.label_longview, [-1, 1])
+
+        print ("self.label_like_re=", self.label_like_re)
+        print ("self.label_follow_re=", self.label_follow_re)
+        print ("self.label_comment_re=", self.label_comment_re)
+        print ("self.label_forward_re=", self.label_forward_re)
+        print ("self.label_longview_re=", self.label_longview_re)
 
         ## define trainable parameters
         self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
@@ -94,14 +110,26 @@ class model_MMOE(object):
         self.forward_pred = tf.nn.sigmoid(forward_logit)
         self.longview_pred = tf.nn.sigmoid(longview_logit)
 
+        print("self.like_pred=", self.like_pred)
+        print("self.follow_pred=", self.follow_pred)
+        print("self.comment_pred=", self.comment_pred)
+        print("self.forward_pred=", self.forward_pred)
+        print("self.longview_pred=", self.longview_pred)
 
         self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred)
         self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred)
         self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred)
         self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred)
         self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred)
+        
+        print("self.loss_like=", self.loss_like)
+        print("self.loss_follow=", self.loss_follow)
+        print("self.loss_comment=", self.loss_comment)
+        print("self.loss_forward=", self.loss_forward)
+        print("self.loss_longview=", self.loss_longview)
 
         self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
+        print("self.loss=", self.loss)
 
         # MF: test
         # self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
@@ -120,6 +148,7 @@ class model_MMOE(object):
 
         ## update parameters
         self.updates = self.opt.minimize(self.loss, var_list=self.var_list)
+        print("self.updates=", self.updates)
 
         ## get top k
         # self.all_ratings = tf.matmul(self.u_embeddings, self.item_embeddings, transpose_a=False, transpose_b=True)
