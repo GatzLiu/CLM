@@ -88,7 +88,7 @@ def mmoe_prediction_data(para):
                     label_forward: pred_batch_data[:,6],
                     label_longview: pred_batch_data[:,7],
             })
-            if batch_num % 20000 == 0:
+            if batches[batch_num] % 20000 == 0:
                 print ("model_like_pred=", model_like_pred)
                 print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
                 [batches[batch_num], batches[batch_num+1], model_loss,
