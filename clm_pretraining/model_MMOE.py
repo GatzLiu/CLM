@@ -116,11 +116,11 @@ class model_MMOE(object):
         print("self.forward_pred=", self.forward_pred)
         print("self.longview_pred=", self.longview_pred)
 
-        self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred, name='loss_like')
-        self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred, name='loss_follow')
-        self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred, name='loss_comment')
-        self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred, name='loss_forward')
-        self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred, name='loss_longview')
+        self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred)
+        self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred)
+        self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred)
+        self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred)
+        self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred)
         
         print("self.loss_like=", self.loss_like)
         print("self.loss_follow=", self.loss_follow)
