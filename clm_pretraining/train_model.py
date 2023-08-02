@@ -114,10 +114,10 @@ def train_model(para):
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
 
-        # if (epoch+1) % 30 == 0:
-        #     print ("start save model , epoch+1=", epoch+1)
-        #     save_path = saver.save(sess, save_model_path, global_step=epoch)
-        #     print("model save path = ", save_path)
+        if (epoch+1) % 30 == 0:
+            print ("start save model , epoch+1=", epoch+1)
+            save_path = saver.save(sess, save_model_path, global_step=epoch)
+            print("model save path = ", save_path)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
@@ -127,6 +127,8 @@ def train_model(para):
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
+    
+    # print auc
     for epoch in range(len(list_auc_epoch)):
         print("epoch+1=", epoch+1, 
             ", like_auc=", list_auc_epoch[epoch][0], 
@@ -136,8 +138,8 @@ def train_model(para):
             ", longview_auc=", list_auc_epoch[epoch][4])
 
     # save
-    save_path = saver.save(sess, save_model_path)
-    print("model save path = ", save_path)
+    # save_path = saver.save(sess, save_model_path)
+    # print("model save path = ", save_path)
 
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
