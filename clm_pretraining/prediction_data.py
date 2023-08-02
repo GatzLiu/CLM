@@ -1,7 +1,10 @@
-from print_save import *
+from params import all_para
 from params import DIR
+from print_save import *
 import tensorflow as tf
+import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
 
 def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
@@ -101,5 +104,5 @@ def mmoe_prediction_data(para):
 # # jupyter 拼接
 
 if __name__ == '__main__':
-    mmoe_prediction_data(para)
+    mmoe_prediction_data(all_para)
     print("pred success")
