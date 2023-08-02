@@ -21,15 +21,15 @@ class model_MMOE(object):
         # self.graph_emb = data['graph_embeddings']
 
         ## placeholder
-        self.users = tf.placeholder(tf.int32, shape=(None,)) # index []
-        self.items = tf.placeholder(tf.int32, shape=(None,))
-        self.action_list = tf.placeholder(tf.int32, shape=[None, self.max_len]) # [-1, max_len]
-        self.real_length = tf.placeholder(tf.int32, shape=(None,))
-        self.label_like = tf.placeholder(tf.int32, shape=(None,))
-        self.label_follow = tf.placeholder(tf.int32, shape=(None,))
-        self.label_comment = tf.placeholder(tf.int32, shape=(None,))
-        self.label_forward = tf.placeholder(tf.int32, shape=(None,))
-        self.label_longview = tf.placeholder(tf.int32, shape=(None,))
+        self.users = tf.placeholder(tf.int32, shape=(None,), name='users') # index []
+        self.items = tf.placeholder(tf.int32, shape=(None,), name='items')
+        self.action_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='action_list') # [-1, max_len]
+        self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
+        self.label_like = tf.placeholder(tf.int32, shape=(None,), name='label_like')
+        self.label_follow = tf.placeholder(tf.int32, shape=(None,), name='label_follow')
+        self.label_comment = tf.placeholder(tf.int32, shape=(None,), name='label_comment')
+        self.label_forward = tf.placeholder(tf.int32, shape=(None,), name='label_forward')
+        self.label_longview = tf.placeholder(tf.int32, shape=(None,), name='label_longview')
 
         print ("self.users=", self.users)
         print ("self.items=", self.items)
@@ -42,13 +42,13 @@ class model_MMOE(object):
         print ("self.label_longview=", self.label_longview)
 
         # reshape
-        self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len])
+        self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len],)
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
-        self.label_like_re = tf.reshape(self.label_like, [-1, 1])
-        self.label_follow_re = tf.reshape(self.label_follow, [-1, 1])
-        self.label_comment_re = tf.reshape(self.label_comment, [-1, 1])
-        self.label_forward_re = tf.reshape(self.label_forward, [-1, 1])
-        self.label_longview_re = tf.reshape(self.label_longview, [-1, 1])
+        self.label_like_re = tf.reshape(self.label_like, [-1, 1], name='label_like_re')
+        self.label_follow_re = tf.reshape(self.label_follow, [-1, 1], name='label_follow_re')
+        self.label_comment_re = tf.reshape(self.label_comment, [-1, 1], name='label_comment_re')
+        self.label_forward_re = tf.reshape(self.label_forward, [-1, 1], name='label_forward_re')
+        self.label_longview_re = tf.reshape(self.label_longview, [-1, 1], name='label_longview_re')
 
         print ("self.label_like_re=", self.label_like_re)
         print ("self.label_follow_re=", self.label_follow_re)
@@ -104,11 +104,11 @@ class model_MMOE(object):
         longview_logit = tf.reshape(longview_logit, [-1, 1])
 
         # pred
-        self.like_pred = tf.nn.sigmoid(like_logit) # [-1, 1]
-        self.follow_pred = tf.nn.sigmoid(follow_logit)
-        self.comment_pred = tf.nn.sigmoid(comment_logit)
-        self.forward_pred = tf.nn.sigmoid(forward_logit)
-        self.longview_pred = tf.nn.sigmoid(longview_logit)
+        self.like_pred = tf.nn.sigmoid(like_logit, name='like_pred') # [-1, 1]
+        self.follow_pred = tf.nn.sigmoid(follow_logit, name='follow_pred')
+        self.comment_pred = tf.nn.sigmoid(comment_logit, name='comment_pred')
+        self.forward_pred = tf.nn.sigmoid(forward_logit, name='forward_pred')
+        self.longview_pred = tf.nn.sigmoid(longview_logit, name='longview_pred')
 
         print("self.like_pred=", self.like_pred)
         print("self.follow_pred=", self.follow_pred)
@@ -116,11 +116,11 @@ class model_MMOE(object):
         print("self.forward_pred=", self.forward_pred)
         print("self.longview_pred=", self.longview_pred)
 
-        self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred)
-        self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred)
-        self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred)
-        self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred)
-        self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred)
+        self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred, name='')
+        self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred, name='')
+        self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred, name='')
+        self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred, name='')
+        self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred, name='')
         
         print("self.loss_like=", self.loss_like)
         print("self.loss_follow=", self.loss_follow)
