@@ -142,6 +142,11 @@ def mmoe_prediction_data(para):
         json_ltr_train_data = json.dumps(ltr_train_data)
         with open(ltr_data_path, 'w') as file:
             file.write(json_ltr_train_data)
+        file.close()
+        
+        # test: read
+        ltr_train_data_v1, _, _ = read_data(ltr_data_path)
+
 
 
         
@@ -159,4 +164,4 @@ def mmoe_prediction_data(para):
 
 if __name__ == '__main__':
     mmoe_prediction_data(all_para)
-    print("pred success")
+    print("pred sample && generate ltr_train_data.json success")
