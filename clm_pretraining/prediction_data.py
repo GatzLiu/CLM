@@ -10,8 +10,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
 
 def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
-    model_path = 'model_ckpt/clm_model.ckpt.meta'
-    restore_path = 'model_ckpt/clm_model.ckpt'
+    model_path = 'model_ckpt/clm_model.ckpt-79.meta'
+    restore_path = 'model_ckpt/clm_model.ckpt-79'
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)

@@ -97,10 +97,6 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
-            if (epoch+1) % 40 == 0:
-                print ("start save model , epoch+1=", epoch+1)
-                save_path = saver.save(sess, save_model_path, global_step=epoch)
-                print("model save path = ", save_path)
 
             epoch_label_like_re.append(label_like_re)
             epoch_label_follow_re.append(label_follow_re)
@@ -117,6 +113,11 @@ def train_model(para):
         list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
+
+        if (epoch+1) % 40 == 0:
+            print ("start save model , epoch+1=", epoch+1)
+            save_path = saver.save(sess, save_model_path, global_step=epoch)
+            print("model save path = ", save_path)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
