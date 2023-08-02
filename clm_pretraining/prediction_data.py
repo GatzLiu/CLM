@@ -2,6 +2,7 @@ from params import all_para
 from params import DIR
 from print_save import *
 
+import json
 import numpy as np
 import tensorflow as tf
 import os
@@ -10,6 +11,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
 
 def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
+    ltr_data_path = DIR + 'kuairand_ltr_data.json'
+
     model_path = 'model_ckpt/clm_model.ckpt-79.meta'
     restore_path = 'model_ckpt/clm_model.ckpt-79'
 
@@ -90,13 +93,13 @@ def mmoe_prediction_data(para):
                 feed_dict = {
                     user: pred_batch_data[:,0],
                     item: pred_batch_data[:,1],
-                    action_list: pred_batch_data[:,9:],
-                    real_length: pred_batch_data[:,8],
-                    label_like: pred_batch_data[:,3],
-                    label_follow: pred_batch_data[:,4],
-                    label_comment: pred_batch_data[:,5],
-                    label_forward: pred_batch_data[:,6],
-                    label_longview: pred_batch_data[:,7],
+                    action_list: pred_batch_data[:,10:],
+                    real_length: pred_batch_data[:,9],
+                    label_like: pred_batch_data[:,4],
+                    label_follow: pred_batch_data[:,5],
+                    label_comment: pred_batch_data[:,6],
+                    label_forward: pred_batch_data[:,7],
+                    label_longview: pred_batch_data[:,8],
             })
 
             epoch_label_like_re.append(model_label_like_re)
@@ -124,8 +127,22 @@ def mmoe_prediction_data(para):
             ", comment_auc=", list_auc[2],
             ", forward_auc=", list_auc[3],
             ", longview_auc=", list_auc[4])
-        print ("epoch_label_like_re=", epoch_label_like_re)
-        print ("tf.concat(epoch_label_like_re, 0)=", tf.concat(epoch_label_like_re, 0))
+        print ("epoch_like_pred=", epoch_like_pred)
+        like_pxtr = np.flatten(epoch_like_pred)
+        print ("like_pxtr[0] = ", like_pxtr[0])
+        print ("like_pxtr = ", like_pxtr)
+
+        # generate ltr model train data
+        ltr_train_data = []
+        int index = 0
+        for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
+            ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
+                                    like_pxtr[index]])
+            index = index + 1
+        json_ltr_train_data = json.dumps(ltr_train_data)
+        with open(ltr_data_path, 'w') as file:
+            file.write(json_ltr_train_data)
+
 
         
 

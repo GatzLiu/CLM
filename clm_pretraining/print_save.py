@@ -73,9 +73,9 @@ def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_commen
     # auc_like_value = sess.run(auc_like)
     # list_auc_like_value.append(auc_like_value)
 
-
+# NOTE: add feature [real_length]
 def generate_sample(data, para):
-    (user, item, click, like, follow, comment, forward, longview, user_real_action) = data
+    (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) = data
     limit_user_real_action = user_real_action
     cur_length = len(limit_user_real_action)
     real_length = 0
@@ -90,4 +90,4 @@ def generate_sample(data, para):
         limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
     # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
     # print("limit_user_real_action=", limit_user_real_action)
-    return [user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action
+    return [user, item, time_ms, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action

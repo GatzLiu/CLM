@@ -89,13 +89,13 @@ def train_model(para):
                     model.like_pred, model.follow_pred, model.comment_pred, model.forward_pred, model.longview_pred], 
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
-                            model.action_list: train_batch_data[:,9:],
-                            model.real_length: train_batch_data[:,8],
-                            model.label_like: train_batch_data[:,3],
-                            model.label_follow: train_batch_data[:,4],
-                            model.label_comment: train_batch_data[:,5],
-                            model.label_forward: train_batch_data[:,6],
-                            model.label_longview: train_batch_data[:,7],
+                            model.action_list: train_batch_data[:,10:],
+                            model.real_length: train_batch_data[:,9],
+                            model.label_like: train_batch_data[:,4],
+                            model.label_follow: train_batch_data[:,5],
+                            model.label_comment: train_batch_data[:,6],
+                            model.label_forward: train_batch_data[:,7],
+                            model.label_longview: train_batch_data[:,8],
             })
 
             epoch_label_like_re.append(label_like_re)
@@ -114,10 +114,10 @@ def train_model(para):
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
 
-        if (epoch+1) % 40 == 0:
-            print ("start save model , epoch+1=", epoch+1)
-            save_path = saver.save(sess, save_model_path, global_step=epoch)
-            print("model save path = ", save_path)
+        # if (epoch+1) % 30 == 0:
+        #     print ("start save model , epoch+1=", epoch+1)
+        #     save_path = saver.save(sess, save_model_path, global_step=epoch)
+        #     print("model save path = ", save_path)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
@@ -136,8 +136,8 @@ def train_model(para):
             ", longview_auc=", list_auc_epoch[epoch][4])
 
     # save
-    # save_path = saver.save(sess, save_model_path)
-    # print("model save path = ", save_path)
+    save_path = saver.save(sess, save_model_path)
+    print("model save path = ", save_path)
 
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
