@@ -96,9 +96,9 @@ def train_model(para):
 
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, \
             label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re, \
-            like_pred, follow_pred, comment_pred, forward_pred, longview_pred =
-                sess.run(
-                    [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
+            like_pred, follow_pred, comment_pred, forward_pred, longview_pred = \
+            sess.run(
+                [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
                     model.loss_forward, model.loss_longview, 
                     model.label_like_re, model.label_follow_re, model.label_comment_re, model.label_forward_re, model.label_longview_re, 
                     model.like_pred, model.follow_pred, model.comment_pred, model.forward_pred, model.longview_pred], 
