@@ -142,6 +142,7 @@ def mmoe_prediction_data(para):
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
                                     like_pxtr[index]])
             index = index + 1
+        print ("ltr_train_data[:2]=", ltr_train_data[:2])
         print("type(ltr_train_data)=", type(ltr_train_data))
         json_ltr_train_data = json.dumps(ltr_train_data)
 
