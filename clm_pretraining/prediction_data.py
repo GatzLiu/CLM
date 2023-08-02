@@ -132,9 +132,6 @@ def mmoe_prediction_data(para):
         print ("epoch_like_pred=", epoch_like_pred)
         # like_pxtr = epoch_like_pred.flatten()
         like_pxtr = [pxtr for batch_list in epoch_like_pred for pxtr in batch_list]
-        print("------type(like_pxtr)=", type(like_pxtr))
-        like_pxtr.tolist()
-        print("------type(like_pxtr)=", type(like_pxtr))
         print ("like_pxtr[0] = ", like_pxtr[0])
         print ("len(like_pxtr) = ", len(like_pxtr))
 
@@ -143,7 +140,7 @@ def mmoe_prediction_data(para):
         index = 0
         for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
-                                    like_pxtr[index]])
+                                    float(like_pxtr[index])])
             index = index + 1
         print ("ltr_train_data[:2]=", ltr_train_data[:2])
         print("type(ltr_train_data)=", type(ltr_train_data))
