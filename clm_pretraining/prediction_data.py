@@ -113,8 +113,8 @@ def mmoe_prediction_data(para):
             epoch_forward_pred.append(model_forward_pred)
             epoch_longview_pred.append(model_longview_pred)
 
-            if batches[batch_num+1] % 20000 == 0:
-                print ("model_like_pred=", model_like_pred)
+            if batches[batch_num] % 20000 == 0:
+                # print ("model_like_pred=", model_like_pred)
                 print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
                 [batches[batch_num], batches[batch_num+1], model_loss,
                 model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
