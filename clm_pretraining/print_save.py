@@ -52,3 +52,40 @@ def read_data(path):
         
     return data, user_num, item_num
 
+
+def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
+            epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred):
+    list_auc = []
+    auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
+    auc_follow, auc_op_follow = tf.metrics.auc(tf.concat(epoch_label_follow_re, 0), tf.concat(epoch_follow_pred, 0))
+    auc_comment, auc_op_comment = tf.metrics.auc(tf.concat(epoch_label_comment_re, 0), tf.concat(epoch_comment_pred, 0))
+    auc_forward, auc_op_forward = tf.metrics.auc(tf.concat(epoch_label_forward_re, 0), tf.concat(epoch_forward_pred, 0))
+    auc_longview, auc_op_longview = tf.metrics.auc(tf.concat(epoch_label_longview_re, 0), tf.concat(epoch_longview_pred, 0))
+    
+    sess.run(tf.local_variables_initializer())
+    sess.run([auc_op_like, auc_op_follow, auc_op_comment, auc_op_forward, auc_op_longview])
+    auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value = sess.run(
+        [auc_like, auc_follow, auc_comment, auc_forward, auc_longview])
+    
+    return [auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value]
+    # auc_like_value = sess.run(auc_like)
+    # list_auc_like_value.append(auc_like_value)
+
+
+def generate_sample(data, para):
+    (user, item, click, like, follow, comment, forward, longview, user_real_action) = data
+    limit_user_real_action = user_real_action
+    cur_length = len(limit_user_real_action)
+    real_length = 0
+    if cur_length >= para['ACTION_LIST_MAX_LEN']:
+        limit_user_real_action = limit_user_real_action[-para['ACTION_LIST_MAX_LEN']:]  # tail
+        real_length = len(limit_user_real_action)
+    else:
+        real_length = len(limit_user_real_action)
+        list_null_pos = []
+        for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
+            list_null_pos.append(0)
+        limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
+    # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
+    # print("limit_user_real_action=", limit_user_real_action)
+    return [user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action

@@ -3,24 +3,6 @@ from test_model import *
 from print_save import *
 from params import DIR
 
-def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
-            epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred):
-    list_auc = []
-    auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
-    auc_follow, auc_op_follow = tf.metrics.auc(tf.concat(epoch_label_follow_re, 0), tf.concat(epoch_follow_pred, 0))
-    auc_comment, auc_op_comment = tf.metrics.auc(tf.concat(epoch_label_comment_re, 0), tf.concat(epoch_comment_pred, 0))
-    auc_forward, auc_op_forward = tf.metrics.auc(tf.concat(epoch_label_forward_re, 0), tf.concat(epoch_forward_pred, 0))
-    auc_longview, auc_op_longview = tf.metrics.auc(tf.concat(epoch_label_longview_re, 0), tf.concat(epoch_longview_pred, 0))
-    
-    sess.run(tf.local_variables_initializer())
-    sess.run([auc_op_like, auc_op_follow, auc_op_comment, auc_op_forward, auc_op_longview])
-    auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value = sess.run(
-        [auc_like, auc_follow, auc_comment, auc_forward, auc_longview])
-    
-    return [auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value]
-    # auc_like_value = sess.run(auc_like)
-    # list_auc_like_value.append(auc_like_value)
-
 def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
@@ -70,22 +52,25 @@ def train_model(para):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
-                (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
-                limit_user_real_action = user_real_action
-                cur_length = len(limit_user_real_action)
-                real_length = 0
-                if cur_length >= para['ACTION_LIST_MAX_LEN']:
-                    limit_user_real_action = limit_user_real_action[-para['ACTION_LIST_MAX_LEN']:]  # tail
-                    real_length = len(limit_user_real_action)
-                else:
-                    real_length = len(limit_user_real_action)
-                    list_null_pos = []
-                    for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
-                        list_null_pos.append(0)
-                    limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
-                # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
-                # print("limit_user_real_action=", limit_user_real_action)
-                train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
+                sample_list = generate_sample(train_data[sample], para)
+                train_batch_data.append(sample_list)
+
+                # (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
+                # limit_user_real_action = user_real_action
+                # cur_length = len(limit_user_real_action)
+                # real_length = 0
+                # if cur_length >= para['ACTION_LIST_MAX_LEN']:
+                #     limit_user_real_action = limit_user_real_action[-para['ACTION_LIST_MAX_LEN']:]  # tail
+                #     real_length = len(limit_user_real_action)
+                # else:
+                #     real_length = len(limit_user_real_action)
+                #     list_null_pos = []
+                #     for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
+                #         list_null_pos.append(0)
+                #     limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
+                # # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
+                # # print("limit_user_real_action=", limit_user_real_action)
+                # train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
 
             train_batch_data = np.array(train_batch_data)
             # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
@@ -127,11 +112,6 @@ def train_model(para):
         list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
-        # auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
-        # sess.run(tf.local_variables_initializer())
-        # sess.run(auc_op_like)
-        # auc_like_value = sess.run(auc_like)
-        # list_auc_like_value.append(auc_like_value)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
