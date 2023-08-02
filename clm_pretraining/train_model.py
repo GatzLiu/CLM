@@ -3,6 +3,23 @@ from test_model import *
 from print_save import *
 from params import DIR
 
+def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
+            epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred):
+    list_auc = []
+    auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
+    auc_follow, auc_op_follow = tf.metrics.auc(tf.concat(epoch_label_follow_re, 0), tf.concat(epoch_follow_pred, 0))
+    auc_comment, auc_op_comment = tf.metrics.auc(tf.concat(epoch_label_comment_re, 0), tf.concat(epoch_comment_pred, 0))
+    auc_forward, auc_op_forward = tf.metrics.auc(tf.concat(epoch_label_forward_re, 0), tf.concat(epoch_forward_pred, 0))
+    auc_longview, auc_op_longview = tf.metrics.auc(tf.concat(epoch_label_longview_re, 0), tf.concat(epoch_longview_pred, 0))
+    
+    sess.run(tf.local_variables_initializer())
+    sess.run([auc_op_like, auc_op_follow, auc_op_comment, auc_op_forward, auc_op_longview])
+    auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value = sess.run(
+        [auc_like, auc_follow, auc_comment, auc_forward, auc_longview])
+    
+    return [auc_like_value, auc_follow_value, auc_comment_value, auc_forward_value, auc_longview_value]
+    # auc_like_value = sess.run(auc_like)
+    # list_auc_like_value.append(auc_like_value)
 
 def train_model(para):
     ## paths of data
@@ -37,12 +54,19 @@ def train_model(para):
     batches.append(len(train_data))
 
     ## training iteratively
-    auc_like_value_list = []
-    list_auc_like_value = []
+    list_auc_epoch = []
     F1_max = 0
     for epoch in range(para['N_EPOCH']):
         epoch_label_like_re = []
+        epoch_label_follow_re = []
+        epoch_label_comment_re = []
+        epoch_label_forward_re = []
+        epoch_label_longview_re = []
         epoch_like_pred = []
+        epoch_follow_pred = []
+        epoch_comment_pred = []
+        epoch_forward_pred = []
+        epoch_longview_pred = []
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
@@ -67,12 +91,17 @@ def train_model(para):
             # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
             # print ("train_batch_data[:,3]=", train_batch_data[:3,3])
             # print("train_batch_data[:,0] = ", train_batch_data[:,0])
-            # print(np.shape(train_batch_data[:,0]))
+
             # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
 
-            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, label_like_re, like_pred = sess.run(
-                [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
-                model.loss_forward, model.loss_longview, model.label_like_re, model.like_pred],
+            _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, 
+            label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re
+            like_pred, follow_pred, comment_pred, forward_pred, longview_pred = 
+                sess.run(
+                    [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
+                    model.loss_forward, model.loss_longview, 
+                    model.label_like_re, model.label_follow_re, model.label_comment_re, model.label_forward_re, model.label_longview_re, 
+                    model.like_pred, model.follow_pred, model.comment_pred, model.forward_pred, model.longview_pred], 
                 feed_dict={model.users: train_batch_data[:,0],
                             model.items: train_batch_data[:,1],
                             model.action_list: train_batch_data[:,9:],
@@ -84,30 +113,41 @@ def train_model(para):
                             model.label_longview: train_batch_data[:,7],
             })
             epoch_label_like_re.append(label_like_re)
+            epoch_label_follow_re.append(label_follow_re)
+            epoch_label_comment_re.append(label_comment_re)
+            epoch_label_forward_re.append(label_forward_re)
+            epoch_label_longview_re.append(label_longview_re)
             epoch_like_pred.append(like_pred)
+            epoch_follow_pred.append(follow_pred)
+            epoch_comment_pred.append(comment_pred)
+            epoch_forward_pred.append(forward_pred)
+            epoch_longview_pred.append(longview_pred)
 
-            # auc_like, auc_op_like = tf.metrics.auc(tf.reshape(label_like_re, [-1]), tf.reshape(like_pred, [-1]))
-            # sess.run(tf.local_variables_initializer())
-            # sess.run(auc_op_like)
-            # auc_like_value = sess.run(auc_like)
-            # auc_like_value_list_epoch.append(auc_like_value)
-        
         # epoch auc:
-        auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
-        sess.run(tf.local_variables_initializer())
-        sess.run(auc_op_like)
-        auc_like_value = sess.run(auc_like)
-        list_auc_like_value.append(auc_like_value)
+        list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
+                epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
+        list_auc_epoch.append(list_auc)
+        # auc_like, auc_op_like = tf.metrics.auc(tf.concat(epoch_label_like_re, 0), tf.concat(epoch_like_pred, 0))
+        # sess.run(tf.local_variables_initializer())
+        # sess.run(auc_op_like)
+        # auc_like_value = sess.run(auc_like)
+        # list_auc_like_value.append(auc_like_value)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
         print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
         [epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
-        print("[epoch + 1, auc_like_value] = ", [epoch + 1, auc_like_value])
+        print("[epoch + 1, like_auc, follow_auc, comment_auc, forward_auc, longview_auc", 
+                [epoch + 1, list_auc[0], list_auc[1], list_auc[2], list_auc[3], list_auc[4]])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
-    for epoch in range(len(list_auc_like_value)):
-        print("epoch+1=", epoch+1, ", list_auc_like_value[epoch] -> AUC=", list_auc_like_value[epoch])
+    for epoch in range(len(list_auc_epoch)):
+        print("epoch+1=", epoch+1, 
+            ", like_auc=", list_auc_epoch[epoch][0], 
+            ", follow_auc=", list_auc_epoch[epoch][1], 
+            ", comment_auc=", list_auc_epoch[epoch][2],
+            ", forward_auc=", list_auc_epoch[epoch][3],
+            ", longview_auc=", list_auc_epoch[epoch][4])
 
     # save
     save_path = saver.save(sess, save_model_path)
