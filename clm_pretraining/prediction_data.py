@@ -128,24 +128,23 @@ def mmoe_prediction_data(para):
             ", forward_auc=", list_auc[3],
             ", longview_auc=", list_auc[4])
 
-        # epoch_like_pred = np.array(epoch_like_pred)
-        print ("epoch_like_pred=", epoch_like_pred)
-        # like_pxtr = epoch_like_pred.flatten()
+     
         like_pxtr = [pxtr for batch_list in epoch_like_pred for pxtr in batch_list]
-        print ("like_pxtr[0] = ", like_pxtr[0])
-        print ("len(like_pxtr) = ", len(like_pxtr))
+        follow_pxtr = [pxtr for batch_list in epoch_follow_pred for pxtr in batch_list]
+        comment_pxtr = [pxtr for batch_list in epoch_comment_pred for pxtr in batch_list]
+        forward_pxtr = [pxtr for batch_list in epoch_forward_pred for pxtr in batch_list]
+        longview_pxtr = [pxtr for batch_list in epoch_longview_pred for pxtr in batch_list]
 
         # generate ltr model train data
         ltr_train_data = []
         index = 0
         for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
-                                    float(like_pxtr[index])])
+                                float(like_pxtr[index]), float(follow_pxtr[index]), float(comment_pxtr[index]), 
+                                float(forward_pxtr[index]), float(longview_pxtr[index])])
             index = index + 1
-        print ("ltr_train_data[:2]=", ltr_train_data[:2])
-        print("type(ltr_train_data)=", type(ltr_train_data))
-        json_ltr_train_data = json.dumps(ltr_train_data)
 
+        json_ltr_train_data = json.dumps(ltr_train_data)
         with open(ltr_data_path, 'w') as file:
             file.write(json_ltr_train_data)
         file.close()
