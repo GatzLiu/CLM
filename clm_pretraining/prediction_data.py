@@ -130,8 +130,10 @@ def mmoe_prediction_data(para):
 
         epoch_like_pred = np.array(epoch_like_pred)
         print ("epoch_like_pred=", epoch_like_pred)
-        like_pxtr = epoch_like_pred.flatten()
+        # like_pxtr = epoch_like_pred.flatten()
+        like_pxtr = [pxtr for sub_list in batch_list for row in epoch_like_pred ]
         print ("like_pxtr[0] = ", like_pxtr[0])
+        print ("len(like_pxtr) = ", len(like_pxtr))
         print ("like_pxtr = ", like_pxtr)
 
         # generate ltr model train data
