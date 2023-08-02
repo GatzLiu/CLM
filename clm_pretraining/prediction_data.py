@@ -1,6 +1,8 @@
 from params import all_para
 from params import DIR
 from print_save import *
+
+import numpy as np
 import tensorflow as tf
 import os
 
