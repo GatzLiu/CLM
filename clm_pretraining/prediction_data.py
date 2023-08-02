@@ -1,5 +1,6 @@
 from print_save import *
 from params import DIR
+import tensorflow as tf
 
 
 # get model
