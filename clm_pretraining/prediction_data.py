@@ -62,37 +62,37 @@ def mmoe_prediction_data(para):
         updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')
 
         # for
-        for epoch in range(para['N_EPOCH']):
-            for batch_num in range(len(batches)-1):
-                pred_batch_data = []
-                for sample in range(batches[batch_num], batches[batch_num+1]):
-                    sample_list = generate_sample(pred_data[sample], para)
-                    pred_batch_data.append(sample_list)
-                pred_batch_data = np.array(pred_batch_data)
+        for batch_num in range(len(batches)-1):
+            pred_batch_data = []
+            for sample in range(batches[batch_num], batches[batch_num+1]):
+                sample_list = generate_sample(pred_data[sample], para)
+                pred_batch_data.append(sample_list)
+            pred_batch_data = np.array(pred_batch_data)
 
 
-                _, model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview, \
-                model_label_like_re, model_label_follow_re, model_label_comment_re, model_label_forward_re, model_label_longview_re, \
-                model_like_pred, model_follow_pred, model_comment_pred, model_forward_pred, model_longview_pred = \
-                sess.run(
-                    [updates, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview,
-                        label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
-                        like_pred, follow_pred, comment_pred, forward_pred, longview_pred], 
-                    feed_dict = {
-                        user: pred_batch_data[:,0],
-                        item: pred_batch_data[:,1],
-                        action_list: pred_batch_data[:,9:],
-                        real_length: pred_batch_data[:,8],
-                        label_like: pred_batch_data[:,3],
-                        label_follow: pred_batch_data[:,4],
-                        label_comment: pred_batch_data[:,5],
-                        label_forward: pred_batch_data[:,6],
-                        label_longview: pred_batch_data[:,7],
-                })
-
-            print ("model_like_pred=", model_like_pred)
-            print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
-            [epoch + 1, model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
+            _, model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview, \
+            model_label_like_re, model_label_follow_re, model_label_comment_re, model_label_forward_re, model_label_longview_re, \
+            model_like_pred, model_follow_pred, model_comment_pred, model_forward_pred, model_longview_pred = \
+            sess.run(
+                [updates, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview,
+                    label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
+                    like_pred, follow_pred, comment_pred, forward_pred, longview_pred], 
+                feed_dict = {
+                    user: pred_batch_data[:,0],
+                    item: pred_batch_data[:,1],
+                    action_list: pred_batch_data[:,9:],
+                    real_length: pred_batch_data[:,8],
+                    label_like: pred_batch_data[:,3],
+                    label_follow: pred_batch_data[:,4],
+                    label_comment: pred_batch_data[:,5],
+                    label_forward: pred_batch_data[:,6],
+                    label_longview: pred_batch_data[:,7],
+            })
+            if batch_num % 20000 == 0:
+                print ("model_like_pred=", model_like_pred)
+                print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
+                [batches[batch_num], batches[batch_num+1], model_loss,
+                model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
 
 
 
