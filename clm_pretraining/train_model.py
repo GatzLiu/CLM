@@ -26,7 +26,7 @@ def train_model(para):
     config.gpu_options.allow_growth = True
 
     # saver
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep = 5)
 
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
@@ -97,6 +97,11 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,6],
                             model.label_longview: train_batch_data[:,7],
             })
+            if (epoch+1) % 40 == 0:
+                print ("start save model , epoch+1=", epoch+1)
+                save_path = saver.save(sess, save_model_path, global_step=epoch)
+                print("model save path = ", save_path)
+
             epoch_label_like_re.append(label_like_re)
             epoch_label_follow_re.append(label_follow_re)
             epoch_label_comment_re.append(label_comment_re)
@@ -130,8 +135,8 @@ def train_model(para):
             ", longview_auc=", list_auc_epoch[epoch][4])
 
     # save
-    save_path = saver.save(sess, save_model_path)
-    print("model save path = ", save_path)
+    # save_path = saver.save(sess, save_model_path)
+    # print("model save path = ", save_path)
 
     #     F1, NDCG = test_model(sess, model, para_test)
     #     if F1[1] > F1_max:
