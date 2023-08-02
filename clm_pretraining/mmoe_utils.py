@@ -1,6 +1,3 @@
-## author@Wenhui Yu  2020.06.02
-## email: jianlin.ywh@alibaba-inc.com
-
 import json
 import random as rd
 import tensorflow as tf

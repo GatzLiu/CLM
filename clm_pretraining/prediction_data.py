@@ -1,6 +1,6 @@
 from params import all_para
 from params import DIR
-from print_save import *
+from utils_mmoe import *
 
 import json
 import numpy as np

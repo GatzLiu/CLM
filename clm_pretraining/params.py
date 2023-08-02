@@ -1,5 +1,4 @@
-## author@Wenhui Yu  2020.06.02
-## email: jianlin.ywh@alibaba-inc.com
+
 
 dataset = 1         # 0:Amazon, 1:KuaiRand
 validate_test = 0   # 0:Validate, 1: Test
