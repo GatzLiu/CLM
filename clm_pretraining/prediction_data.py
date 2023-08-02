@@ -62,6 +62,16 @@ def mmoe_prediction_data(para):
         updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')
 
         # for
+        epoch_label_like_re = []
+        epoch_label_follow_re = []
+        epoch_label_comment_re = []
+        epoch_label_forward_re = []
+        epoch_label_longview_re = []
+        epoch_like_pred = []
+        epoch_follow_pred = []
+        epoch_comment_pred = []
+        epoch_forward_pred = []
+        epoch_longview_pred = []
         for batch_num in range(len(batches)-1):
             pred_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
@@ -88,11 +98,34 @@ def mmoe_prediction_data(para):
                     label_forward: pred_batch_data[:,6],
                     label_longview: pred_batch_data[:,7],
             })
+
+            epoch_label_like_re.append(model_label_like_re)
+            epoch_label_follow_re.append(model_label_follow_re)
+            epoch_label_comment_re.append(model_label_comment_re)
+            epoch_label_forward_re.append(model_label_forward_re)
+            epoch_label_longview_re.append(model_label_longview_re)
+            epoch_like_pred.append(model_like_pred)
+            epoch_follow_pred.append(model_follow_pred)
+            epoch_comment_pred.append(model_comment_pred)
+            epoch_forward_pred.append(model_forward_pred)
+            epoch_longview_pred.append(model_longview_pred)
+
             if batches[batch_num+1] % 20000 == 0:
                 print ("model_like_pred=", model_like_pred)
                 print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
                 [batches[batch_num], batches[batch_num+1], model_loss,
                 model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
+        
+        list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
+                epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
+        print("pred_data AUC", 
+            ", like_auc=", list_auc[0], 
+            ", follow_auc=", list_auc[1], 
+            ", comment_auc=", list_auc[2],
+            ", forward_auc=", list_auc[3],
+            ", longview_auc=", list_auc[4])
+
+        
 
 
 
