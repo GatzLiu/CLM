@@ -95,7 +95,7 @@ def train_model(para):
             # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
 
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, 
-            label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re
+            label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
             like_pred, follow_pred, comment_pred, forward_pred, longview_pred = 
                 sess.run(
                     [model.updates, model.loss, model.loss_like, model.loss_follow, model.loss_comment, 
