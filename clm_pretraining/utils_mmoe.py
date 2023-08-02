@@ -41,7 +41,7 @@ def read_data(path):
     f.close()
     row_num = len(data)
     print ("sample number=", row_num, ", data_path=", path)
-    # print("data[0:2]=", data[0:2])
+    print("data[:2]=", data[:2])
 
     user_num = 0;
     item_num = 0;
