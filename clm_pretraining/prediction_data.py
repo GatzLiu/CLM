@@ -127,6 +127,8 @@ def mmoe_prediction_data(para):
             ", comment_auc=", list_auc[2],
             ", forward_auc=", list_auc[3],
             ", longview_auc=", list_auc[4])
+
+        epoch_like_pred = np.array(epoch_like_pred)
         print ("epoch_like_pred=", epoch_like_pred)
         like_pxtr = epoch_like_pred.flatten()
         print ("like_pxtr[0] = ", like_pxtr[0])
@@ -140,7 +142,7 @@ def mmoe_prediction_data(para):
                                     like_pxtr[index]])
             index = index + 1
         json_ltr_train_data = json.dumps(ltr_train_data)
-        
+
         with open(ltr_data_path, 'w') as file:
             file.write(json_ltr_train_data)
         file.close()
