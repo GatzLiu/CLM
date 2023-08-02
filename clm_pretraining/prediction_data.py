@@ -134,7 +134,6 @@ def mmoe_prediction_data(para):
         like_pxtr = [pxtr for batch_list in epoch_like_pred for pxtr in batch_list ]
         print ("like_pxtr[0] = ", like_pxtr[0])
         print ("len(like_pxtr) = ", len(like_pxtr))
-        print ("like_pxtr = ", like_pxtr)
 
         # generate ltr model train data
         ltr_train_data = []
@@ -143,7 +142,7 @@ def mmoe_prediction_data(para):
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
                                     like_pxtr[index]])
             index = index + 1
-        json_ltr_train_data = json.dumps(ltr_train_data)
+        json_ltr_train_data = json.dumps(ltr_train_data.tolist())
 
         with open(ltr_data_path, 'w') as file:
             file.write(json_ltr_train_data)
