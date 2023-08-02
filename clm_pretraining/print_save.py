@@ -3,6 +3,8 @@
 
 import json
 import random as rd
+import tensorflow as tf
+
 def print_params(para):
     for para_name in para:
         print(para_name+':  ',para[para_name])
