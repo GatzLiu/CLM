@@ -134,7 +134,7 @@ def mmoe_prediction_data(para):
 
         # generate ltr model train data
         ltr_train_data = []
-        int index = 0
+        index = 0
         for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
                                     like_pxtr[index]])
