@@ -114,7 +114,7 @@ def train_model(para):
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
 
-        if (epoch+1) % 30 == 0:
+        if (epoch+1) % 40 == 0:
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch)
             print("model save path = ", save_path)
