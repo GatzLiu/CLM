@@ -124,6 +124,8 @@ def mmoe_prediction_data(para):
             ", comment_auc=", list_auc[2],
             ", forward_auc=", list_auc[3],
             ", longview_auc=", list_auc[4])
+        print ("epoch_label_like_re=", epoch_label_like_re)
+        print ("tf.concat(epoch_label_like_re, 0)=", tf.concat(epoch_label_like_re, 0))
 
         
 
