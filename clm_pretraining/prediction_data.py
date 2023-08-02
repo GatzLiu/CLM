@@ -9,7 +9,8 @@ restore_path = 'model_ckpt/clm_model.ckpt'
 with tf.Session() as sess:
     saver = tf.train.import_meta_graph(model_path)
     saver.restore(sess, restore_path)
-    
+
+print("success")
 #     updates = sess.graph.get_operation_by_name('updates')
 #     sess.run([updates], feed_dict={
 
