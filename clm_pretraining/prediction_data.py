@@ -128,7 +128,7 @@ def mmoe_prediction_data(para):
             ", forward_auc=", list_auc[3],
             ", longview_auc=", list_auc[4])
         print ("epoch_like_pred=", epoch_like_pred)
-        like_pxtr = np.flatten(epoch_like_pred)
+        like_pxtr = np.array(epoch_like_pred).flatten()
         print ("like_pxtr[0] = ", like_pxtr[0])
         print ("like_pxtr = ", like_pxtr)
 
