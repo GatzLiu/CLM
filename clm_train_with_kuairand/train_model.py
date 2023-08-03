@@ -1,4 +1,4 @@
-from model_MMOE import *
+from models.model_CLM import *
 from test_model import *
 from utils_mmoe import *
 from params import DIR
@@ -20,7 +20,8 @@ def train_model(para):
     data = {'user_num': user_num, "item_num": item_num}
 
     ## define the model
-    model = model_MMOE(data=data, para=para)
+    if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
+    # model = model_MMOE(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True

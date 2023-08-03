@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-class model_MMOE(object):
+class model_CLM(object):
     def __init__(self, data, para):
         ## model hyper-params
         self.model_name = 'MMOE'
