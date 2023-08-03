@@ -7,7 +7,7 @@ def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
     validation_path = DIR + 'train_data.json'
-    save_model_path = './model_ckpt/clm_model.ckpt'
+    save_model_path = './model_ckpt/mmoe_model.ckpt'
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
     ## Load data
@@ -114,7 +114,7 @@ def train_model(para):
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
 
-        if ((epoch+1) == 20) or ((epoch+1) == 50) or ((epoch+1) == 100) or ((epoch+1) == 150) or ((epoch+1) == 200):
+        if ((epoch+1) == 50) or ((epoch+1) == 100) or ((epoch+1) == 150) or ((epoch+1) == 200):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch)
             print("model save path = ", save_path)
