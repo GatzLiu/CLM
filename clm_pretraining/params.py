@@ -5,14 +5,14 @@ validate_test = 0   # 0:Validate, 1: Test
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]
 MODEL = 'MMOE'
-LR = [0.001, 0.05][dataset]
+LR = [0.001, 0.10][dataset]
 LAMDA = [0.2, 0.01][dataset]
 ACTION_LIST_MAX_LEN = 150
 EMB_DIM = 64
 BATCH_SIZE = 10000
 TEST_USER_BATCH = {'Amazon': 4096, 'KuaiRand': 4096}[DATASET]
 SAMPLE_RATE = 1
-N_EPOCH = 800
+N_EPOCH = 200
 TOP_K = [10, 20, 50, 100]
 DIR = './dataset/'+DATASET+'/'
 GPU_INDEX = "0"
@@ -20,7 +20,7 @@ GPU_INDEX = "0"
 # model save
 
 #pred
-PRED_BATCH_SIZE = 1
+PRED_BATCH_SIZE = 10000
 
 
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'LR': LR, 'LAMDA': LAMDA, 'ACTION_LIST_MAX_LEN': ACTION_LIST_MAX_LEN, 
