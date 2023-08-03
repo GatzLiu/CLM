@@ -1,0 +1,20 @@
+from params.params_common import *
+
+DIR = './dataset/'+DATASET+'/'
+LR = [0.001, 500][dataset]
+LAMDA = [0.2, 0.01][dataset]
+MODEL = 'MMOE'
+
+TEST_USER_BATCH = {'Tamll': 4096, 'KuaiRand': 4096}[DATASET]
+SAMPLE_RATE = 1
+
+# model save
+
+#pred
+PRED_BATCH_SIZE = 10000
+
+
+all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDATE_ITEM_LIST_LENGTH': CANDIDATE_ITEM_LIST_LENGTH, 'LR': LR, 'LAMDA': LAMDA,
+            'EMB_DIM': EMB_DIM, 'BATCH_SIZE': BATCH_SIZE, 'PRED_BATCH_SIZE': PRED_BATCH_SIZE, 'TEST_USER_BATCH': TEST_USER_BATCH, 'N_EPOCH': N_EPOCH, 'IF_PRETRAIN': False,
+            'TEST_VALIDATION': 'Validation', 'TOP_K': TOP_K, 'SAMPLE_RATE': SAMPLE_RATE,'LOSS_FUNCTION': 'CrossEntropy',
+            'OPTIMIZER': 'SGD', 'SAMPLER': 'MMOE', 'AUX_LOSS_WEIGHT': 0}

@@ -3,11 +3,13 @@ from test_model import *
 from utils_mmoe import *
 from params import DIR
 
+from params.params_common import MODEL
+
 def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
-    validation_path = DIR + 'train_data.json'
-    save_model_path = './model_ckpt/clm_model.ckpt'
+
+    save_model_path = './model_ckpt/' + model + '/clm_model.ckpt'
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
     ## Load data
