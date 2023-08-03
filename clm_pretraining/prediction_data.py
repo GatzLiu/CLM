@@ -13,8 +13,8 @@ def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
     ltr_data_path = DIR + 'kuairand_ltr_data.json'
 
-    model_path = 'model_ckpt/clm_model.ckpt-399.meta'
-    restore_path = 'model_ckpt/clm_model.ckpt-399'
+    model_path = 'model_ckpt/clm_model.ckpt-199.meta'
+    restore_path = 'model_ckpt/clm_model.ckpt-199'
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)
@@ -153,19 +153,7 @@ def mmoe_prediction_data(para):
 
 
 
-        
-
-
-
-
-# 3、预测
-# print(sess.run(accuracy,feed_dict={x:mnist.test.images,y:mnist.test.labels}))
-
-
-# # save pred    dataset/KuaiRand/DataWithPred
-
-# # jupyter 拼接
-
 if __name__ == '__main__':
+    print_params(all_para)
     mmoe_prediction_data(all_para)
     print("pred sample && generate ltr_train_data.json success")
