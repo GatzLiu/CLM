@@ -21,7 +21,7 @@ def mmoe_prediction_data(para):
     print ("pred_data[0:3]=", pred_data[0:3])
 
     ## split the pred-samples into batches
-    batches = list(range(0, len(pred_data), para['BATCH_SIZE']))
+    batches = list(range(0, len(pred_data), para['PRED_BATCH_SIZE']))
     batches.append(len(pred_data))
 
     with tf.Session() as sess:
