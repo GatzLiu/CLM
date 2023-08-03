@@ -140,10 +140,9 @@ def mmoe_prediction_data(para):
         index = 0
         for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
-                                float(like_pxtr[index]), float(follow_pxtr[index]), float(comment_pxtr[index]), 
-                                float(forward_pxtr[index]), float(longview_pxtr[index])])
-            index = index + 1
-
+                                round(float(like_pxtr[index]),6), round(float(follow_pxtr[index]),6), round(float(comment_pxtr[index]),6)
+                                round(float(forward_pxtr[index]),6), round(float(longview_pxtr[index]),6)]
+            index = index + 1  
         json_ltr_train_data = json.dumps(ltr_train_data)
         with open(ltr_data_path, 'w') as file:
             file.write(json_ltr_train_data)
