@@ -10,7 +10,7 @@ from models.model_CLM import model_CLM
 
 def train_model(para):
     ## paths of data
-    train_path = DIR + 'kuairand_ltr_data_train.json'
+    train_path = para['DIR'] + 'kuairand_ltr_data_train.json'
     save_model_path = './model_ckpt/model_' + para["MODEL"] + '/clm_model.ckpt'
 
     ## Load data
