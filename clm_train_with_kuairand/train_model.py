@@ -58,13 +58,18 @@ def train_model(para):
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
+            real_len_list = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
-                sample_list = generate_sample_with_max_len(train_data[sample], para)    # [100, 13]
+                sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)    # [100, 13]
                 sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5] 
                 train_batch_data.append(sample_list)
+                real_len_list.append(real_len)
             
             train_batch_data = np.array(train_batch_data)  # [-1, 100, 13+5],  [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+            real_len_list = np.array(real_len_list) # [-1]
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
-            print("train_batch_data[:,:,12]", train_batch_data[:,:,17])
-            print("train_batch_data[:,:,12]", train_batch_data[:,:,18]) 
+            # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
+
+            # # 将一个布尔值传递给feed_dict
+            # result = sess.run(not_op, feed_dict={model.is_train: True})

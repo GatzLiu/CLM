@@ -96,7 +96,7 @@ def generate_sample(data, para):
     # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
     # print("limit_user_real_action=", limit_user_real_action)
     return [user, item, time_ms, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action
-
+     
 
 def generate_sample_with_max_len(data, para):
     sample = data
@@ -109,7 +109,7 @@ def generate_sample_with_max_len(data, para):
     elif (real_len < para['CANDIDATE_ITEM_LIST_LENGTH']):
         for i in range(para['CANDIDATE_ITEM_LIST_LENGTH'] - real_len):
             sample.append([0,0,0,0,0,0,0,0,0,0,0,0,0])
-    return sample
+    return sample, real_len
 
 def generate_sample_with_pxtr_bins(data, para, pxtr_bucket_range):
     sample = []
