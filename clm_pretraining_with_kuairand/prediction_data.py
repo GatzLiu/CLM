@@ -13,8 +13,8 @@ def mmoe_prediction_data(para):
     pred_data_path = DIR + 'train_data_pred.json'
     ltr_data_path = DIR + 'kuairand_ltr_data.json'
 
-    model_path = 'model_ckpt/mmoe_model.ckpt-99.meta'
-    restore_path = 'model_ckpt/mmoe_model.ckpt-99'
+    model_path = 'model_ckpt/mmoe_model.ckpt-149.meta'
+    restore_path = 'model_ckpt/mmoe_model.ckpt-149'
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)
@@ -140,8 +140,8 @@ def mmoe_prediction_data(para):
         index = 0
         for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
             ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
-                                round(float(like_pxtr[index]),6), round(float(follow_pxtr[index]),6), round(float(comment_pxtr[index]),6),
-                                round(float(forward_pxtr[index]),6), round(float(longview_pxtr[index]),6)])
+                                round(float(like_pxtr[index]),8), round(float(follow_pxtr[index]),8), round(float(comment_pxtr[index]),8),
+                                round(float(forward_pxtr[index]),8), round(float(longview_pxtr[index]),8)])
             index = index + 1  
         json_ltr_train_data = json.dumps(ltr_train_data)
         with open(ltr_data_path, 'w') as file:
