@@ -8,30 +8,34 @@ def train_model(para):
     train_path = DIR + 'train_data.json'
     validation_path = DIR + 'validation_data.json'
     save_model_path = './model_ckpt/mmoe_model.ckpt'
-    # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
     ## Load data
     [train_data, user_num, item_num] = read_data(train_path)
     validation_data = read_data(validation_path)[0]
     print("len(train_data)=",len(train_data), ", user_num=", user_num, ", item_num=", item_num)
-    # test_data = read_data(validation_path)[0]
-    # print ("test_data[0:3]=", test_data[0:3])
-    # para_test = [train_data, test_data, user_num, item_num, para['TOP_K'], para['TEST_USER_BATCH']]
 
     data = {'user_num': user_num, "item_num": item_num}
 
     ## define the model
     model = model_MMOE(data=data, para=para)
-
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
 
     # saver
     saver = tf.train.Saver(max_to_keep = 10)
-
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
 
+    ## process data
+    train_data_input = []
+    for sample in range(len(train_data)):
+        sample_list = generate_sample(train_data[sample], para)
+        train_data_input.append(sample_list)
+    train_data_input = np.array(train_data_input)
+    validation_data_input = []
+    for sample in range(len(validation_data)):
+        validation_data_input.append(generate_sample(validation_data[sample], para))
+    validation_data_input = np.array(validation_data_input)
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
     batches.append(len(train_data))
@@ -44,35 +48,11 @@ def train_model(para):
         epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re = [], [], [], [], []
         epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred = [], [], [], [], []
         for batch_num in range(len(batches)-1):
-            train_batch_data = []
-            for sample in range(batches[batch_num], batches[batch_num+1]):
-                sample_list = generate_sample(train_data[sample], para)
-                train_batch_data.append(sample_list)
-
-                # (user, item, click, like, follow, comment, forward, longview, user_real_action) = train_data[sample]
-                # limit_user_real_action = user_real_action
-                # cur_length = len(limit_user_real_action)
-                # real_length = 0
-                # if cur_length >= para['ACTION_LIST_MAX_LEN']:
-                #     limit_user_real_action = limit_user_real_action[-para['ACTION_LIST_MAX_LEN']:]  # tail
-                #     real_length = len(limit_user_real_action)
-                # else:
-                #     real_length = len(limit_user_real_action)
-                #     list_null_pos = []
-                #     for i in range(para['ACTION_LIST_MAX_LEN'] - cur_length):
-                #         list_null_pos.append(0)
-                #     limit_user_real_action = limit_user_real_action + list_null_pos # first item_id, then 0; use cal attention with mask
-                # # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
-                # # print("limit_user_real_action=", limit_user_real_action)
-                # train_batch_data.append([user, item, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action)
-
-            train_batch_data = np.array(train_batch_data)
-            # print ("train_batch_data[:,3].shape=", train_batch_data[:,3].shape)
-            # print ("train_batch_data[:,3]=", train_batch_data[:3,3])
-            # print("train_batch_data[:,0] = ", train_batch_data[:,0])
-
-            # print("train_batch_data[:3,9:]=", train_batch_data[:3,9:])
-
+            train_batch_data = train_data_input[batches[batch_num]: batches[batch_num+1]]
+            # for sample in range(batches[batch_num], batches[batch_num+1]):
+            #     sample_list = generate_sample(train_data[sample], para)
+            #     train_batch_data.append(sample_list)
+            # train_batch_data = np.array(train_batch_data)
             _, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview, \
             label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re, \
             like_pred, follow_pred, comment_pred, forward_pred, longview_pred = \
@@ -91,7 +71,6 @@ def train_model(para):
                             model.label_forward: train_batch_data[:,7],
                             model.label_longview: train_batch_data[:,8],
             })
-
             epoch_label_like_re.append(label_like_re)
             epoch_label_follow_re.append(label_follow_re)
             epoch_label_comment_re.append(label_comment_re)
@@ -102,17 +81,17 @@ def train_model(para):
             epoch_comment_pred.append(comment_pred)
             epoch_forward_pred.append(forward_pred)
             epoch_longview_pred.append(longview_pred)
-
         # train auc:
         list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
                 epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
         list_auc_epoch.append(list_auc)
 
         # validation:
-        validation_data_input = []
-        for sample in range(len(validation_data_input)):
-            validation_data_input.append(generate_sample(validation_data[sample], para))
-        validation_data_input = np.array(validation_data_input)
+
+        # validation_data_input = []
+        # for sample in range(len(validation_data_input)):
+        #     validation_data_input.append(generate_sample(validation_data[sample], para))
+        # validation_data_input = np.array(validation_data_input)
         loss_vali, loss_like_vali, loss_follow_vali, loss_comment_vali, loss_forward_vali, loss_longview_vali, \
         label_like_re_vali, label_follow_re_vali, label_comment_re_vali, label_forward_re_vali, label_longview_re_vali, \
         like_pred_vali, follow_pred_vali, comment_pred_vali, forward_pred_vali, longview_pred_vali = \
