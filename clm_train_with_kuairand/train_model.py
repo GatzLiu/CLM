@@ -1,13 +1,12 @@
-from models.model_CLM import *
 from test_model import *
-from utils_mmoe import *
+from utils import *
 
 from params.params_common import MODEL
 from models.model_MF import model_MF
-from models.model_NCF import model_NCF
-from models.model_NGCF import model_NGCF
-from models.model_LightGCN import model_LightGCN
-from models.model_LGCN import model_LGCN
+# from models.model_NCF import model_NCF
+# from models.model_NGCF import model_NGCF
+# from models.model_LightGCN import model_LightGCN
+# from models.model_LGCN import model_LGCN
 
 def train_model(para):
     ## paths of data
