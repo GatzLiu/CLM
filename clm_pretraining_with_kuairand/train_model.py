@@ -6,7 +6,7 @@ from params import DIR
 def train_model(para):
     ## paths of data
     train_path = DIR + 'train_data.json'
-    validation_path = DIR + 'train_data_validation.json'
+    validation_path = DIR + 'validation_data.json'
     save_model_path = './model_ckpt/mmoe_model.ckpt'
     # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
 
