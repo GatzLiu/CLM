@@ -129,9 +129,9 @@ def generate_sample_with_pxtr_bins(data, para, pxtr_bucket_range):
         pwtr_index = np.searchsorted(pxtr_bucket_range, pwtr)
         pcmtr_index = np.searchsorted(pxtr_bucket_range, pcmtr)
         pftr_index = np.searchsorted(pxtr_bucket_range, pftr)
-        plvtr_index = np.searchsorted(pxtr_bucket_range, pvltr)
+        plvtr_index = np.searchsorted(pxtr_bucket_range, plvtr)
 
         sample.append([item_id, time_ms, click, like, follow, comment, forward, longview, pltr, pwtr, pcmtr, pftr, plvtr,
-                    pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index])
+                    pltr_index, pwtr_index, pcmtr_index, pftr_index, plvtr_index])
     return sample
 
