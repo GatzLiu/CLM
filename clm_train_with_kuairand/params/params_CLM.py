@@ -2,7 +2,6 @@ from params.params_common import *
 
 LR = [0.001, 500][dataset]
 LAMDA = [0.2, 0.01][dataset]
-MODEL = 'CLM'
 
 TEST_USER_BATCH = {'Tamll': 4096, 'KuaiRand': 4096}[DATASET]
 SAMPLE_RATE = 1

@@ -4,7 +4,7 @@ dataset = 1         # 0:Amazon, 1:KuaiRand
 validate_test = 0   # 0:Validate, 1: Test
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]
-# MODEL = ['CLM', 'NCF', 'NGCF', 'LightGCN', 'LGCN'][0]
+MODEL = ['CLM', 'NCF', 'NGCF', 'LightGCN', 'LGCN'][0]
 CANDIDATE_ITEM_LIST_LENGTH = 100
 PXTR_DIM = 16
 ITEM_DIM = 64
