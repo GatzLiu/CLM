@@ -54,12 +54,6 @@ def read_data(path):
     for sample in data:
         for item in sample:
             item_num = max(item[0], item_num)
-            
-    user_num = 0;
-    item_num = 0;
-    for row in data:
-        user_num = max(row[0], user_num)
-        item_num = max(row[1], item_num)
     
     print ("user_num=", user_num) # 25701
     return data, item_num
