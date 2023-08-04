@@ -1,6 +1,5 @@
 from params.params_common import *
 
-DIR = './dataset/'+DATASET+'/'
 LR = [0.001, 500][dataset]
 LAMDA = [0.2, 0.01][dataset]
 MODEL = 'MMOE'

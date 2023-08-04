@@ -12,7 +12,7 @@ TEST_USER_BATCH = {'Tamll': 4096, 'KuaiRand': 4096}[DATASET]
 SAMPLE_RATE = 1
 N_EPOCH = 200
 TOP_K = [10, 20, 50, 100]
-DIR = './dataset/'+DATASET+'/'
+DIR = '../clm_pretraining_with_kuairand/dataset/'+DATASET+'/'
 GPU_INDEX = "0"
 
 # model save

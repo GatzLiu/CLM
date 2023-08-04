@@ -41,15 +41,21 @@ def read_data(path):
     f.close()
     row_num = len(data)
     print ("sample number=", row_num, ", data_path=", path)
-    print("data[:2]=", data[:2])
+    print("data[:1]=", data[:1])
 
+    item_num = 0
+    for sample in data:
+        for item in sample:
+            item_num = max(item[0], item_num)
+            
     user_num = 0;
     item_num = 0;
     for row in data:
         user_num = max(row[0], user_num)
         item_num = max(row[1], item_num)
-        
-    return data, user_num, item_num
+    
+    print ("user_num=", user_num) # 25701
+    return data, item_num
 
 
 def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,

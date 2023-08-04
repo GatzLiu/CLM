@@ -1,16 +1,18 @@
 from models.model_CLM import *
 from test_model import *
 from utils_mmoe import *
-from params import DIR
 
 from params.params_common import MODEL
+from models.model_MF import model_MF
+from models.model_NCF import model_NCF
+from models.model_NGCF import model_NGCF
+from models.model_LightGCN import model_LightGCN
+from models.model_LGCN import model_LGCN
 
 def train_model(para):
     ## paths of data
-    train_path = DIR + 'train_data.json'
-
-    save_model_path = './model_ckpt/' + model + '/clm_model.ckpt'
-    # save_embeddings_path = DIR + 'pre_train_embeddings' + str(para['EMB_DIM']) + '.json'
+    train_path = DIR + 'kuairand_ltr_data_train.json'
+    save_model_path = './model_ckpt/model_' + para["MODEL"] + '/clm_model.ckpt'
 
     ## Load data
     [train_data, user_num, item_num] = read_data(train_path)
@@ -23,6 +25,12 @@ def train_model(para):
 
     ## define the model
     if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
+    
+    # if para["MODEL"] == 'MF': model = model_MF(data=data, para=para)
+    # if para["MODEL"] == 'NCF': model = model_NCF(data=data, para=para)
+    # if para["MODEL"] == 'NGCF': model = model_NGCF(data=data, para=para)
+    # if para["MODEL"] == 'LightGCN': model = model_LightGCN(data=data, para=para)
+    # if para["MODEL"] == 'LGCN': model = model_LGCN(data=data, para=para)
     # model = model_MMOE(data=data, para=para)
 
     config = tf.ConfigProto()
