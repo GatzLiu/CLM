@@ -100,7 +100,7 @@ def generate_sample(data, para):
 def generate_sample_v2(data, para):
     sample = data
     real_len = len(sample)
-    print ("real_len=", real_len)
+    # print ("real_len=", real_len)
     
     # NOTE: real_len <= para['CANDIDATE_ITEM_LIST_LENGTH']
     if real_len == para['CANDIDATE_ITEM_LIST_LENGTH']:

@@ -45,11 +45,31 @@ def train_model(para):
     ## training iteratively
     list_auc_epoch = []
     F1_max = 0
+
+    sum = 0
+    count_100 = 0
+    count_non_100 = 0
+
+    a_count_100 = 0
+    a_count_non_100 = 0
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
+                sum = sum+1
+                # test
+                if len(train_data[sample]) == 100 :
+                    count_100 = count_100 + 1
+                elif len(train_data[sample]) < 100:
+                    count_non_100 = count_non_100 + 1
                 sample_list = generate_sample_v2(train_data[sample], para)
-                break
+                
+                if len(sample_list) == 100 :
+                    a_count_100 = a_count_100 + 1
+                elif len(sample_list) < 100:
+                    a_count_non_100 = a_count_non_100 + 1
                 # train_batch_data.append(sample_list)
-            break
+    
+    print ("sum =",  sum)
+    print ("count_100=", count_100, ", count_non_100=", count_non_100)
+    print ("a_count_100=", a_count_100, ", a_count_non_100=", a_count_non_100)
