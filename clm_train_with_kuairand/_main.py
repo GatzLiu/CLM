@@ -6,6 +6,7 @@ if MODEL == "CLM": from params.params_CLM import all_para
 # if MODEL == "LGCN": from params.params_LGCN import all_para
 
 # from params import all_para
+from train_model import *
 from utils import *
 import os
 
