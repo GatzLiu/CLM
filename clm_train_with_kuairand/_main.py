@@ -6,7 +6,7 @@ if MODEL == "LightGCN": from params.params_LightGCN import all_para
 if MODEL == "LGCN": from params.params_LGCN import all_para
 
 # from params import all_para
-from utils_mmoe import *
+from utils import *
 import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
