@@ -8,6 +8,14 @@ from models.model_CLM import model_CLM
 # from models.model_LightGCN import model_LightGCN
 # from models.model_LGCN import model_LGCN
 
+
+# [
+#           0        1       2      3    4      5         6          7      8     9     10     11     12
+#     [ [item_id, time_ms, click, like, follow, comment, forward, longview, pltr, pwtr, pcmtr, pftr, plvtr],  [] .....]
+#     []
+# ....
+# ]
+
 def train_model(para):
     ## paths of data
     train_path = para['DIR'] + 'kuairand_ltr_data_train.json'
@@ -53,5 +61,6 @@ def train_model(para):
                 train_batch_data.append(sample_list)
             
             train_batch_data = np.array(train_batch_data)  # [-1, 100, 13]
-            print("train_batch_data[:,:,0]", train_batch_data[:,:,0])
-            print("train_batch_data[:,:,1]", train_batch_data[:,:,1])
+            print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
+            print("train_batch_data[:,:,12]", train_batch_data[:,:,12]) 
+            print("train_batch_data[:,:,13]", train_batch_data[:,:,13]) 
