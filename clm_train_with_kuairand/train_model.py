@@ -53,14 +53,18 @@ def train_model(para):
     ## training iteratively
     list_auc_epoch = []
     F1_max = 0
+
+    pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = []
             for sample in range(batches[batch_num], batches[batch_num+1]):
-                sample_list = generate_sample_v2(train_data[sample], para)
+                sample_list = generate_sample_with_max_len(train_data[sample], para)    # [100, 13]
+                sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5] 
                 train_batch_data.append(sample_list)
             
-            train_batch_data = np.array(train_batch_data)  # [-1, 100, 13]
-            print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
-            print("train_batch_data[:,:,12]", train_batch_data[:,:,12]) 
-            print("train_batch_data[:,:,13]", train_batch_data[:,:,13]) 
+            train_batch_data = np.array(train_batch_data)  # [-1, 100, 13+5],  [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+            # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
+            print("train_batch_data[:,:,12]", train_batch_data[:,:,17])
+            print("train_batch_data[:,:,12]", train_batch_data[:,:,18]) 
+

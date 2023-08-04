@@ -97,7 +97,7 @@ def generate_sample(data, para):
     return [user, item, time_ms, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action
 
 
-def generate_sample_v2(data, para):
+def generate_sample_with_max_len(data, para):
     sample = data
     real_len = len(sample)
     # print ("real_len=", real_len)
@@ -109,3 +109,28 @@ def generate_sample_v2(data, para):
         for i in range(para['CANDIDATE_ITEM_LIST_LENGTH'] - real_len):
             sample.append([0,0,0,0,0,0,0,0,0,0,0,0,0])
     return sample
+
+def generate_sample_with_pxtr_bins(data, para, pxtr_bucket_range):
+    sample = []
+    for (item_id, time_ms, click, like, follow, comment, forward, longview, pltr, pwtr, pcmtr, pftr, plvtr) in data:
+        pltr = max(pltr ,0.00000000)
+        pltr = min(pltr ,0.99999999)
+        pwtr = max(pwtr ,0.00000000)
+        pwtr = min(pwtr ,0.99999999)
+        pcmtr = max(pcmtr ,0.00000000)
+        pcmtr = min(pcmtr ,0.99999999)
+        pftr = max(pftr ,0.00000000)
+        pftr = min(pftr ,0.99999999)
+        plvtr = max(plvtr ,0.00000000)
+        plvtr = min(plvtr ,0.99999999)
+
+        pltr_index = np.searchsorted(pxtr_bucket_range, pltr)
+        pwtr_index = np.searchsorted(pxtr_bucket_range, pwtr)
+        pcmtr_index = np.searchsorted(pxtr_bucket_range, pcmtr)
+        pftr_index = np.searchsorted(pxtr_bucket_range, pftr)
+        plvtr_index = np.searchsorted(pxtr_bucket_range, pvltr)
+        
+        sample.append([item_id, time_ms, click, like, follow, comment, forward, longview, pltr, pwtr, pcmtr, pftr, plvtr
+                    pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index])
+    return sample
+

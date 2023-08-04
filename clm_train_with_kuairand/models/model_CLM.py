@@ -35,13 +35,15 @@ class model_CLM(object):
         # self.label_longview = tf.placeholder(tf.int32, shape=(None,), name='label_longview')
 
         # [-1, list_len, 1]
-        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len, 1], name='item_list')
-        self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len, 1], name='click_label_list')
-        self.like_pxtr_list = tf.placeholder(tf.int32, shape=(), name='like_pxtr_list')  # bin
-        self.follow_pxtr_list = tf.placeholder(tf.int32, shape=(), name='follow_pxtr_list')
-        self.comment_pxtr_list = tf.placeholder(tf.int32, shape=(), name='comment_pxtr_list')
-        self.forward_pxtr_list = tf.placeholder(tf.int32, shape=(), name='forward_pxtr_list')
-        self.longview_pxtr_list = tf.placeholder(tf.int32, shape=(), name='longview_pxtr_list')
+        self.action_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='action_list') # [-1, max_len]
+
+        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')
+        self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
+        self.like_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_pxtr_list')  # bin
+        self.follow_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_pxtr_list')
+        self.comment_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='comment_pxtr_list')
+        self.forward_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_pxtr_list')
+        self.longview_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_pxtr_list')
 
 
 
