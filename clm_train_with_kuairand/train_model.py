@@ -20,7 +20,7 @@ def train_model(para):
     data = {"item_num": item_num}
 
     ## define the model
-    if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
+    # if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
     
     # if para["MODEL"] == 'MF': model = model_MF(data=data, para=para)
     # if para["MODEL"] == 'NCF': model = model_NCF(data=data, para=para)

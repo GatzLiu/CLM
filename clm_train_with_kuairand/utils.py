@@ -55,7 +55,7 @@ def read_data(path):
         for item in sample:
             item_num = max(item[0], item_num)
     
-    print ("item_num=", item_num) # 25701
+    print ("item_num=", item_num) # 25700
     return data, item_num
 
 
