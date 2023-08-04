@@ -1,6 +1,7 @@
 import json
 import random as rd
 import tensorflow as tf
+import numpy as np
 
 def print_params(para):
     for para_name in para:
