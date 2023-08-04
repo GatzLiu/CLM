@@ -34,6 +34,13 @@ def read_data1111(path):
     rd.shuffle(interactions)
     return data, interactions, user_num, item_num
 
+
+# [
+#           0        1       2      3    4      5         6          7      8     9     10     11     12
+#     [(item_id, time_ms, click, like, follow, comment, forward, longview, pltr, pwtr, pcmtr, pftr, plvtr),   () .....]
+#     []
+# ....
+# ]
 def read_data(path):
     with open(path) as f:
         line = f.readline()
@@ -94,3 +101,17 @@ def generate_sample(data, para):
     # print("len(limit_user_real_action)=", len(limit_user_real_action), ", real_length=", real_length)
     # print("limit_user_real_action=", limit_user_real_action)
     return [user, item, time_ms, click, like, follow, comment, forward, longview, real_length] + limit_user_real_action
+
+
+def generate_sample_v2(data, para):
+    sample = data
+    real_len = len(sample)
+    print ("real_len=", real_len)
+    
+    # NOTE: real_len <= para['CANDIDATE_ITEM_LIST_LENGTH']
+    if real_len == para['CANDIDATE_ITEM_LIST_LENGTH']:
+        return sample
+    elif (real_len < para['CANDIDATE_ITEM_LIST_LENGTH']):
+        for i in range(para['CANDIDATE_ITEM_LIST_LENGTH'] - real_len):
+            sample.append([0,0,0,0,0,0,0,0,0,0,0,0,0])
+    return sample

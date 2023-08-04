@@ -6,70 +6,103 @@ class model_CLM(object):
     def __init__(self, data, para):
         ## model hyper-params
         self.model_name = 'CLM'
-        self.emb_dim = para['EMB_DIM']
+        self.pxtr_dim = para['PXTR_DIM']
+        self.item_dim = para['ITEM_DIM']
         self.lr = para['LR']
         self.lamda = para['LAMDA']
         self.loss_function = para['LOSS_FUNCTION']
         self.optimizer = para['OPTIMIZER']
         self.sampler = para['SAMPLER']
         self.aux_loss_weight = para['AUX_LOSS_WEIGHT']
-        self.n_users = data['user_num']
+        # self.n_users = data['user_num']
         self.n_items = data['item_num']
-        self.max_len = para['ACTION_LIST_MAX_LEN']
+        self.n_pxtr_bins = para['PXTR_BINS']
+        self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
+        # self.max_len = para['ACTION_LIST_MAX_LEN']
         # self.popularity = data['popularity']
         # self.A_hat = data['sparse_propagation_matrix']
         # self.graph_emb = data['graph_embeddings']
 
         ## placeholder
-        self.users = tf.placeholder(tf.int32, shape=(None,), name='users') # index []
-        self.items = tf.placeholder(tf.int32, shape=(None,), name='items')
-        self.action_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='action_list') # [-1, max_len]
-        self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
-        self.label_like = tf.placeholder(tf.int32, shape=(None,), name='label_like')
-        self.label_follow = tf.placeholder(tf.int32, shape=(None,), name='label_follow')
-        self.label_comment = tf.placeholder(tf.int32, shape=(None,), name='label_comment')
-        self.label_forward = tf.placeholder(tf.int32, shape=(None,), name='label_forward')
-        self.label_longview = tf.placeholder(tf.int32, shape=(None,), name='label_longview')
+        # self.users = tf.placeholder(tf.int32, shape=(None,), name='users') # index []
+        # self.items = tf.placeholder(tf.int32, shape=(None,), name='items')
+        # self.action_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='action_list') # [-1, max_len]
+        # self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
+        # self.label_like = tf.placeholder(tf.int32, shape=(None,), name='label_like')
+        # self.label_follow = tf.placeholder(tf.int32, shape=(None,), name='label_follow')
+        # self.label_comment = tf.placeholder(tf.int32, shape=(None,), name='label_comment')
+        # self.label_forward = tf.placeholder(tf.int32, shape=(None,), name='label_forward')
+        # self.label_longview = tf.placeholder(tf.int32, shape=(None,), name='label_longview')
 
-        print ("self.users=", self.users)
-        print ("self.items=", self.items)
-        print ("self.action_list=", self.action_list)
-        print ("self.real_length=", self.real_length)
-        print ("self.label_like=", self.label_like)
-        print ("self.label_follow=", self.label_follow)
-        print ("self.label_comment=", self.label_comment)
-        print ("self.label_forward=", self.label_forward)
-        print ("self.label_longview=", self.label_longview)
+        # [-1, list_len, 1]
+        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len, 1], name='item_list')
+        self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len, 1], name='click_label_list')
+        self.like_pxtr_list = tf.placeholder(tf.int32, shape=(), name='like_pxtr_list')  # bin
+        self.follow_pxtr_list = tf.placeholder(tf.int32, shape=(), name='follow_pxtr_list')
+        self.comment_pxtr_list = tf.placeholder(tf.int32, shape=(), name='comment_pxtr_list')
+        self.forward_pxtr_list = tf.placeholder(tf.int32, shape=(), name='forward_pxtr_list')
+        self.longview_pxtr_list = tf.placeholder(tf.int32, shape=(), name='longview_pxtr_list')
+
+
 
         # reshape
-        self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len],)
-        self.real_length_re = tf.reshape(self.real_length, [-1, 1])
-        self.label_like_re = tf.reshape(self.label_like, [-1, 1], name='label_like_re')
-        self.label_follow_re = tf.reshape(self.label_follow, [-1, 1], name='label_follow_re')
-        self.label_comment_re = tf.reshape(self.label_comment, [-1, 1], name='label_comment_re')
-        self.label_forward_re = tf.reshape(self.label_forward, [-1, 1], name='label_forward_re')
-        self.label_longview_re = tf.reshape(self.label_longview, [-1, 1], name='label_longview_re')
-
+        # self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len],)
+        # self.real_length_re = tf.reshape(self.real_length, [-1, 1])
+        # self.label_like_re = tf.reshape(self.label_like, [-1, 1], name='label_like_re')
+        # self.label_follow_re = tf.reshape(self.label_follow, [-1, 1], name='label_follow_re')
+        # self.label_comment_re = tf.reshape(self.label_comment, [-1, 1], name='label_comment_re')
+        # self.label_forward_re = tf.reshape(self.label_forward, [-1, 1], name='label_forward_re')
+        # self.label_longview_re = tf.reshape(self.label_longview, [-1, 1], name='label_longview_re')
         # print ("self.label_like_re=", self.label_like_re)
-        # print ("self.label_follow_re=", self.label_follow_re)
-        # print ("self.label_comment_re=", self.label_comment_re)
-        # print ("self.label_forward_re=", self.label_forward_re)
-        # print ("self.label_longview_re=", self.label_longview_re)
+
+
+        self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len, 1])
+        self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len, 1])
+        self.ltr_list = tf.reshape(self.like_pxtr_list, [-1, self.max_len, 1])
 
         ## define trainable parameters
-        self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
-        self.item_embeddings = tf.Variable(tf.random_normal([self.n_items, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings')
-        self.var_list = [self.user_embeddings, self.item_embeddings]
+        # self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
+        self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
+        self.pltr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pltr_embeddings_table')
+        self.pwtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pwtr_embeddings_table')
+        self.pcmtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pcmtr_embeddings_table')
+        self.pftr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pftr_embeddings_table')
+        self.plvtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='plvtr_embeddings_table')
+        self.var_list = [self.item_embeddings_table, self.pltr_embeddings_table, self.pwtr_embeddings_table, 
+                        self.pcmtr_embeddings_table, self.pftr_embeddings_table, self.plvtr_embeddings_table]
 
         ## lookup
-        self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
-        self.i_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.items) # [-1, dim]
+        # self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
+        # self.i_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.items) # [-1, dim]
 
-        self.action_list_re = tf.reshape(self.action_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
-        self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list_re)  # [bs*max_len, dim]
-        self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
-        
+        # self.action_list_re = tf.reshape(self.action_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
+        # self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list_re)  # [bs*max_len, dim]
+        # self.action_list_embeddings = tf.reshape(self.action_list_embeddings, [-1, self.max_len, self.emb_dim])  #[-1, max_len, dim]
+        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, self.max_len, 1] -> [bs*max_len*1]
+        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
+        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
+
+        self.ltr_list = tf.reshape(self.ltr_list, [-1])  # [-1, self.max_len, 1] -> [bs*max_len*1]
+        self.ltr_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re) # [bs*max_len, pxtr_dim]
+        self.ltr_list_embeddings = tf.reshape(self.ltr_list_embeddings, [-1, self.max_len, self.pxtr_dim])  #[-1, max_len, pxtr_dim]
+
+
         # start ---------------------
+        self.item_input =  self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
         mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
         mask = tf.reshape(mask, [-1, self.max_len]) 
 
