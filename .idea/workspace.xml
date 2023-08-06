@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb430805-5f3b-4e56-9ac9-34b73093558f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/clm_pretraining_with_kuairand/model_MMOE.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_pretraining_with_kuairand/model_MMOE.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_pretraining_with_kuairand/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_pretraining_with_kuairand/train_model.py" afterDir="false" />
-    </list>
+    <list default="true" id="eb430805-5f3b-4e56-9ac9-34b73093558f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,13 +28,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/jack/codes/CLM"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/jack/codes/CLM&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

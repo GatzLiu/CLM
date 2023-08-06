@@ -113,7 +113,7 @@ def train_model(para):
                            [like_pred_vali], [follow_pred_vali], [comment_pred_vali], [forward_pred_vali], [longview_pred_vali])
         list_auc_epoch_vali.append(list_auc_vali)
 
-        if ((epoch+1) == 50) or ((epoch+1) == 100) or ((epoch+1) == 150) or ((epoch+1) == 200):
+        if ((epoch+1) == para['BEST_EPOCH']):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch)
             print("model save path = ", save_path)
