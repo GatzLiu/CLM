@@ -133,7 +133,7 @@ def train_model(para):
                 sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
 
         # ndcg: pred with action-label
-        print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [
+        print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
             sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
             sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
             sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
