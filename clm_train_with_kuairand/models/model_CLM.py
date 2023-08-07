@@ -29,6 +29,7 @@ class model_CLM(object):
         keep_prob = 0.999
         if_pxtr_interaction = False
         pxtr_weight = [1.0, 1.0, 1.0, 1.0, 1.0]
+        exp_weight = 1.0
         sim_order_weight = 2.0
         pxtr_reconstruct_weight = 0.1
         # self.max_len = para['ACTION_LIST_MAX_LEN']
