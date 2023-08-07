@@ -378,7 +378,6 @@ class model_CLM(object):
     
     def pxtr_transformer(self, pxtr_input, listwise_len, pxtr_num, dim, name):
         pxtr_input = tf.reshape(pxtr_input, [-1, pxtr_num, dim])
-                                            query_input, action_list_input, name,              mask, col, nh=8, action_item_size=152, att_emb_size=64, mask_flag_k=True
         pxtr_input = self.set_attention_block(pxtr_input, pxtr_input, name + "_pxtr_transformer", 0, dim, 1, dim, dim, False, False)
         return tf.reshape(pxtr_input, [-1, listwise_len, pxtr_num * dim])
     
