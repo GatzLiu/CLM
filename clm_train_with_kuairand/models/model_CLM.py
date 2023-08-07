@@ -49,11 +49,11 @@ class model_CLM(object):
         self.forward_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_pxtr_list')
         self.longview_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_pxtr_list')
         #   pxtr dense feature
-        self.like_pxtr_dense_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_pxtr_dense_list')
-        self.follow_pxtr_dense_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
-        self.comment_pxtr_dense_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
-        self.forward_pxtr_dense_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
-        self.longview_pxtr_dense_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
+        self.like_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_pxtr_dense_list')
+        self.follow_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
+        self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
+        self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
+        self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
 
 
         # 2 reshape
