@@ -88,7 +88,7 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
-        if ((epoch+1) == 5) || ((epoch+1) == 10):
+        if ((epoch+1) == 5) or ((epoch+1) == 10):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
         #                            1              2              0.1                   1
