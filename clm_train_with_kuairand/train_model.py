@@ -71,22 +71,22 @@ def train_model(para):
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
             _ , loss = sess.run(
-                [model.updates, model.loss]
+                [model.updates, model.loss],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
                     model.real_length: real_len_batch,
                     model.is_train: True,
-                    model.like_pxtr_list: train_batch_data[:,:,13]
-                    model.follow_pxtr_list: train_batch_data[:,:,14]
-                    model.comment_pxtr_list: train_batch_data[:,:,15]
-                    model.forward_pxtr_list: train_batch_data[:,:,16]
-                    model.longview_pxtr_list: train_batch_data[:,:,17]
-                    model.like_pxtr_dense_list: train_batch_data[:,:,8]
-                    model.follow_pxtr_dense_list: train_batch_data[:,:,9]
-                    model.comment_pxtr_dense_list: train_batch_data[:,:,10]
-                    model.forward_pxtr_dense_list: train_batch_data[:,:,11]
-                    model.longview_pxtr_dense_list: train_batch_data[:,:,12]
+                    model.like_pxtr_list: train_batch_data[:,:,13],
+                    model.follow_pxtr_list: train_batch_data[:,:,14],
+                    model.comment_pxtr_list: train_batch_data[:,:,15],
+                    model.forward_pxtr_list: train_batch_data[:,:,16],
+                    model.longview_pxtr_list: train_batch_data[:,:,17],
+                    model.like_pxtr_dense_list: train_batch_data[:,:,8],
+                    model.follow_pxtr_dense_list: train_batch_data[:,:,9],
+                    model.comment_pxtr_dense_list: train_batch_data[:,:,10],
+                    model.forward_pxtr_dense_list: train_batch_data[:,:,11],
+                    model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
         print ("[epoch+1, loss] = ", [epoch+1, loss])
         if not loss < 10 ** 10:
