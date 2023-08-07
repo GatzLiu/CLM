@@ -41,7 +41,7 @@ class model_CLM(object):
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
-        self.is_train = tf.placeholder(tf.bool)
+        self.is_train = tf.placeholder(tf.bool, shape=[], name='is_train')
         #   pxtr emb feature
         self.like_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_pxtr_list')   # bin
         self.follow_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_pxtr_list')
@@ -145,8 +145,7 @@ class model_CLM(object):
         #   5.2 mask
         mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, keep_prob)
-        inner_flag = tf.constant(True)
-        if tf.equal(self.is_train, inner_flag):
+        if self.is_train:
             mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
             pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->
             pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
