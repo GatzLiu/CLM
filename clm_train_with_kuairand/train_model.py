@@ -119,12 +119,12 @@ def train_model(para):
             list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,16], pred_list[i][:k], k))
             list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,17], pred_list[i][:k], k))
 
-            click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k]))
-            ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k]))
-            wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k]))
-            cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k]))
-            ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k]))
-            lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k]))
+            click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k], k))
+            ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
+            wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
+            cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
+            ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
+            lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
 
         # ndcg: pxtr-input with pred
         print ("[epoch+1, (pxtr-input with pred) ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
