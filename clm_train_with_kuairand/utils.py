@@ -135,3 +135,23 @@ def generate_sample_with_pxtr_bins(data, para, pxtr_bucket_range):
                     pltr_index, pwtr_index, pcmtr_index, pftr_index, plvtr_index])
     return sample
 
+
+    def get_order(ranking):
+        position_in_ranking = np.argsort(-np.array(ranking))
+        order = np.argsort(position_in_ranking) + 1
+        return order
+
+    def ndcg_for_one_samp(ranking_xtr, ranking_ens, k):
+        ranking_xtr = ranking_xtr[:k]
+        ranking_ens = ranking_ens[:k]
+
+        order_xtr = get_order(ranking_xtr)
+        order_ens = get_order(ranking_ens)
+        print(order_xtr)
+        print(order_ens)
+        dcg, idcg = 0, 0
+        for i in range(len(ranking_xtr[:k])):
+            dcg += ranking_xtr[i] / np.log(order_ens[i] + 1) / np.log(2.0)
+            idcg += ranking_xtr[i] / np.log(order_xtr[i] + 1) / np.log(2.0)
+        print(dcg, idcg)
+        return dcg / (idcg + 1e-10)

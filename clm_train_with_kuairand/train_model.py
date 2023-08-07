@@ -45,15 +45,18 @@ def train_model(para):
     # process data
     train_data_input = []
     real_len_input = []
+    real_len_min = 10000
     pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for sample in range(len(train_data)):
         sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [-1, 100, 13]
         sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [-1, 100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
         train_data_input.append(sample_list)
         real_len_input.append(real_len)
+        real_len_min = min(real_len_min, real_len)
     train_data_input = np.array(train_data_input)
     real_len_input = np.array(real_len_input)
     print ("len(train_data_input)=", len(train_data_input), ", len(real_len_input)=", len(real_len_input))
+    print ("real_len_min=", real_len_min)
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -63,6 +66,7 @@ def train_model(para):
     list_auc_epoch = []
     F1_max = 0
     for epoch in range(para['N_EPOCH']):
+        pred_list = []
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
@@ -70,8 +74,9 @@ def train_model(para):
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
-            _ , loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias= sess.run(
-                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias],
+            _ , loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
+                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
+                model.pred],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
@@ -88,12 +93,26 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
+            pred_list.append(pred) # pred = [-1, max_len, 1]
         if ((epoch+1) == 5) or ((epoch+1) == 10):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
         #                            1              2              0.1                   1
         print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ", 
                 [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
+        
+        pred_list = np.concatenate(pred_list, axis=0)
+        print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
+        for i in range(len(pred_list)):
+            # pred_list[i]     [100, 1]
+            print ("pred_list[i]=", pred_list[i])
+            # train_data_input[:,:,13]  # [-1, 100]        train_data_input[i][:,13] # [100, 1]
+            print ("train_data_input[i][:,13]=", train_data_input[i][:,13])
+            break
+            # ndcg_for_one_samp(ranking_xtr, sample, k)
+        # pred [-1, max_len, 1]
+
+        
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break

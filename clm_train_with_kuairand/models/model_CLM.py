@@ -191,7 +191,7 @@ class model_CLM(object):
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
             pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
-            pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
+            self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             min_len = tf.reduce_min(self.real_length_re)
             
             self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, pxtr_weight, min_len)
@@ -213,7 +213,7 @@ class model_CLM(object):
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
-        self.loss_click = tf.losses.log_loss(self.click_label_list_re, pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
+        self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
         self.loss = exp_weight * self.loss_click + \
                     sim_order_weight * self.loss_sim_order + \
                     pxtr_reconstruct_weight * self.loss_pxtr_reconstruct + \
