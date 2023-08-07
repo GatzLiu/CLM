@@ -143,16 +143,16 @@ class model_CLM(object):
         pxtr_unbias_emb = tf.nn.embedding_lookup(pxtr_unbias_emb_matrix, pxtr_index)  # [-1, max_len, 5, pxtr_dim]
 
         #   5.2 mask
-        mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
-        mask = tf.nn.dropout(mask, keep_prob)
-        print("self.is_train=", self.is_train)
-        print("tf.constant([True], dtype=tf.bool)=", tf.constant([True], dtype=tf.bool))
-        if tf.cond(tf.equal(self.is_train, tf.constant([True], dtype=tf.bool)), lambda: True, lambda: False):
-            mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
-            pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->
-            pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
-            pxtr_unbias_emb = pxtr_unbias_emb * mask # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
-            pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])
+        # mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
+        # mask = tf.nn.dropout(mask, keep_prob)
+        # print("self.is_train=", self.is_train)
+        # print("tf.constant([True], dtype=tf.bool)=", tf.constant([True], dtype=tf.bool))
+        # if tf.cond(tf.equal(self.is_train, tf.constant([True], dtype=tf.bool)), lambda: True, lambda: False):
+        #     mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
+        #     pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->
+        #     pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
+        #     pxtr_unbias_emb = pxtr_unbias_emb * mask # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
+        #     pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])
         
         pxtr_unbias_input = tf.reshape(pxtr_unbias_emb, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])   # concat embs of pxtr
         
