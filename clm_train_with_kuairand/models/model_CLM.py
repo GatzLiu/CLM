@@ -6,7 +6,6 @@ from tensorflow.python.framework import ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope
 from tensorflow.python.ops import nn
-import math # e
 
 class model_CLM(object):
     def __init__(self, data, para):
@@ -25,6 +24,7 @@ class model_CLM(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
+        self.e = 0.1 ** 10
         bin_num = 10000
         keep_prob = 0.999
         if_pxtr_interaction = False
@@ -398,7 +398,7 @@ class model_CLM(object):
         seq = tf.reshape(seq_samp, [-1, 2])
         if if_norm:
             seq_mean, seq_var = tf.nn.moments(tf.stop_gradient(seq), axes=0)
-            seq_norm = (seq - tf.expand_dims(seq_mean, 0)) / (tf.sqrt(tf.expand_dims(seq_var, 0)) + e)
+            seq_norm = (seq - tf.expand_dims(seq_mean, 0)) / (tf.sqrt(tf.expand_dims(seq_var, 0)) + self.e)
         else:
             seq_norm = seq
         seq_resh = tf.reshape(seq_norm, [-1, 2, 2])
