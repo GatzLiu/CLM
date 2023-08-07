@@ -124,9 +124,11 @@ class model_CLM(object):
 
 
         #   5.1 train item bias of each pxtr
-        bias_init = tf.constant_initializer([-0.60289445, -2.08689043, -5.61812366, -3.63968866, -5.89929939, -6.35453781,
-                                            -6.95378411, -5.07679352, -4.72239371, -9.58054279, -0.9745345])  # initialize bias
-        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), bias_initializer=bias_init, name='pxtr_mlp')   # predict pxtr with item features
+        # bias_init = tf.constant_initializer([-0.60289445, -2.08689043, -5.61812366, -3.63968866, -5.89929939, -6.35453781,
+        #                                     -6.95378411, -5.07679352, -4.72239371, -9.58054279, -0.9745345])  # initialize bias
+        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), 
+                                                # bias_initializer=bias_init, 
+                                                name='pxtr_mlp')   # predict pxtr with item features
         pxtr_item_bias_pred = tf.sigmoid(pxtr_item_bias_logits)
         self.loss_pxtr_bias = tf.losses.log_loss(pxtr_dense_input, pxtr_item_bias_pred) # # [-1, max_len, 5]
 
