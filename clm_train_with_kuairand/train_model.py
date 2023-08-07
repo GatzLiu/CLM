@@ -113,7 +113,7 @@ def train_model(para):
             # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
             list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
             list_ltr_dense_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,8], pred_list[i][:k], k)) # dense
-        print ("[epoch+1, ndcg@", k, "(like_bin, like_dense)]=", [epoch+1, sum(list_ndcg_epoch)/len(list_ndcg_epoch), 
+        print ("[epoch+1, ndcg@", k, "(like_bin, like_dense)]=", [epoch+1, sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch), 
                 sum(list_ltr_dense_ndcg_epoch)/len(list_ltr_dense_ndcg_epoch)])
 
         
