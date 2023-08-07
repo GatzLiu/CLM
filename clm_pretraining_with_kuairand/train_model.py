@@ -115,7 +115,7 @@ def train_model(para):
 
         if ((epoch+1) == para['BEST_EPOCH']):
             print ("start save model , epoch+1=", epoch+1)
-            save_path = saver.save(sess, save_model_path, global_step=epoch)
+            save_path = saver.save(sess, save_model_path, global_step=epoch+1)
             print("model save path = ", save_path)
 
         # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
