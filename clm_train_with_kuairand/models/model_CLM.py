@@ -6,6 +6,7 @@ from tensorflow.python.framework import ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope
 from tensorflow.python.ops import nn
+import math # e
 
 class model_CLM(object):
     def __init__(self, data, para):
