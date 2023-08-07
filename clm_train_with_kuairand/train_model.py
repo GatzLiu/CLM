@@ -45,6 +45,7 @@ def train_model(para):
     # process data
     train_data_input = []
     real_len_input = []
+    pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for sample in range(len(train_data)):
         sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [-1, 100, 13]
         sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [-1, 100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
@@ -61,7 +62,6 @@ def train_model(para):
     ## training iteratively
     list_auc_epoch = []
     F1_max = 0
-    pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
