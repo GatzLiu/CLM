@@ -41,7 +41,7 @@ class model_CLM(object):
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
-        self.is_train = tf.placeholder(tf.bool, shape=[], name='is_train')
+        self.is_train = tf.placeholder(tf.bool, shape=[1], name='is_train')
         #   pxtr emb feature
         self.like_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_pxtr_list')   # bin
         self.follow_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_pxtr_list')
