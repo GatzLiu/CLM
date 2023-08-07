@@ -38,7 +38,7 @@ def train_model(para):
     config.gpu_options.allow_growth = True
 
     # saver
-    # saver = tf.train.Saver(max_to_keep = 10)
+    saver = tf.train.Saver(max_to_keep = 5)
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
 
@@ -88,7 +88,10 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
-        # 1 2 0.1 1
+        if ((epoch+1) == 5) || ((epoch+1) == 10):
+            print ("start save model , epoch+1=", epoch+1)
+            save_path = saver.save(sess, save_model_path, global_step=epoch+1)
+        #                            1              2              0.1                   1
         print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ", 
                 [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
         if not loss < 10 ** 10:
