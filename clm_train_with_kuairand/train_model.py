@@ -70,8 +70,8 @@ def train_model(para):
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
-            _ , loss = sess.run(
-                [model.updates, model.loss],
+            _ , loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias= sess.run(
+                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
