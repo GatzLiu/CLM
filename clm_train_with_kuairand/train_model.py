@@ -48,12 +48,12 @@ def train_model(para):
     real_len_min = 10000
     pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for sample in range(len(train_data)):
-        sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [-1, 100, 13]
-        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [-1, 100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
-        train_data_input.append(sample_list)
+        sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [100, 13]
+        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        train_data_input.append(sample_list)  
         real_len_input.append(real_len)
         real_len_min = min(real_len_min, real_len)
-    train_data_input = np.array(train_data_input)
+    train_data_input = np.array(train_data_input)  # [-1, 100, 13+5]
     real_len_input = np.array(real_len_input)
     print ("len(train_data_input)=", len(train_data_input), ", len(real_len_input)=", len(real_len_input))
     print ("real_len_min=", real_len_min)
@@ -63,7 +63,7 @@ def train_model(para):
     batches.append(len(train_data))
 
     ## training iteratively
-    list_auc_epoch = []
+    
     F1_max = 0
     for epoch in range(para['N_EPOCH']):
         pred_list = []
@@ -93,7 +93,8 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
-            pred_list.append(pred) # pred = [-1, max_len, 1]
+            pred_list.append(pred) # pred = [-1, max_len]
+
         if ((epoch+1) == 5) or ((epoch+1) == 10):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
@@ -101,16 +102,16 @@ def train_model(para):
         print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ", 
                 [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
         
-        pred_list = np.concatenate(pred_list, axis=0)
+        pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
         print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
+
+        k = 100
+        list_ndcg_epoch = []
         for i in range(len(pred_list)):
-            # pred_list[i]     [100, 1]
-            print ("pred_list[i]=", pred_list[i])
-            # train_data_input[:,:,13]  # [-1, 100]        train_data_input[i][:,13] # [100, 1]
-            print ("train_data_input[i][:,13]=", train_data_input[i][:,13])
-            break
-            # ndcg_for_one_samp(ranking_xtr, sample, k)
-        # pred [-1, max_len, 1]
+            # pred_list[i]     [max_len]
+            # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
+            list_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k))
+        print ("[epoch+1, ndcg@", k, "]=", [epoch+1, sum(list_ndcg_epoch)/len(list_ndcg_epoch)])
 
         
         if not loss < 10 ** 10:
