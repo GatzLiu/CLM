@@ -205,7 +205,7 @@ class model_CLM(object):
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
-            pxtr_input = KaiLayerNorm(pxtr_input, scope='ln_decoder')
+            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
             self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred)
         
