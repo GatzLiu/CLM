@@ -132,7 +132,7 @@ class model_CLM(object):
                                                 # bias_initializer=bias_init, 
                                                 name='pxtr_mlp')   # predict pxtr with item features
         pxtr_item_bias_pred = tf.sigmoid(pxtr_item_bias_logits)
-        self.loss_pxtr_bias = tf.losses.log_loss(pxtr_dense_input, pxtr_item_bias_pred) # # [-1, max_len, 5]
+        self.loss_pxtr_bias = tf.losses.log_loss(pxtr_dense_input, pxtr_item_bias_pred, reduction="weighted_mean") # # [-1, max_len, 5]
 
         #   get unbias pxtr; remap and lookup emb
         pxtr_dense_input = tf.clip_by_value(pxtr_dense_input, 0, 1)     # clip pxtr dense value for safty
@@ -208,12 +208,12 @@ class model_CLM(object):
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
             pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
-            self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred)
+            self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred, reduction="weighted_mean")
         
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
-        self.loss_click = tf.losses.log_loss(self.click_label_list_re, pred, mask_data, reduction="weighted_sum")     # loss [-1, max_len]
+        self.loss_click = tf.losses.log_loss(self.click_label_list_re, pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
         self.loss = exp_weight * self.loss_click + \
                     sim_order_weight * self.loss_sim_order + \
                     pxtr_reconstruct_weight * self.loss_pxtr_reconstruct + \
@@ -406,7 +406,7 @@ class model_CLM(object):
         # attention! sigmoid(x) = 2 * tf.nn.sigmoid(x) - 1
         # TODO: replace with tanh(x)
         reg_loss = tf.multiply(self.sigmoid(seq_resh[:, 0, 0] - seq_resh[:, 1, 0]), self.sigmoid(seq_resh[:, 0, 1] - seq_resh[:, 1, 1]))
-        return -tf.reduce_sum(reg_loss)
+        return -tf.reduce_mean(reg_loss)
 
     def sim_order_reg(self, pred, pxtr, weight, length):
         reg_loss = 0
