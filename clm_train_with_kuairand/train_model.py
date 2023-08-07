@@ -76,7 +76,7 @@ def train_model(para):
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
                     model.real_length: real_len_batch,
-                    model.is_train: True,
+                    model.keep_prob: 0.999,
                     model.like_pxtr_list: train_batch_data[:,:,13],
                     model.follow_pxtr_list: train_batch_data[:,:,14],
                     model.comment_pxtr_list: train_batch_data[:,:,15],
