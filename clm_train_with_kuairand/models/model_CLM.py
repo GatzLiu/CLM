@@ -198,10 +198,10 @@ class model_CLM(object):
             # choose use or not-use Transformer 
             col = pxtr_input.get_shape()[2]
             if linear_flag:
-                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
+                pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
             else:
-                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
+                pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
