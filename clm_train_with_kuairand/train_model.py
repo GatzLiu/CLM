@@ -28,23 +28,31 @@ def train_model(para):
     data = {"item_num": item_num}
 
     ## define the model
-    # if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
-    
+    if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
     # if para["MODEL"] == 'MF': model = model_MF(data=data, para=para)
     # if para["MODEL"] == 'NCF': model = model_NCF(data=data, para=para)
     # if para["MODEL"] == 'NGCF': model = model_NGCF(data=data, para=para)
     # if para["MODEL"] == 'LightGCN': model = model_LightGCN(data=data, para=para)
     # if para["MODEL"] == 'LGCN': model = model_LGCN(data=data, para=para)
-    # model = model_MMOE(data=data, para=para)
-
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
 
     # saver
     # saver = tf.train.Saver(max_to_keep = 10)
-
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
+
+    # process data
+    train_data_input = []
+    real_len_input = []
+    for sample in range(len(train_data)):
+        sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [-1, 100, 13]
+        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [-1, 100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        train_data_input.append(sample_list)
+        real_len_input.append(real_len)
+    train_data_input = np.array(train_data_input)
+    real_len_input = np.array(real_len_input)
+    print ("len(train_data_input)=", len(train_data_input), ", len(real_len_input)=", len(real_len_input))
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -53,22 +61,37 @@ def train_model(para):
     ## training iteratively
     list_auc_epoch = []
     F1_max = 0
-
     pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for epoch in range(para['N_EPOCH']):
         for batch_num in range(len(batches)-1):
-            train_batch_data = []
-            real_len_list = []
-            for sample in range(batches[batch_num], batches[batch_num+1]):
-                sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)    # [100, 13]
-                sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5] 
-                train_batch_data.append(sample_list)
-                real_len_list.append(real_len)
-            
-            train_batch_data = np.array(train_batch_data)  # [-1, 100, 13+5],  [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
-            real_len_list = np.array(real_len_list) # [-1]
+            train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
+            real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
+    
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
+
+            _ , loss = sess.run(
+                [model.updates, model.loss]
+                feed_dict={
+                    model.item_list: train_batch_data[:,:,0],
+                    model.click_label_list: train_batch_data[:,:,2],
+                    model.real_length: real_len_batch,
+                    model.is_train: True,
+                    model.like_pxtr_list: train_batch_data[:,:,13]
+                    model.follow_pxtr_list: train_batch_data[:,:,14]
+                    model.comment_pxtr_list: train_batch_data[:,:,15]
+                    model.forward_pxtr_list: train_batch_data[:,:,16]
+                    model.longview_pxtr_list: train_batch_data[:,:,17]
+                    model.like_pxtr_dense_list: train_batch_data[:,:,8]
+                    model.follow_pxtr_dense_list: train_batch_data[:,:,9]
+                    model.comment_pxtr_dense_list: train_batch_data[:,:,10]
+                    model.forward_pxtr_dense_list: train_batch_data[:,:,11]
+                    model.longview_pxtr_dense_list: train_batch_data[:,:,12]
+            })
+        print ("[epoch+1, loss] = ", [epoch+1, loss])
+        if not loss < 10 ** 10:
+            print ("ERROR, loss big, loss=", loss)
+            break
 
 
             # # 将一个布尔值传递给feed_dict
