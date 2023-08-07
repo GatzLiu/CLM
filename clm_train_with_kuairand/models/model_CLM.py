@@ -145,7 +145,7 @@ class model_CLM(object):
         #   5.2 mask
         mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, keep_prob)
-        if self.is_train:
+        if tf.cond(tf.equal(self.is_train, True)):
             mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
             pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->
             pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
