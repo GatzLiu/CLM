@@ -147,7 +147,7 @@ class model_CLM(object):
         #   5.2 mask
         mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, self.keep_prob)
-        print("self.is_train=", self.is_train)
+        # print("self.is_train=", self.is_train)
         print("tf.constant(True, dtype=tf.bool)=", tf.constant(True, dtype=tf.bool))
         # if tf.cond(tf.equal(self.is_train, tf.constant(True, dtype=tf.bool)), lambda: True, lambda: False):
         mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
@@ -189,7 +189,7 @@ class model_CLM(object):
                 pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
+            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder_0')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             min_len = tf.reduce_min(self.real_length_re)
@@ -206,7 +206,7 @@ class model_CLM(object):
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder')
+            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder_1')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
             self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred)
         
