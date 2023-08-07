@@ -105,17 +105,38 @@ def train_model(para):
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
         print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
 
+        # ndcg
         k = 100
-        list_ltr_ndcg_epoch = []
-        list_ltr_dense_ndcg_epoch = []
+        list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
+        ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
+        click_label_ndcg = []
         for i in range(len(pred_list)):
             # pred_list[i]     [max_len]
             # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
             list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
-            list_ltr_dense_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,8], pred_list[i][:k], k)) # dense
-        print ("[epoch+1, ndcg@", k, "(like_bin, like_dense)]=", [epoch+1, sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch), 
-                sum(list_ltr_dense_ndcg_epoch)/len(list_ltr_dense_ndcg_epoch)])
+            list_wtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,14], pred_list[i][:k], k))
+            list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,15], pred_list[i][:k], k))
+            list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,16], pred_list[i][:k], k))
+            list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,17], pred_list[i][:k], k))
 
+            click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k]))
+            ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k]))
+            wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k]))
+            cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k]))
+            ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k]))
+            lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k]))
+
+        # ndcg: pxtr-input with pred
+        print ("[epoch+1, (pxtr-input with pred) ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+                sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
+                sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
+                sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
+
+        # ndcg: pred with action-label
+        print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [
+            sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
+            sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
+            sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
