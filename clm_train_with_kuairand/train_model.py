@@ -88,7 +88,9 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
-        print ("[epoch+1, loss] = ", [epoch+1, loss])
+        # 1 2 0.1 1
+        print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ", 
+                [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
