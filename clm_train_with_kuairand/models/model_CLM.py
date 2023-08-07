@@ -115,11 +115,11 @@ class model_CLM(object):
         # 5 start ---------------------
         item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
         # [-1, max_len, pxtr_dim*5]
-        pxtr_input = tf.concat([pltr_list_embeddings, pwtr_list_embeddings, pcmtr_list_embeddings, 
-                                pftr_list_embeddings, plvtr_list_embeddings], -1)
+        pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pcmtr_list_embeddings, 
+                                self.pftr_list_embeddings, self.plvtr_list_embeddings], -1)
         # [-1, max_len, 5]
-        pxtr_dense_input = tf.concat([pltr_dense_list, pwtr_dense_list, pcmtr_dense_list, 
-                                        pftr_dense_list, plvtr_dense_list], -1)
+        pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pcmtr_dense_list, 
+                                    self.pftr_dense_list, self.plvtr_dense_list], -1)
 
 
 
