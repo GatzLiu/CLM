@@ -16,9 +16,6 @@ class model_MMOE(object):
         self.n_users = data['user_num']
         self.n_items = data['item_num']
         self.max_len = para['ACTION_LIST_MAX_LEN']
-        # self.popularity = data['popularity']
-        # self.A_hat = data['sparse_propagation_matrix']
-        # self.graph_emb = data['graph_embeddings']
 
         ## placeholder
         self.users = tf.placeholder(tf.int32, shape=(None,), name='users') # index []
@@ -49,12 +46,6 @@ class model_MMOE(object):
         self.label_comment_re = tf.reshape(self.label_comment, [-1, 1], name='label_comment_re')
         self.label_forward_re = tf.reshape(self.label_forward, [-1, 1], name='label_forward_re')
         self.label_longview_re = tf.reshape(self.label_longview, [-1, 1], name='label_longview_re')
-
-        # print ("self.label_like_re=", self.label_like_re)
-        # print ("self.label_follow_re=", self.label_follow_re)
-        # print ("self.label_comment_re=", self.label_comment_re)
-        # print ("self.label_forward_re=", self.label_forward_re)
-        # print ("self.label_longview_re=", self.label_longview_re)
 
         ## define trainable parameters
         self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
