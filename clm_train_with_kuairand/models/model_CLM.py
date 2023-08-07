@@ -1,7 +1,7 @@
 ## basic baseline MF_BPR
 
 import tensorflow as tf
-
+from tensorflow.contrib.layers.python.layers import utils
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope
