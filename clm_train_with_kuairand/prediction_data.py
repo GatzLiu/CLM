@@ -95,6 +95,7 @@ def prediction_data(para):
                     forward_pxtr_dense_list: pred_batch_data[:,:,11],
                     longview_pxtr_dense_list: pred_batch_data[:,:,12]
             })
+            print ("batches[batch_num+1]=", batches[batch_num+1], ", model_pred=", model_pred)
             pred_list.append(model_pred) # pred = [-1, max_len]
 
         print ("1-pred_list=", pred_list)
