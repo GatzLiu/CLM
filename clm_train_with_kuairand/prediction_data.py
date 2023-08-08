@@ -79,7 +79,7 @@ def prediction_data(para):
             pred_batch_data = pred_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
 
-            model_pred = sess.run([pred], feed_dict = {
+            model_pred = sess.run(pred, feed_dict = {
                     item_list: pred_batch_data[:,:,0],
                     click_label_list: pred_batch_data[:,:,2],
                     real_length: real_len_batch,
@@ -99,7 +99,7 @@ def prediction_data(para):
             pred_list.append(model_pred) # pred = [-1, max_len]
 
         print ("1-pred_list=", pred_list)
-        pred_list = np.array(pred_list)
+        # pred_list = np.array(pred_list)
         print ("1-pred_list.shape=", pred_list.shape)
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
