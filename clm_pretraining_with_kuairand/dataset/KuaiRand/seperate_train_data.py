@@ -2,7 +2,7 @@ import json
 import random as rd
 
 path_train_read = "train_data_bp.json"
-path_validate = "train_data_validation.json"
+path_validate = "validation_data.json"
 path_train = "train_data.json"
 
 def write_data(data, path):

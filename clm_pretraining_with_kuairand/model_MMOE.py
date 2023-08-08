@@ -16,6 +16,7 @@ class model_MMOE(object):
         self.n_users = data['user_num']
         self.n_items = data['item_num']
         self.max_len = para['ACTION_LIST_MAX_LEN']
+        self.loss_weight = para['LOSS_WEIGHT']
 
         ## placeholder
         self.users = tf.placeholder(tf.int32, shape=(None,), name='users') # index []
@@ -119,7 +120,11 @@ class model_MMOE(object):
         # print("self.loss_forward=", self.loss_forward)
         # print("self.loss_longview=", self.loss_longview)
 
-        self.loss = self.loss_like + self.loss_follow + self.loss_comment + self.loss_forward + self.loss_longview
+        self.loss = self.loss_weight[0] * self.loss_like + \
+                    self.loss_weight[1] * self.loss_follow + \
+                    self.loss_weight[2] * self.loss_comment + \
+                    self.loss_weight[3] * self.loss_forward + \
+                    self.loss_weight[4] * self.loss_longview
         # print("self.loss=", self.loss)
 
         # MF: test

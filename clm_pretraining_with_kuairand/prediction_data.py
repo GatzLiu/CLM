@@ -83,13 +83,13 @@ def mmoe_prediction_data(para):
             pred_batch_data = np.array(pred_batch_data)
 
 
-            _, model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview, \
+            model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview, \
             model_label_like_re, model_label_follow_re, model_label_comment_re, model_label_forward_re, model_label_longview_re, \
             model_like_pred, model_follow_pred, model_comment_pred, model_forward_pred, model_longview_pred = \
             sess.run(
-                [updates, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview,
-                    label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
-                    like_pred, follow_pred, comment_pred, forward_pred, longview_pred], 
+                [loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview,
+                 label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
+                 like_pred, follow_pred, comment_pred, forward_pred, longview_pred],
                 feed_dict = {
                     user: pred_batch_data[:,0],
                     item: pred_batch_data[:,1],
