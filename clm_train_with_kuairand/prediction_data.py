@@ -98,7 +98,9 @@ def prediction_data(para):
             pred_list.append(model_pred) # pred = [-1, max_len]
 
         print ("len(pred_list)=", len(pred_list))
-        print ("pred_list[:1]=", pred_list[:1])
+        print ("pred_list=", pred_list)
+        pred_list = np.array(pred_list)
+        print ("pred_list.shape=", pred_list.shape)
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
         print ("len(pred_list)=", len(pred_list), ", len(pred_batch_data)=", len(pred_batch_data))
