@@ -71,7 +71,7 @@ def prediction_data(para):
         longview_pxtr_dense_list = sess.graph.get_tensor_by_name('longview_pxtr_dense_list:0')
 
         # 2 pred
-        pred = sess.graph.get_tensor_by_name('pred:0')
+        pred = sess.graph.get_tensor_by_name('sab1/Sigmoid:0')
 
         # for
         pred_list = []
