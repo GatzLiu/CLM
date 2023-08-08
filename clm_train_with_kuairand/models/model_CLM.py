@@ -56,7 +56,7 @@ class model_CLM(object):
         self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
         self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
-
+        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
         self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
@@ -192,6 +192,7 @@ class model_CLM(object):
             pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
+            print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
             
             self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, pxtr_weight, min_len)
