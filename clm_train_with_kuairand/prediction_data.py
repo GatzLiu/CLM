@@ -95,37 +95,29 @@ def prediction_data(para):
                     forward_pxtr_dense_list: pred_batch_data[:,:,11],
                     longview_pxtr_dense_list: pred_batch_data[:,:,12]
             })
-            print ("batches[batch_num+1]=", batches[batch_num+1], ", model_pred=", model_pred)
             pred_list.append(model_pred) # pred = [-1, max_len]
 
-        print ("1-pred_list=", pred_list)
-        # pred_list = np.array(pred_list)
-        # print ("1-pred_list.shape=", pred_list.shape)
-        
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
-        print ("2-pred_list=", pred_list) 
-        # print ("2-pred_list.shape=", pred_list.shape)
         print ("len(pred_list)=", len(pred_list), ", len(pred_data_input)=", len(pred_data_input))
 
         k = 100
         list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
         ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
         click_label_ndcg = []
-
         for i in range(len(pred_list)):
-            # pred_list[i] -> [max_len]     pred_batch_data[i][:,13] -> [max_len]
-            list_ltr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,13], pred_list[i][:k], k)) # bin
-            list_wtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,14], pred_list[i][:k], k))
-            list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,15], pred_list[i][:k], k))
-            list_ftr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,16], pred_list[i][:k], k))
-            list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,17], pred_list[i][:k], k))
+            # pred_list[i] -> [max_len]     pred_data_input[i][:,13] -> [max_len]
+            list_ltr_ndcg_epoch.append(ndcg_for_one_samp(pred_data_input[i][:k,13], pred_list[i][:k], k)) # bin
+            list_wtr_ndcg_epoch.append(ndcg_for_one_samp(pred_data_input[i][:k,14], pred_list[i][:k], k))
+            list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(pred_data_input[i][:k,15], pred_list[i][:k], k))
+            list_ftr_ndcg_epoch.append(ndcg_for_one_samp(pred_data_input[i][:k,16], pred_list[i][:k], k))
+            list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(pred_data_input[i][:k,17], pred_list[i][:k], k))
 
-            click_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,2], pred_list[i][:k], k))
-            ltr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,3], pred_list[i][:k], k))
-            wtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,4], pred_list[i][:k], k))
-            cmtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,5], pred_list[i][:k], k))
-            ftr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,6], pred_list[i][:k], k))
-            lvtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,7], pred_list[i][:k], k))
+            click_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,2], pred_list[i][:k], k))
+            ltr_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,3], pred_list[i][:k], k))
+            wtr_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,4], pred_list[i][:k], k))
+            cmtr_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,5], pred_list[i][:k], k))
+            ftr_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,6], pred_list[i][:k], k))
+            lvtr_label_ndcg.append(ndcg_for_one_samp(pred_data_input[i][:k,7], pred_list[i][:k], k))
         
         # ndcg: pxtr-input with pred
         print ("[test_data, pxtr-input with pred, ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [ 
