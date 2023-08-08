@@ -34,7 +34,7 @@ def prediction_data(para):
     pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for sample in range(len(pred_data)):
         sample_list, real_len = generate_sample_with_max_len(pred_data[sample], para)  # [100, 13]
-        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        sample_list = generate_sample_with_pxtr_bins(pred_data[sample], para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
         pred_data_input.append(sample_list)  
         real_len_input.append(real_len)
         real_len_min = min(real_len_min, real_len)
@@ -136,4 +136,4 @@ def prediction_data(para):
 if __name__ == '__main__':
     print_params(all_para)
     prediction_data(all_para)
-    print("pred sample && generate ltr_train_data.json success")
+    print("pred sample success")
