@@ -1,7 +1,7 @@
 from test_model import *
 from utils import *
 
-from params.params_common import MODEL
+# from params.params_common import MODEL
 from models.model_CLM import model_CLM
 # from models.model_NCF import model_NCF
 # from models.model_NGCF import model_NGCF
