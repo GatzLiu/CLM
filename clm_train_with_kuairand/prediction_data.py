@@ -100,11 +100,11 @@ def prediction_data(para):
 
         print ("1-pred_list=", pred_list)
         # pred_list = np.array(pred_list)
-        print ("1-pred_list.shape=", pred_list.shape)
+        # print ("1-pred_list.shape=", pred_list.shape)
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
         print ("2-pred_list=", pred_list) 
-        print ("2-pred_list.shape=", pred_list.shape)
+        # print ("2-pred_list.shape=", pred_list.shape)
         print ("len(pred_list)=", len(pred_list), ", len(pred_data_input)=", len(pred_data_input))
 
         k = 100
