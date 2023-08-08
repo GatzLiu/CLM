@@ -19,7 +19,7 @@ from models.model_CLM import model_CLM
 def train_model(para):
     ## paths of data
     train_path = para['DIR'] + 'kuairand_ltr_data_train.json'
-    save_model_path = './model_ckpt/model_' + para["MODEL"] + '/clm_model.ckpt'
+    save_model_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt'
 
     ## Load data
     [train_data, item_num] = read_data(train_path)
@@ -119,12 +119,12 @@ def train_model(para):
             list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,16], pred_list[i][:k], k))
             list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,17], pred_list[i][:k], k))
 
-            click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k], k))
-            ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
-            wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
-            cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
-            ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
-            lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
+            # click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k], k))
+            # ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
+            # wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
+            # cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
+            # ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
+            # lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
 
         # ndcg: pxtr-input with pred
         print ("[epoch+1, (pxtr-input with pred) ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
@@ -133,10 +133,10 @@ def train_model(para):
                 sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
 
         # ndcg: pred with action-label
-        print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
-            sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
-            sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
-            sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
+        # print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+        #     sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
+        #     sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
+        #     sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)

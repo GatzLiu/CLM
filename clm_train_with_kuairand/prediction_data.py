@@ -9,16 +9,34 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
 
-def mmoe_prediction_data(para):
-    pred_data_path = DIR + 'train_data_pred.json'
-    ltr_data_path = DIR + 'kuairand_ltr_data.json'
-
-    model_path = 'model_ckpt/clm_model.ckpt-49.meta'
-    restore_path = 'model_ckpt/clm_model.ckpt-49'
+def prediction_data(para):
+    print ("Model Name = ", para["MODEL"] )
+    pred_data_path = para['DIR'] + 'kuairand_ltr_data_test.json'
+    # ltr_data_path = DIR + 'kuairand_ltr_data.json'
+    
+    #load model path
+    model_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt-5.meta'
+    restore_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt-5'
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)
-    print ("pred_data[0:3]=", pred_data[0:3])
+    print ("pred_data[0:3]=", pred_data[:1])
+
+    # process data
+    pred_data_input = []
+    real_len_input = []
+    real_len_min = 10000
+    pxtr_bucket_range = np.linspace(0, 1, num=10000)
+    for sample in range(len(pred_data)):
+        sample_list, real_len = generate_sample_with_max_len(pred_data[sample], para)  # [100, 13]
+        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        pred_data_input.append(sample_list)  
+        real_len_input.append(real_len)
+        real_len_min = min(real_len_min, real_len)
+    pred_data_input = np.array(pred_data_input)  # [-1, 100, 13+5]
+    real_len_input = np.array(real_len_input)
+    print ("len(pred_data_input)=", len(pred_data_input), ", len(real_len_input)=", len(real_len_input))
+    print ("real_len_min=", real_len_min)
 
     ## split the pred-samples into batches
     batches = list(range(0, len(pred_data), para['PRED_BATCH_SIZE']))
@@ -29,131 +47,83 @@ def mmoe_prediction_data(para):
         saver.restore(sess, restore_path)
 
         # feed_dict
-        user = sess.graph.get_tensor_by_name('users:0')
-        item = sess.graph.get_tensor_by_name('items:0')
-        action_list = sess.graph.get_tensor_by_name('action_list:0')
+        item_list = sess.graph.get_tensor_by_name('item_list:0') # [-1, max_len]
+        #   label
+        click_label_list = sess.graph.get_tensor_by_name('click_label_list:0')
         real_length = sess.graph.get_tensor_by_name('real_length:0')
-        label_like = sess.graph.get_tensor_by_name('label_like:0')
-        label_follow = sess.graph.get_tensor_by_name('label_follow:0')
-        label_comment = sess.graph.get_tensor_by_name('label_comment:0')
-        label_forward = sess.graph.get_tensor_by_name('label_forward:0')
-        label_longview = sess.graph.get_tensor_by_name('label_longview:0')
+        keep_prob = sess.graph.get_tensor_by_name('keep_prob:0')
+        #   pxtr emb feature
+        like_pxtr_list = sess.graph.get_tensor_by_name('like_pxtr_list:0') # bin
+        follow_pxtr_list = sess.graph.get_tensor_by_name('follow_pxtr_list:0')
+        comment_pxtr_list = sess.graph.get_tensor_by_name('comment_pxtr_list:0')
+        forward_pxtr_list = sess.graph.get_tensor_by_name('forward_pxtr_list:0')
+        longview_pxtr_list = sess.graph.get_tensor_by_name('longview_pxtr_list:0')
+        #   pxtr dense feature
+        like_pxtr_dense_list = sess.graph.get_tensor_by_name('like_pxtr_dense_list:0')
+        follow_pxtr_dense_list = sess.graph.get_tensor_by_name('follow_pxtr_dense_list:0')
+        comment_pxtr_dense_list = sess.graph.get_tensor_by_name('comment_pxtr_dense_list:0')
+        forward_pxtr_dense_list = sess.graph.get_tensor_by_name('forward_pxtr_dense_list:0')
+        longview_pxtr_dense_list = sess.graph.get_tensor_by_name('longview_pxtr_dense_list:0')
 
-        # loss  sess.graph.get_tensor_by_name('')
-        loss_like = sess.graph.get_tensor_by_name('log_loss/value:0')
-        loss_follow = sess.graph.get_tensor_by_name('log_loss_1/value:0')
-        loss_comment = sess.graph.get_tensor_by_name('log_loss_2/value:0')
-        loss_forward = sess.graph.get_tensor_by_name('log_loss_3/value:0')
-        loss_longview = sess.graph.get_tensor_by_name('log_loss_4/value:0')
-        loss = sess.graph.get_tensor_by_name('add_3:0')
-
-        # label: cal auc
-        label_like_re = sess.graph.get_tensor_by_name('label_like_re:0')
-        label_follow_re = sess.graph.get_tensor_by_name('label_follow_re:0')
-        label_comment_re = sess.graph.get_tensor_by_name('label_comment_re:0')
-        label_forward_re = sess.graph.get_tensor_by_name('label_forward_re:0')
-        label_longview_re = sess.graph.get_tensor_by_name('label_longview_re:0')
-
-        # pred: cal auc & save
-        like_pred = sess.graph.get_tensor_by_name('like_pred:0')
-        follow_pred = sess.graph.get_tensor_by_name('follow_pred:0')
-        comment_pred = sess.graph.get_tensor_by_name('comment_pred:0')
-        forward_pred = sess.graph.get_tensor_by_name('forward_pred:0')
-        longview_pred = sess.graph.get_tensor_by_name('longview_pred:0')
-
-        # opt
-        updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')
+        # 2 pred
+        pred = sess.graph.get_tensor_by_name('pred:0')
 
         # for
-        epoch_label_like_re = []
-        epoch_label_follow_re = []
-        epoch_label_comment_re = []
-        epoch_label_forward_re = []
-        epoch_label_longview_re = []
-        epoch_like_pred = []
-        epoch_follow_pred = []
-        epoch_comment_pred = []
-        epoch_forward_pred = []
-        epoch_longview_pred = []
+        pred_list = []
         for batch_num in range(len(batches)-1):
-            pred_batch_data = []
-            for sample in range(batches[batch_num], batches[batch_num+1]):
-                sample_list = generate_sample(pred_data[sample], para)
-                pred_batch_data.append(sample_list)
-            pred_batch_data = np.array(pred_batch_data)
+            pred_batch_data = pred_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
+            real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
 
-
-            _, model_loss, model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview, \
-            model_label_like_re, model_label_follow_re, model_label_comment_re, model_label_forward_re, model_label_longview_re, \
-            model_like_pred, model_follow_pred, model_comment_pred, model_forward_pred, model_longview_pred = \
-            sess.run(
-                [updates, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview,
-                    label_like_re, label_follow_re, label_comment_re, label_forward_re, label_longview_re,
-                    like_pred, follow_pred, comment_pred, forward_pred, longview_pred], 
-                feed_dict = {
-                    user: pred_batch_data[:,0],
-                    item: pred_batch_data[:,1],
-                    action_list: pred_batch_data[:,10:],
-                    real_length: pred_batch_data[:,9],
-                    label_like: pred_batch_data[:,4],
-                    label_follow: pred_batch_data[:,5],
-                    label_comment: pred_batch_data[:,6],
-                    label_forward: pred_batch_data[:,7],
-                    label_longview: pred_batch_data[:,8],
+            model_pred = sess.run([pred], feed_dict = {
+                    item_list: pred_batch_data[:,:,0],
+                    click_label_list: pred_batch_data[:,:,2],
+                    real_length: real_len_batch,
+                    keep_prob: 1.0, # pred
+                    like_pxtr_list: pred_batch_data[:,:,13],
+                    follow_pxtr_list: pred_batch_data[:,:,14],
+                    comment_pxtr_list: pred_batch_data[:,:,15],
+                    forward_pxtr_list: pred_batch_data[:,:,16],
+                    longview_pxtr_list: pred_batch_data[:,:,17],
+                    like_pxtr_dense_list: pred_batch_data[:,:,8],
+                    follow_pxtr_dense_list: pred_batch_data[:,:,9],
+                    comment_pxtr_dense_list: pred_batch_data[:,:,10],
+                    forward_pxtr_dense_list: pred_batch_data[:,:,11],
+                    longview_pxtr_dense_list: pred_batch_data[:,:,12]
             })
+            pred_list.append(model_pred) # pred = [-1, max_len]
 
-            epoch_label_like_re.append(model_label_like_re)
-            epoch_label_follow_re.append(model_label_follow_re)
-            epoch_label_comment_re.append(model_label_comment_re)
-            epoch_label_forward_re.append(model_label_forward_re)
-            epoch_label_longview_re.append(model_label_longview_re)
-            epoch_like_pred.append(model_like_pred)
-            epoch_follow_pred.append(model_follow_pred)
-            epoch_comment_pred.append(model_comment_pred)
-            epoch_forward_pred.append(model_forward_pred)
-            epoch_longview_pred.append(model_longview_pred)
+        pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
+        print ("len(pred_list)=", len(pred_list), ", len(pred_batch_data)=", len(pred_batch_data))
 
-            if batches[batch_num] % 20000 == 0:
-                # print ("model_like_pred=", model_like_pred)
-                print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
-                [batches[batch_num], batches[batch_num+1], model_loss,
-                model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
+        k = 100
+        list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
+        ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
+        click_label_ndcg = []
+
+        for i in range(len(pred_list)):
+            # pred_list[i] -> [max_len]     pred_batch_data[i][:,13] -> [max_len]
+            list_ltr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,13], pred_list[i][:k], k)) # bin
+            list_wtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,14], pred_list[i][:k], k))
+            list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,15], pred_list[i][:k], k))
+            list_ftr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,16], pred_list[i][:k], k))
+            list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(pred_batch_data[i][:k,17], pred_list[i][:k], k))
+
+            click_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,2], pred_list[i][:k], k))
+            ltr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,3], pred_list[i][:k], k))
+            wtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,4], pred_list[i][:k], k))
+            cmtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,5], pred_list[i][:k], k))
+            ftr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,6], pred_list[i][:k], k))
+            lvtr_label_ndcg.append(ndcg_for_one_samp(pred_batch_data[i][:k,7], pred_list[i][:k], k))
         
-        list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
-                epoch_like_pred, epoch_follow_pred, epoch_comment_pred, epoch_forward_pred, epoch_longview_pred)
-        print("pred_data AUC", 
-            ", like_auc=", list_auc[0], 
-            ", follow_auc=", list_auc[1], 
-            ", comment_auc=", list_auc[2],
-            ", forward_auc=", list_auc[3],
-            ", longview_auc=", list_auc[4])
-
-     
-        like_pxtr = [pxtr for batch_list in epoch_like_pred for pxtr in batch_list]
-        follow_pxtr = [pxtr for batch_list in epoch_follow_pred for pxtr in batch_list]
-        comment_pxtr = [pxtr for batch_list in epoch_comment_pred for pxtr in batch_list]
-        forward_pxtr = [pxtr for batch_list in epoch_forward_pred for pxtr in batch_list]
-        longview_pxtr = [pxtr for batch_list in epoch_longview_pred for pxtr in batch_list]
-
-        # generate ltr model train data
-        ltr_train_data = []
-        index = 0
-        for (user, item, time_ms, click, like, follow, comment, forward, longview, user_real_action) in pred_data:
-            ltr_train_data.append([user, item, time_ms, click, like, follow, comment, forward, longview,
-                                round(float(like_pxtr[index]),6), round(float(follow_pxtr[index]),6), round(float(comment_pxtr[index]),6),
-                                round(float(forward_pxtr[index]),6), round(float(longview_pxtr[index]),6)])
-            index = index + 1  
-        json_ltr_train_data = json.dumps(ltr_train_data)
-        with open(ltr_data_path, 'w') as file:
-            file.write(json_ltr_train_data)
-        file.close()
+        # ndcg: pxtr-input with pred
+        print ("[test_data, pxtr-input with pred, ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [ 
+                sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
+                sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
+                sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
         
-        # test: read
-        ltr_train_data_v1, _, _ = read_data(ltr_data_path)
-
-
-
-if __name__ == '__main__':
-    print_params(all_para)
-    mmoe_prediction_data(all_para)
-    print("pred sample && generate ltr_train_data.json success")
+        # ndcg: pred with action-label
+        print ("[test_data, pred with action-label ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+            sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
+            sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
+            sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
+        
