@@ -131,4 +131,9 @@ def prediction_data(para):
             sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
             sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
             sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
-        
+
+
+if __name__ == '__main__':
+    print_params(all_para)
+    prediction_data(all_para)
+    print("pred sample && generate ltr_train_data.json success")
