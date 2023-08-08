@@ -24,7 +24,7 @@ def prediction_data(para):
     restore_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt-5'
 
     ## Load data
-    pred_data, _, _ = read_data(pred_data_path)
+    pred_data, _ = read_data(pred_data_path)
     print ("pred_data[0:3]=", pred_data[:1])
 
     # process data

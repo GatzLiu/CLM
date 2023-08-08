@@ -19,22 +19,6 @@ def save_embeddings(data, path):
     f.write('\n')
     f.close
 
-def read_data1111(path):
-    with open(path) as f:
-        line = f.readline()
-        data = json.loads(line)
-    f.close()
-    user_num = len(data)
-    item_num = 0
-    interactions = []
-    for user in range(user_num):
-        for item in data[user]:
-            interactions.append((user, item))
-            item_num = max(item, item_num)
-    item_num += 1
-    rd.shuffle(interactions)
-    return data, interactions, user_num, item_num
-
 
 # [
 #           0        1       2      3    4      5         6          7      8     9     10     11     12
