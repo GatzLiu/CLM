@@ -97,13 +97,13 @@ def prediction_data(para):
             })
             pred_list.append(model_pred) # pred = [-1, max_len]
 
-        print ("len(pred_list)=", len(pred_list))
-        print ("pred_list=", pred_list)
-        pred_list = np.array(pred_list)
-        print ("pred_list.shape=", pred_list.shape)
+        # print ("len(pred_list)=", len(pred_list))
+        # print ("pred_list=", pred_list)
+        # pred_list = np.array(pred_list)
+        # print ("pred_list.shape=", pred_list.shape)
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
-        print ("len(pred_list)=", len(pred_list), ", len(pred_batch_data)=", len(pred_batch_data))
+        print ("len(pred_list)=", len(pred_list), ", len(pred_data_input)=", len(pred_data_input))
 
         k = 100
         list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
@@ -132,7 +132,7 @@ def prediction_data(para):
                 sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
         
         # ndcg: pred with action-label
-        print ("[test_data, pred with action-label ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+        print ("[test_data, pred with action-label ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [
             sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
             sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
             sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
