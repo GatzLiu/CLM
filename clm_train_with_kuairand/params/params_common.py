@@ -5,7 +5,7 @@ dataset = 1         # 0:Amazon, 1:KuaiRand
 model = 0
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]
-MODEL = ['CLM', 'PRM', 'NGCF', 'LightGCN', 'LGCN'][model]
+MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][model]
 CANDIDATE_ITEM_LIST_LENGTH = 100
 PXTR_DIM = 16
 ITEM_DIM = 64

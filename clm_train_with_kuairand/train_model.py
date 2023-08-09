@@ -3,7 +3,9 @@ from utils import *
 
 from models.model_CLM import model_CLM
 from models.model_PRM import model_PRM
-
+from models.model_MLP import model_MLP
+from models.model_SUM import model_SUM
+from models.model_MUL import model_MUL
 
 
 # [
@@ -27,6 +29,9 @@ def train_model(para):
     ## define the model
     if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
     if para["MODEL"] == 'PRM': model = model_PRM(data=data, para=para)
+    if para["MODEL"] == 'MLP': model = model_MLP(data=data, para=para)
+    if para["MODEL"] == 'SUM': model = model_SUM(data=data, para=para)
+    if para["MODEL"] == 'MUL': model = model_MUL(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True

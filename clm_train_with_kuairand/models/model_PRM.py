@@ -10,7 +10,7 @@ from tensorflow.python.ops import nn
 class model_PRM(object):
     def __init__(self, data, para):
         ## model hyper-params
-        self.model_name = 'CLM'
+        self.model_name = 'PRM'
         self.pxtr_dim = para['PXTR_DIM']
         self.item_dim = para['ITEM_DIM']
         self.lr = para['LR']
@@ -31,10 +31,6 @@ class model_PRM(object):
         exp_weight = 1.0
         sim_order_weight = 2.0
         pxtr_reconstruct_weight = 0.1
-        # self.max_len = para['ACTION_LIST_MAX_LEN']
-        # self.popularity = data['popularity']
-        # self.A_hat = data['sparse_propagation_matrix']
-        # self.graph_emb = data['graph_embeddings']
 
         ## 1 placeholder
         # [-1, max_len]

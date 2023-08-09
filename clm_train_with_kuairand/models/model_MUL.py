@@ -7,10 +7,10 @@ from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import variable_scope
 from tensorflow.python.ops import nn
 
-class model_CLM(object):
+class model_MUL(object):
     def __init__(self, data, para):
         ## model hyper-params
-        self.model_name = 'CLM'
+        self.model_name = 'MUL'
         self.pxtr_dim = para['PXTR_DIM']
         self.item_dim = para['ITEM_DIM']
         self.lr = para['LR']
