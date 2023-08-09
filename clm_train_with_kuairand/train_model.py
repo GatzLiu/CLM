@@ -1,12 +1,9 @@
 from test_model import *
 from utils import *
 
-# from params.params_common import MODEL
 from models.model_CLM import model_CLM
-# from models.model_NCF import model_NCF
-# from models.model_NGCF import model_NGCF
-# from models.model_LightGCN import model_LightGCN
-# from models.model_LGCN import model_LGCN
+from models.model_PRM import model_PRM
+
 
 
 # [
@@ -29,11 +26,8 @@ def train_model(para):
 
     ## define the model
     if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
-    # if para["MODEL"] == 'MF': model = model_MF(data=data, para=para)
-    # if para["MODEL"] == 'NCF': model = model_NCF(data=data, para=para)
-    # if para["MODEL"] == 'NGCF': model = model_NGCF(data=data, para=para)
-    # if para["MODEL"] == 'LightGCN': model = model_LightGCN(data=data, para=para)
-    # if para["MODEL"] == 'LGCN': model = model_LGCN(data=data, para=para)
+    if para["MODEL"] == 'PRM': model = model_PRM(data=data, para=para)
+
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
 
@@ -70,7 +64,7 @@ def train_model(para):
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
-    
+
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
