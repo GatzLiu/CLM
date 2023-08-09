@@ -3,7 +3,7 @@ GPU_INDEX = "0"
 dataset = 1         # 0:Amazon, 1:KuaiRand
 DATASET = ['Tamll', 'KuaiRand'][dataset]
 MODEL = 'MMOE'
-LR = [0.001, 100][dataset]
+LR = [0.001, 200][dataset]
 LAMDA = [0.2, 0.01][dataset]
 ACTION_LIST_MAX_LEN = 150
 EMB_DIM = 64
@@ -11,10 +11,10 @@ BATCH_SIZE = 10000
 validate_test = 0   # 0:Validate, 1: Test
 TEST_USER_BATCH = [4096, 4096][dataset]
 SAMPLE_RATE = 1
-N_EPOCH = 100
+N_EPOCH = 50
 BEST_EPOCH = [66, 48][dataset]
 LOSS_WEIGHT = [[2, 1, 2, 2, 1],
-               [2, 1, 5, 5, 1]][dataset]
+               [1.7, 2.2, 2.2, 1.4, 0.9]][dataset]
 TOP_K = [10, 20, 50, 100]
 DIR = './dataset/'+DATASET+'/'
 
