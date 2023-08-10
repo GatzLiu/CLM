@@ -169,7 +169,7 @@ class model_PRM(object):
         self.loss = exp_weight * self.loss_click + \
                     sim_order_weight * self.loss_sim_order + \
                     pxtr_reconstruct_weight * self.loss_pxtr_reconstruct
-        self.loss_pxtr_bias = 0
+        self.loss_pxtr_bias = tf.constant(0)
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
