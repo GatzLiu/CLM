@@ -27,7 +27,7 @@ class model_CLM(object):
         self.e = 0.1 ** 10
         bin_num = 10000
         if_pxtr_interaction = False
-        if_add_position = True
+        if_add_position = False
 
         ## 1 placeholder
         # [-1, max_len]
