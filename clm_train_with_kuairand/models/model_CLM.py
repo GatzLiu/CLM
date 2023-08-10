@@ -71,7 +71,6 @@ class model_CLM(object):
         self.pftr_dense_list = tf.reshape(self.forward_pxtr_dense_list, [-1, self.max_len, 1])
         self.plvtr_dense_list = tf.reshape(self.longview_pxtr_dense_list, [-1, self.max_len, 1])
 
-
         # 3 define trainable parameters
         self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
         self.pltr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pltr_embeddings_table')
@@ -79,36 +78,32 @@ class model_CLM(object):
         self.pcmtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pcmtr_embeddings_table')
         self.pftr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pftr_embeddings_table')
         self.plvtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='plvtr_embeddings_table')
-        self.var_list = [self.item_embeddings_table, self.pltr_embeddings_table, self.pwtr_embeddings_table, 
-                        self.pcmtr_embeddings_table, self.pftr_embeddings_table, self.plvtr_embeddings_table]
-
 
         # 4 lookup
         self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
         self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
         self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
 
-        #   1) [-1, self.max_len, 1] -> [bs*max_len]
+        # 1) [-1, self.max_len, 1] -> [bs*max_len]
         self.pltr_list = tf.reshape(self.pltr_list, [-1])  
         self.pwtr_list = tf.reshape(self.pwtr_list, [-1])
         self.pcmtr_list = tf.reshape(self.pcmtr_list, [-1])
         self.pftr_list = tf.reshape(self.pftr_list, [-1])
         self.plvtr_list = tf.reshape(self.plvtr_list, [-1])
 
-        #   2) [bs*max_len, pxtr_dim]
+        # 2) [bs*max_len, pxtr_dim]
         self.pltr_list_embeddings = tf.nn.embedding_lookup(self.pltr_embeddings_table, self.pltr_list)
         self.pwtr_list_embeddings = tf.nn.embedding_lookup(self.pwtr_embeddings_table, self.pwtr_list)
         self.pcmtr_list_embeddings = tf.nn.embedding_lookup(self.pcmtr_embeddings_table, self.pcmtr_list)
         self.pftr_list_embeddings = tf.nn.embedding_lookup(self.pftr_embeddings_table, self.pftr_list)
         self.plvtr_list_embeddings = tf.nn.embedding_lookup(self.plvtr_embeddings_table, self.plvtr_list)
 
-        #   3) [-1, max_len, pxtr_dim]
+        # 3) [-1, max_len, pxtr_dim]
         self.pltr_list_embeddings = tf.reshape(self.pltr_list_embeddings, [-1, self.max_len, self.pxtr_dim])
         self.pwtr_list_embeddings = tf.reshape(self.pwtr_list_embeddings, [-1, self.max_len, self.pxtr_dim])
         self.pcmtr_list_embeddings = tf.reshape(self.pcmtr_list_embeddings, [-1, self.max_len, self.pxtr_dim])
         self.pftr_list_embeddings = tf.reshape(self.pftr_list_embeddings, [-1, self.max_len, self.pxtr_dim])
         self.plvtr_list_embeddings = tf.reshape(self.plvtr_list_embeddings, [-1, self.max_len, self.pxtr_dim])
-
 
         # 5 start ---------------------
         item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
@@ -119,18 +114,12 @@ class model_CLM(object):
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pcmtr_dense_list, 
                                     self.pftr_dense_list, self.plvtr_dense_list], -1)
 
-
-
-        #   5.1 train item bias of each pxtr
-        # bias_init = tf.constant_initializer([-0.60289445, -2.08689043, -5.61812366, -3.63968866, -5.89929939, -6.35453781,
-        #                                     -6.95378411, -5.07679352, -4.72239371, -9.58054279, -0.9745345])  # initialize bias
-        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), 
-                                                # bias_initializer=bias_init, 
-                                                name='pxtr_mlp')   # predict pxtr with item features
+        # 5.1 train item bias of each pxtr
+        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), name='pxtr_mlp')   # predict pxtr with item features
         pxtr_item_bias_pred = tf.sigmoid(pxtr_item_bias_logits)
         self.loss_pxtr_bias = tf.losses.log_loss(pxtr_dense_input, pxtr_item_bias_pred, reduction="weighted_mean") # # [-1, max_len, 5]
 
-        #   get unbias pxtr; remap and lookup emb
+        # get unbias pxtr; remap and lookup emb
         pxtr_dense_input = tf.clip_by_value(pxtr_dense_input, 0, 1)     # clip pxtr dense value for safty
         pxtr_unbias = pxtr_dense_input / (tf.stop_gradient(pxtr_item_bias_pred) + 0.1 ** 10)   # equals to pxtr_dense_input - pxtr_item_bias_pred
         pxtr_normalize = pxtr_unbias / (pxtr_unbias + 1)       # use x/(1+x) to map (0, inf) to (0, 1)
@@ -140,12 +129,9 @@ class model_CLM(object):
         pxtr_unbias_emb_matrix = tf.get_variable('pxtr_unbias_emb', [bin_num * len(self.pxtr_list), self.pxtr_dim])   # define emb matrix  [10000*5, pxtr_dim]
         pxtr_unbias_emb = tf.nn.embedding_lookup(pxtr_unbias_emb_matrix, pxtr_index)  # [-1, max_len, 5, pxtr_dim]
 
-        #   5.2 mask
+        # 5.2 dropout
         mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, self.keep_prob)
-        # print("self.is_train=", self.is_train)
-        # print("tf.constant(True, dtype=tf.bool)=", tf.constant(True, dtype=tf.bool))
-        # if tf.cond(tf.equal(self.is_train, tf.constant(True, dtype=tf.bool)), lambda: True, lambda: False):
         mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->
         pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
@@ -154,16 +140,14 @@ class model_CLM(object):
         
         pxtr_unbias_input = tf.reshape(pxtr_unbias_emb, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])   # concat embs of pxtr
         
-        #   5.3 position_emb
-        # [-1, max_len, pxtr_dim*5]
+        # 5.3 add position_emb, [-1, max_len, pxtr_dim*5]
         pxtr_input = self.add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len, 
                                             pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name="biased")
         if if_pxtr_interaction:
-            pxtr_input += pxtr_transformer(pxtr_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='pxtr')
-            pxtr_unbias_input += pxtr_transformer(pxtr_unbias_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='unbiased_pxtr')
+            pxtr_input += self.pxtr_transformer(pxtr_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='pxtr')
+            pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='unbiased_pxtr')
         
-        #   5.4 pxtr_input
-        #   [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
+        #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
         pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
 
         #   5.5 transformer
@@ -223,14 +207,8 @@ class model_CLM(object):
         if self.optimizer == 'Adagrad': self.opt = tf.train.AdagradOptimizer(learning_rate=self.lr)
 
         #   5.7 update parameters
-        self.updates = self.opt.minimize(self.loss, var_list=self.var_list)
+        self.updates = self.opt.minimize(self.loss)
         print("self.updates=", self.updates)
-
-        ## get top k
-        # self.all_ratings = tf.matmul(self.u_embeddings, self.item_embeddings, transpose_a=False, transpose_b=True)
-        # self.all_ratings += self.items_in_train_data  ## set a very small value for the items appearing in the training set to make sure they are at the end of the sorted list
-        # self.top_items = tf.nn.top_k(self.all_ratings, k=self.top_k, sorted=True).indices
-
 
     def inner_product(self, users, items):
         scores = tf.reduce_sum(tf.multiply(users, items), axis=1)
@@ -378,12 +356,12 @@ class model_CLM(object):
             order = tf.contrib.framework.argsort(position_in_ranking, axis=1)
             pos_emb = tf.gather(pos_embeddings, order)
             return tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]) + query_input
-    
+
     def pxtr_transformer(self, pxtr_input, listwise_len, pxtr_num, dim, name):
         pxtr_input = tf.reshape(pxtr_input, [-1, pxtr_num, dim])
         pxtr_input = self.set_attention_block(pxtr_input, pxtr_input, name + "_pxtr_transformer", 0, dim, 1, dim, dim, False, False)
         return tf.reshape(pxtr_input, [-1, listwise_len, pxtr_num * dim])
-    
+
     def sigmoid(self, x):
         return 2 * tf.nn.sigmoid(x) - 1
 

@@ -51,7 +51,6 @@ class model_MMOE(object):
         ## define trainable parameters
         self.user_embeddings = tf.Variable(tf.random_normal([self.n_users, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='user_embeddings')
         self.item_embeddings = tf.Variable(tf.random_normal([self.n_items, self.emb_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings')
-        self.var_list = [self.user_embeddings, self.item_embeddings]
 
         ## lookup
         self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
@@ -102,39 +101,17 @@ class model_MMOE(object):
         self.forward_pred = tf.nn.sigmoid(forward_logit, name='forward_pred')
         self.longview_pred = tf.nn.sigmoid(longview_logit, name='longview_pred')
 
-        # print("self.like_pred=", self.like_pred)
-        # print("self.follow_pred=", self.follow_pred)
-        # print("self.comment_pred=", self.comment_pred)
-        # print("self.forward_pred=", self.forward_pred)
-        # print("self.longview_pred=", self.longview_pred)
-
         self.loss_like = tf.losses.log_loss(self.label_like_re, self.like_pred)
         self.loss_follow = tf.losses.log_loss(self.label_follow_re, self.follow_pred)
         self.loss_comment = tf.losses.log_loss(self.label_comment_re, self.comment_pred)
         self.loss_forward = tf.losses.log_loss(self.label_forward_re, self.forward_pred)
         self.loss_longview = tf.losses.log_loss(self.label_longview_re, self.longview_pred)
-        
-        # print("self.loss_like=", self.loss_like)
-        # print("self.loss_follow=", self.loss_follow)
-        # print("self.loss_comment=", self.loss_comment)
-        # print("self.loss_forward=", self.loss_forward)
-        # print("self.loss_longview=", self.loss_longview)
 
         self.loss = self.loss_weight[0] * self.loss_like + \
                     self.loss_weight[1] * self.loss_follow + \
                     self.loss_weight[2] * self.loss_comment + \
                     self.loss_weight[3] * self.loss_forward + \
                     self.loss_weight[4] * self.loss_longview
-        # print("self.loss=", self.loss)
-
-        # MF: test
-        # self.scores = self.inner_product(self.u_embeddings, self.i_embeddings)
-        # like_pred = tf.nn.sigmoid(self.scores)
-        # # print("tf.shape(self.label_like)=", tf.shape(self.label_like))
-        # # print("1tf.shape(like_pred)=", tf.shape(like_pred))
-        # like_pred = tf.reshape(like_pred, [-1, 1])
-        # # print("2tf.shape(like_pred)=", tf.shape(like_pred))
-        # self.loss = tf.losses.log_loss(self.label_like_re, like_pred)
 
         ## optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
@@ -143,14 +120,8 @@ class model_MMOE(object):
         if self.optimizer == 'Adagrad': self.opt = tf.train.AdagradOptimizer(learning_rate=self.lr)
 
         ## update parameters
-        self.updates = self.opt.minimize(self.loss, var_list=self.var_list)
+        self.updates = self.opt.minimize(self.loss)
         print("self.updates=", self.updates)
-
-        ## get top k
-        # self.all_ratings = tf.matmul(self.u_embeddings, self.item_embeddings, transpose_a=False, transpose_b=True)
-        # self.all_ratings += self.items_in_train_data  ## set a very small value for the items appearing in the training set to make sure they are at the end of the sorted list
-        # self.top_items = tf.nn.top_k(self.all_ratings, k=self.top_k, sorted=True).indices
-
 
     def inner_product(self, users, items):
         scores = tf.reduce_sum(tf.multiply(users, items), axis=1)

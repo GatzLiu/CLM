@@ -73,7 +73,7 @@ def train_model(para):
             # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
             # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
 
-            _ , loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
+            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
                 [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
                 model.pred],
                 feed_dict={
