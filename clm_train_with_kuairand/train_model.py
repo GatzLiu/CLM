@@ -70,17 +70,15 @@ def train_model(para):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
 
-            # print("train_batch_data[:,:,0]", train_batch_data[:,:,0]) # [-1, 100]
-            # print("train_batch_data[:,:,17]", train_batch_data[:,:,17])
-
-            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
-                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
+            # preedict first
+            loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
+                [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
                 model.pred],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
                     model.real_length: real_len_batch,
-                    model.keep_prob: 0.999,
+                    model.keep_prob: 1.0,
                     model.like_pxtr_list: train_batch_data[:,:,13],
                     model.follow_pxtr_list: train_batch_data[:,:,14],
                     model.comment_pxtr_list: train_batch_data[:,:,15],
@@ -92,6 +90,25 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
+            # then train the model
+            _ = sess.run(
+                model.updates,
+                feed_dict={
+                    model.item_list: train_batch_data[:, :, 0],
+                    model.click_label_list: train_batch_data[:, :, 2],
+                    model.real_length: real_len_batch,
+                    model.keep_prob: 0.999,
+                    model.like_pxtr_list: train_batch_data[:, :, 13],
+                    model.follow_pxtr_list: train_batch_data[:, :, 14],
+                    model.comment_pxtr_list: train_batch_data[:, :, 15],
+                    model.forward_pxtr_list: train_batch_data[:, :, 16],
+                    model.longview_pxtr_list: train_batch_data[:, :, 17],
+                    model.like_pxtr_dense_list: train_batch_data[:, :, 8],
+                    model.follow_pxtr_dense_list: train_batch_data[:, :, 9],
+                    model.comment_pxtr_dense_list: train_batch_data[:, :, 10],
+                    model.forward_pxtr_dense_list: train_batch_data[:, :, 11],
+                    model.longview_pxtr_dense_list: train_batch_data[:, :, 12],
+                })
             pred_list.append(pred) # pred = [-1, max_len]
 
         if ((epoch+1) == 5) or ((epoch+1) == 10):
