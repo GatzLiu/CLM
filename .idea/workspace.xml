@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="eb430805-5f3b-4e56-9ac9-34b73093558f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_pretraining_with_kuairand/model_MMOE.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_pretraining_with_kuairand/model_MMOE.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_CLM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_CLM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_MLP.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_MLP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_PRM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_PRM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_SUM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/models/model_SUM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/models/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/models/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/train_model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,13 +34,13 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/jack/codes/CLM/clm_train_with_kuairand/models"
+    "last_opened_file_path": "/Users/jack/codes/CLM/clm_train_with_kuairand/params"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/clm_train_with_kuairand/models" />
       <recent name="$PROJECT_DIR$/clm_train_with_kuairand/params" />
+      <recent name="$PROJECT_DIR$/clm_train_with_kuairand/models" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/clm_train_with_kuairand/models" />
