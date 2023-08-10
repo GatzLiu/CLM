@@ -142,13 +142,13 @@ def train_model(para):
             lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
 
         # ndcg: pxtr-input with pred
-        print ("[epoch+1, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
+        print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
                 sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
                 sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
                 sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
 
         # ndcg: pred with action-label
-        print ("[epoch+1, label ndcg", ", click, xtr]=", [epoch+1,
+        print ("[ep, label ndcg", ", click, xtr]=", [epoch+1,
             sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
             sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
             sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
