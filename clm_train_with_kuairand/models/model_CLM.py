@@ -27,10 +27,7 @@ class model_CLM(object):
         self.e = 0.1 ** 10
         bin_num = 10000
         if_pxtr_interaction = False
-        pxtr_weight = para['pxtr_weight']
-        exp_weight = para['exp_weight']
-        sim_order_weight = para['sim_order_weight']
-        pxtr_reconstruct_weight = para['pxtr_reconstruct_weight']
+        if_add_position = False
 
         ## 1 placeholder
         # [-1, max_len]
@@ -112,10 +109,11 @@ class model_CLM(object):
                                 self.pftr_list_embeddings, self.plvtr_list_embeddings], -1)
         # [-1, max_len, 5]
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pcmtr_dense_list, 
-                                    self.pftr_dense_list, self.plvtr_dense_list], -1)
+                                      self.pftr_dense_list, self.plvtr_dense_list], -1)
 
         # 5.1 train item bias of each pxtr
-        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), name='pxtr_mlp')   # predict pxtr with item features
+        bias_init = tf.constant_initializer([-6.02140376, - 6.31137081, - 6.96401465, - 6.22389044, 0.92653726])  # initialize bias
+        pxtr_item_bias_logits = tf.layers.dense(self.item_list_embeddings[:, :, 0: 16], len(self.pxtr_list), bias_initializer=bias_init, name='pxtr_mlp')   # predict pxtr with item features
         pxtr_item_bias_pred = tf.sigmoid(pxtr_item_bias_logits)
         self.loss_pxtr_bias = tf.losses.log_loss(pxtr_dense_input, pxtr_item_bias_pred, reduction="weighted_mean") # # [-1, max_len, 5]
 
@@ -141,14 +139,16 @@ class model_CLM(object):
         pxtr_unbias_input = tf.reshape(pxtr_unbias_emb, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])   # concat embs of pxtr
         
         # 5.3 add position_emb, [-1, max_len, pxtr_dim*5]
-        pxtr_input = self.add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len, 
-                                            pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name="biased")
+        if if_add_position:
+            pxtr_input = self.add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
+                                               pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name="biased")
         if if_pxtr_interaction:
-            pxtr_input += self.pxtr_transformer(pxtr_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='pxtr')
-            pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=listwise_len, pxtr_num=len(pxtr_list), dim=pxtr_dim, name='unbiased_pxtr')
+            pxtr_input += self.pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
+            pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
-        pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
+        # pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
+        pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
@@ -175,7 +175,7 @@ class model_CLM(object):
             print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
             
-            self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, pxtr_weight, min_len)
+            self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
             # choose use or not-use Transformer 
             col = pxtr_input.get_shape()[2]
@@ -195,10 +195,10 @@ class model_CLM(object):
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
-        self.loss = exp_weight * self.loss_click + \
-                    sim_order_weight * self.loss_sim_order + \
-                    pxtr_reconstruct_weight * self.loss_pxtr_reconstruct + \
-                    self.loss_pxtr_bias
+        self.loss = para['exp_weight'] * self.loss_click + \
+                    para['sim_order_weight'] * self.loss_sim_order + \
+                    para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct + \
+                    para['bias_weight'] * self.loss_pxtr_bias
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)

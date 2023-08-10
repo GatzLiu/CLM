@@ -25,10 +25,6 @@ class model_MLP(object):
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
         self.e = 0.1 ** 10
-        pxtr_weight = para['pxtr_weight']
-        exp_weight = para['exp_weight']
-        sim_order_weight = para['sim_order_weight']
-        pxtr_reconstruct_weight = para['pxtr_reconstruct_weight']
 
         ## 1 placeholder
         # [-1, max_len]
@@ -122,7 +118,7 @@ class model_MLP(object):
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
-            self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, pxtr_weight, min_len)
+            self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
             # choose use or not-use Transformer
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
@@ -134,9 +130,9 @@ class model_MLP(object):
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
-        self.loss = exp_weight * self.loss_click + \
-                    sim_order_weight * self.loss_sim_order + \
-                    pxtr_reconstruct_weight * self.loss_pxtr_reconstruct
+        self.loss = para['exp_weight'] * self.loss_click + \
+                    para['sim_order_weight'] * self.loss_sim_order + \
+                    para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct
         self.loss_pxtr_bias = tf.constant(0)
 
         #   5.6 optimizer
