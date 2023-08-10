@@ -126,7 +126,6 @@ class model_PRM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            layer_num = 1
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
@@ -135,7 +134,7 @@ class model_PRM(object):
 
             if linear_flag:
                 pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=layer_num)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, max_len, nh*pxtr_dim]
             else:
                 pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
@@ -152,7 +151,7 @@ class model_PRM(object):
             col = pxtr_input.get_shape()[2]
             if linear_flag:
                 pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, listwise_len, nh*dim]
             else:
                 pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
@@ -200,19 +199,12 @@ class model_PRM(object):
         for para in reg_list: reg += tf.nn.l2_loss(para)
         return reg
 
-    def linear_set_attention_block(self, query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, m_size=32, iter_num=0):
+    def linear_set_attention_block(self, query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, m_size=32):
         ## poly encoder
         with tf.name_scope(name):
             I = tf.get_variable(name + "_i_trans_matrix",(1, m_size, col), initializer=tf.truncated_normal_initializer(stddev=5.0)) # [-1, m_size, col]
             I = tf.tile(I, [tf.shape(query_input)[0],1,1])
             H = self.set_attention_block(I, action_list_input, name + "_ele2clus", mask, col, 1, action_item_size, att_emb_size, True, True)    #[-1, m_size, nh*dim]
-            for l in range(iter_num):
-                H = self.set_attention_block(H, action_list_input, name + "_ele2clus_{}".format(l), mask, att_emb_size, 1, action_item_size, att_emb_size, True, True)  # [-1, m_size, nh*dim]
-            # for l in range(iter_num):
-            #     H += self.set_attention_block(H, H, name + "_sa_clus2clus_{}".format(l), mask, att_emb_size, 1, att_emb_size, att_emb_size, False, False)
-            #     H = KaiLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
-            #     H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
-            #     H = KaiLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res
 

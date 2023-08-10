@@ -155,7 +155,7 @@ class model_CLM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            layer_num = 1
+            layer_num = 0
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
@@ -235,13 +235,13 @@ class model_CLM(object):
             I = tf.get_variable(name + "_i_trans_matrix",(1, m_size, col), initializer=tf.truncated_normal_initializer(stddev=5.0)) # [-1, m_size, col]
             I = tf.tile(I, [tf.shape(query_input)[0],1,1])
             H = self.set_attention_block(I, action_list_input, name + "_ele2clus", mask, col, 1, action_item_size, att_emb_size, True, True)    #[-1, m_size, nh*dim]
-            for l in range(iter_num):
-                H = self.set_attention_block(H, action_list_input, name + "_ele2clus_{}".format(l), mask, att_emb_size, 1, action_item_size, att_emb_size, True, True)  # [-1, m_size, nh*dim]
             # for l in range(iter_num):
-            #     H += self.set_attention_block(H, H, name + "_sa_clus2clus_{}".format(l), mask, att_emb_size, 1, att_emb_size, att_emb_size, False, False)
-            #     H = KaiLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
-            #     H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
-            #     H = KaiLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
+            #     H = self.set_attention_block(H, action_list_input, name + "_ele2clus_{}".format(l), mask, att_emb_size, 1, action_item_size, att_emb_size, True, True)  # [-1, m_size, nh*dim]
+            for l in range(iter_num):
+                H += self.set_attention_block(H, H, name + "_sa_clus2clus_{}".format(l), mask, att_emb_size, 1, att_emb_size, att_emb_size, False, False)
+                H = self.CommonLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
+                H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
+                H = self.CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res
 
