@@ -73,10 +73,10 @@ class model_MUL(object):
         
         #   5.5 loss
         self.loss = tf.nn.l2_loss(self.item_list_embeddings)
-        self.loss_click = 0
-        self.loss_sim_order = 0
-        self.loss_pxtr_reconstruct = 0
-        self.loss_pxtr_bias = 0
+        self.loss_click = tf.constant(0)
+        self.loss_sim_order = tf.constant(0)
+        self.loss_pxtr_reconstruct = tf.constant(0)
+        self.loss_pxtr_bias = tf.constant(0)
 
         self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
         self.updates = self.opt.minimize(self.loss)
