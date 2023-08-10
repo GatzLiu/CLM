@@ -101,7 +101,7 @@ class model_PRM(object):
 
 
         # 5 start ---------------------
-        # item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
+        item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
         # [-1, max_len, pxtr_dim*5]
         pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pcmtr_list_embeddings, 
                                 self.pftr_list_embeddings, self.plvtr_list_embeddings], -1)
@@ -117,6 +117,7 @@ class model_PRM(object):
         pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])
 
+        pxtr_input = tf.concat([item_input, pxtr_input], -1)
         #   5.5 transformer
         with tf.name_scope("sab1"):
             linear_flag = False

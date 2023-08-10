@@ -11,7 +11,7 @@ PXTR_DIM = 16
 ITEM_DIM = 64
 PXTR_BINS = 10000
 
-N_EPOCH = 20
+N_EPOCH = 50
 validate_test = 0   # 0:Validate, 1: Test
 BATCH_SIZE = 10000
 PRED_BATCH_SIZE = 2000
