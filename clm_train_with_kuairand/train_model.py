@@ -118,7 +118,7 @@ def train_model(para):
                 [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
-        print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
+        # print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
 
         # ndcg
         k = 100
@@ -142,13 +142,13 @@ def train_model(para):
             lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
 
         # ndcg: pxtr-input with pred
-        print ("[epoch+1, (pxtr-input with pred) ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+        print ("[epoch+1, pxtr ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
                 sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
                 sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
                 sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
 
         # ndcg: pred with action-label
-        print ("[epoch+1, (pred with action-label) ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
+        print ("[epoch+1, label ndcg@", k, ", click, ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
             sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
             sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
             sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
