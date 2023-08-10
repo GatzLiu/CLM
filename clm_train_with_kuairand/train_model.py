@@ -72,6 +72,7 @@ def train_model(para):
             for b in train_batch_data:
                 for s in b:
                     if s[0] == 25700:
+                        s[0] = 300000
                         print(s)
             # preedict first
             loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
