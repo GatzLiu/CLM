@@ -41,7 +41,7 @@ def read_data(path):
             item_num = max(item[0], item_num)
     
     print ("item_num=", item_num) # 25700
-    return data, item_num
+    return data, item_num + 1
 
 
 def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
