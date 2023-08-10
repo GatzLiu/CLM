@@ -69,7 +69,10 @@ def train_model(para):
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
-
+            for b in train_batch_data:
+                for s in b:
+                    if s[0] == 25700:
+                        print(s)
             # preedict first
             loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
                 [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
