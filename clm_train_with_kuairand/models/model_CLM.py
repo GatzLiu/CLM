@@ -152,7 +152,7 @@ class model_CLM(object):
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = True
+            linear_flag = False
             m_size_apply = 32
             head_num = 1
             layer_num = 0
