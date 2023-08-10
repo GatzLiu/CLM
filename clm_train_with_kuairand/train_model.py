@@ -126,7 +126,7 @@ def train_model(para):
         list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
         ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
         click_label_ndcg = []
-        for i in range(len(pred_list)):
+        for i in range(para['TEST_USER_BATCH']):  #len(pred_list)):
             # pred_list[i]     [max_len]
             # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
             list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
