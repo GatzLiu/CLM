@@ -27,10 +27,10 @@ class model_CLM(object):
         self.e = 0.1 ** 10
         bin_num = 10000
         if_pxtr_interaction = False
-        pxtr_weight = [1.0, 1.0, 1.0, 1.0, 1.0]
-        exp_weight = 1.0
-        sim_order_weight = 2.0
-        pxtr_reconstruct_weight = 0.1
+        pxtr_weight = para['pxtr_weight']
+        exp_weight = para['exp_weight']
+        sim_order_weight = para['sim_order_weight']
+        pxtr_reconstruct_weight = para['pxtr_reconstruct_weight']
 
         ## 1 placeholder
         # [-1, max_len]

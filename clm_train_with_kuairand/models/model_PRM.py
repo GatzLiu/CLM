@@ -105,7 +105,7 @@ class model_PRM(object):
 
 
         # 5 start ---------------------
-        item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
+        # item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
         # [-1, max_len, pxtr_dim*5]
         pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pcmtr_list_embeddings, 
                                 self.pftr_list_embeddings, self.plvtr_list_embeddings], -1)

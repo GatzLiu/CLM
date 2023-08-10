@@ -49,7 +49,7 @@ def read_data(path):
         user_num = max(row[0], user_num)
         item_num = max(row[1], item_num)
         
-    return data, user_num, item_num
+    return data, user_num + 1, item_num + 1
 
 
 def cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_comment_re, epoch_label_forward_re, epoch_label_longview_re,
