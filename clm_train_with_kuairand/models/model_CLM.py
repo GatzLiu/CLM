@@ -152,10 +152,10 @@ class model_CLM(object):
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = False
+            linear_flag = True
             m_size_apply = 32
             head_num = 1
-            layer_num = 0
+            layer_num = 1
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
