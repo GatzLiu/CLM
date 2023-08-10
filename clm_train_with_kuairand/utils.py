@@ -137,4 +137,5 @@ def ndcg_for_one_samp(ranking_xtr, ranking_ens, k):
         dcg += ranking_xtr[i] / np.log(order_ens[i] + 1) / np.log(2.0)
         idcg += ranking_xtr[i] / np.log(order_xtr[i] + 1) / np.log(2.0)
     # print(dcg, idcg)
+    print(dcg, idcg)
     return dcg / (idcg + 1e-10)

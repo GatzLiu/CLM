@@ -1,6 +1,6 @@
 from params.params_common import *
 
-LR = [0.001, 10000][dataset]
+LR = [0.001, 0.0][dataset]
 LAMDA = [0.2, 0.01][dataset]
 alpha_ltr = 1.0
 alpha_wtr = 1.0

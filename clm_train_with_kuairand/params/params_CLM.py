@@ -1,6 +1,6 @@
 from params.params_common import *
 
-LR = [0.001, 10000][dataset]
+LR = [0.001, 0.001][dataset]
 LAMDA = [0.2, 0.01][dataset]
 
 # model save
