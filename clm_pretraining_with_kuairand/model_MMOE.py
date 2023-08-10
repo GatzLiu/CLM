@@ -55,6 +55,7 @@ class model_MMOE(object):
         ## lookup
         self.u_embeddings = tf.nn.embedding_lookup(self.user_embeddings, self.users) # [-1, dim]
         self.i_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.items) # [-1, dim]
+        self.loss_reg = tf.nn.l2_loss(self.u_embeddings) + tf.nn.l2_loss(self.i_embeddings)
 
         self.action_list_re = tf.reshape(self.action_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
         self.action_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings, self.action_list_re)  # [bs*max_len, dim]
@@ -111,7 +112,8 @@ class model_MMOE(object):
                     self.loss_weight[1] * self.loss_follow + \
                     self.loss_weight[2] * self.loss_comment + \
                     self.loss_weight[3] * self.loss_forward + \
-                    self.loss_weight[4] * self.loss_longview
+                    self.loss_weight[4] * self.loss_longview + \
+                    self.lamda * self.loss_reg
 
         ## optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
