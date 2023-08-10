@@ -142,7 +142,6 @@ def train_model(para):
             ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
             lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
 
-        print(list_ltr_ndcg_epoch)
         # ndcg: pxtr-input with pred
         print ("[epoch+1, (pxtr-input with pred) ndcg@", k, ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1, 
                 sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),

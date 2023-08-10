@@ -52,11 +52,11 @@ class model_MUL(object):
         self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
         #   pxtr dense
-        self.pltr_dense_list = tf.reshape(self.like_pxtr_dense_list, [-1, self.max_len, 1])
-        self.pwtr_dense_list = tf.reshape(self.follow_pxtr_dense_list, [-1, self.max_len, 1])
-        self.pcmtr_dense_list = tf.reshape(self.comment_pxtr_dense_list, [-1, self.max_len, 1])
-        self.pftr_dense_list = tf.reshape(self.forward_pxtr_dense_list, [-1, self.max_len, 1])
-        self.plvtr_dense_list = tf.reshape(self.longview_pxtr_dense_list, [-1, self.max_len, 1])
+        self.pltr_dense_list = tf.reshape(self.like_pxtr_dense_list, [-1, self.max_len])
+        self.pwtr_dense_list = tf.reshape(self.follow_pxtr_dense_list, [-1, self.max_len])
+        self.pcmtr_dense_list = tf.reshape(self.comment_pxtr_dense_list, [-1, self.max_len])
+        self.pftr_dense_list = tf.reshape(self.forward_pxtr_dense_list, [-1, self.max_len])
+        self.plvtr_dense_list = tf.reshape(self.longview_pxtr_dense_list, [-1, self.max_len])
 
         logits = (1 + self.pltr_dense_list / para['beta_ltr']) ** para['alpha_ltr']
         logits *= (1 + self.pwtr_dense_list / para['beta_wtr']) ** para['alpha_wtr']

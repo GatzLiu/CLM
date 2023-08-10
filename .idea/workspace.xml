@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="eb430805-5f3b-4e56-9ac9-34b73093558f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_CLM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_CLM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_MLP.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_MLP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_MUL.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_MUL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_PRM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_PRM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_SUM.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/params/params_SUM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/train_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clm_train_with_kuairand/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/clm_train_with_kuairand/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +46,29 @@
       <recent name="$PROJECT_DIR$/clm_train_with_kuairand/models" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python._main">
+    <configuration name="_main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="CLM" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/opt/anaconda3/envs/tensorflow1.4.1/bin/python3.6" />
+      <option name="SDK_NAME" value="Python 3.6" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/clm_train_with_kuairand" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/clm_train_with_kuairand/_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="utils" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="CLM" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -76,8 +91,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python._main" />
+      <item itemvalue="Python.utils" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python._main" />
         <item itemvalue="Python.utils" />
       </list>
     </recent_temporary>
