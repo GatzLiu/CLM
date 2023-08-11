@@ -146,15 +146,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
             topk_items = np.argsort(-pred_list[j][:k])
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
             ndcg[i].append(evaluation_NDCG(topk_items, k, pos_items))
-            if j == 0:
-                print(k)
-                print(train_data_input[j][:, 2])
-                print(pred_list[j])
-                print(pos_items)
-                print(topk_items)
-                print(evaluation_F1(topk_items, k, pos_items))
-                print(evaluation_NDCG(topk_items, k, pos_items))
-
     # ndcg: pred with action-label
-    print ("[ep, label ndcg", ", click, xtr]=", [epoch+1,
-        sum(ndcg)/len(ndcg)])
+    f1score = np.array(f1score)
+    ndcg = np.array(ndcg)
+    print ("ep", epoch+1, np.mean(f1score, 0), np.mean(ndcg, 0))
