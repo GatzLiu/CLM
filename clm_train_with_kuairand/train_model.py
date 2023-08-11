@@ -61,8 +61,8 @@ def train_model(para):
         sample_list = generate_sample_with_pxtr_bins(sample_list, para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
         test_data_input.append(sample_list)
         test_len_input.append(real_len)
-    test_data_input = np.array(test_data_input)  # [-1, 100, 13+5]
-    test_len_input = np.array(test_len_input)
+    test_data_raw = np.array(test_data_input)  # [-1, 100, 13+5]
+    test_len_raw = np.array(test_len_input)
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -94,9 +94,9 @@ def train_model(para):
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
         ## eval
-        sampling = rd.sample(len(test_data_input), para['TEST_USER_BATCH'])
-        test_data_input = test_data_input[sampling]
-        test_len_input = test_len_input[sampling]
+        sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
+        test_data_input = test_data_raw[sampling]
+        test_len_input = test_len_raw[sampling]
         pred_list = []
         test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, pred = sess.run(
             [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
