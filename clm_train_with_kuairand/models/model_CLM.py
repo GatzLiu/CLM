@@ -155,7 +155,7 @@ class model_CLM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            layer_num = 5
+            self.decay = para['decay']
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
@@ -164,7 +164,7 @@ class model_CLM(object):
 
             if linear_flag:
                 pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=layer_num)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
             else:
                 pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
@@ -241,7 +241,7 @@ class model_CLM(object):
                 H = self.CommonLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
                 H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
                 H = self.CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
-                H_list.append(H)
+                H_list.append((self.decay ** (l + 1)) * H)
             H = tf.reduce_sum(H_list, axis=0)
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res

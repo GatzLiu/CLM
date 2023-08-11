@@ -130,11 +130,31 @@ def ndcg_for_one_samp(ranking_xtr, ranking_ens, k):
 
     order_xtr = get_order(ranking_xtr)
     order_ens = get_order(ranking_ens)
-    # print(order_xtr)
-    # print(order_ens)
     dcg, idcg = 0, 0
-    for i in range(len(ranking_xtr[:k])):
+    for i in range(len(ranking_xtr)):
         dcg += ranking_xtr[i] / np.log(order_ens[i] + 1) / np.log(2.0)
         idcg += ranking_xtr[i] / np.log(order_xtr[i] + 1) / np.log(2.0)
-    # print(dcg, idcg)
     return dcg / (idcg + 1e-10)
+
+# metrices with @k
+def evaluation_F1(order, top_k, positive_item):
+    epsilon = 0.1 ** 10
+    top_k_items = set(order[0: top_k])
+    positive_item = set(positive_item)
+    precision = len(top_k_items & positive_item) / max(len(top_k_items), epsilon)
+    recall = len(top_k_items & positive_item) / max(len(positive_item), epsilon)
+    F1 = 2 * precision * recall / max(precision + recall, epsilon)
+    return F1
+
+def evaluation_NDCG(order, top_k, positive_item):
+    top_k_item = order[0: top_k]
+    epsilon = 0.1**10
+    DCG = 0
+    iDCG = 0
+    for i in range(top_k):
+        if top_k_item[i] in positive_item:
+            DCG += 1 / np.log2(i + 2)
+    for i in range(min(len(positive_item), top_k)):
+        iDCG += 1 / np.log2(i + 2)
+    NDCG = DCG / max(iDCG, epsilon)
+    return NDCG
