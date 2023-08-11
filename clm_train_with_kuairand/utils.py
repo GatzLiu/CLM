@@ -130,11 +130,84 @@ def ndcg_for_one_samp(ranking_xtr, ranking_ens, k):
 
     order_xtr = get_order(ranking_xtr)
     order_ens = get_order(ranking_ens)
-    # print(order_xtr)
-    # print(order_ens)
     dcg, idcg = 0, 0
-    for i in range(len(ranking_xtr[:k])):
+    for i in range(len(ranking_xtr)):
         dcg += ranking_xtr[i] / np.log(order_ens[i] + 1) / np.log(2.0)
         idcg += ranking_xtr[i] / np.log(order_xtr[i] + 1) / np.log(2.0)
-    # print(dcg, idcg)
     return dcg / (idcg + 1e-10)
+
+# metrices with @k
+def evaluation_F1(order, top_k, positive_item):
+    epsilon = 0.1 ** 10
+    top_k_items = set(order[0: top_k])
+    positive_item = set(positive_item)
+    precision = len(top_k_items & positive_item) / max(len(top_k_items), epsilon)
+    recall = len(top_k_items & positive_item) / max(len(positive_item), epsilon)
+    F1 = 2 * precision * recall / max(precision + recall, epsilon)
+    return F1
+
+def evaluation_NDCG(order, top_k, positive_item):
+    top_k_item = order[0: top_k]
+    epsilon = 0.1**10
+    DCG = 0
+    iDCG = 0
+    for i in range(top_k):
+        if top_k_item[i] in positive_item:
+            DCG += 1 / np.log2(i + 2)
+    for i in range(min(len(positive_item), top_k)):
+        iDCG += 1 / np.log2(i + 2)
+    NDCG = DCG / max(iDCG, epsilon)
+    return NDCG
+
+def print_pxtr_ndcg(epoch, para, train_data_input, pred_list):
+    # ndcg
+    k = 100
+    list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
+    ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
+    click_label_ndcg = []
+    for i in range(para['TEST_USER_BATCH']):  #len(pred_list)):
+        # pred_list[i]     [max_len]
+        # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
+        list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
+        list_wtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,14], pred_list[i][:k], k))
+        list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,15], pred_list[i][:k], k))
+        list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,16], pred_list[i][:k], k))
+        list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,17], pred_list[i][:k], k))
+
+        click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k], k))
+        ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
+        wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
+        cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
+        ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
+        lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
+
+    # ndcg: pxtr-input with pred
+    print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
+            sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
+            sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
+            sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
+
+    # ndcg: pred with action-label
+    print ("[ep, label ndcg", ", click, xtr]=", [epoch+1,
+        sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
+        sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
+        sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
+
+def print_click_ndcg(epoch, para, train_data_input, pred_list):
+    f1score = []
+    ndcg = []
+    for i in range(len(para['TOP_K'])):
+        f1score.append([])
+        ndcg.append([])
+    for i in range(len(para['TOP_K'])):
+        for j in range(para['TEST_USER_BATCH']):
+            k = para['TOP_K'][i]
+            pos_items = np.where(train_data_input[j][:, 2] > 0)[0]
+            topk_items = np.argsort(-pred_list[j][:k])
+            f1score[i].append(evaluation_F1(topk_items, k, pos_items))
+            ndcg[i].append(evaluation_NDCG(topk_items, k, pos_items))
+    # ndcg: pred with action-label
+    f1score = np.array(f1score)
+    ndcg = np.array(ndcg)
+    print ("ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1))
+
