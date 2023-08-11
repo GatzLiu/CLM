@@ -147,12 +147,12 @@ class model_CLM(object):
             pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
-        pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
-        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
+        # pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
+        pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = False
+            linear_flag = True
             m_size_apply = 32
             head_num = 1
             layer_num = 0
