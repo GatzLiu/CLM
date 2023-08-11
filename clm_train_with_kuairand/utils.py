@@ -141,14 +141,15 @@ def evaluation_F1(order, top_k, positive_item):
     epsilon = 0.1 ** 10
     top_k_items = set(order[0: top_k])
     positive_item = set(positive_item)
-    print(top_k_items)
-    print(positive_item)
-    print(top_k_items & positive_item)
     precision = len(top_k_items & positive_item) / max(len(top_k_items), epsilon)
     recall = len(top_k_items & positive_item) / max(len(positive_item), epsilon)
     F1 = 2 * precision * recall / max(precision + recall, epsilon)
-    print(precision)
-    print(recall)
+    if top_k == 10:
+        print(top_k_items)
+        print(positive_item)
+        print(top_k_items & positive_item)
+        print(precision)
+        print(recall)
     return F1
 
 def evaluation_NDCG(order, top_k, positive_item):
