@@ -1,6 +1,7 @@
 from test_model import *
 from utils import *
 import numpy as np
+import random as rd
 
 from models.model_CLM import model_CLM
 from models.model_PRM import model_PRM
@@ -60,8 +61,8 @@ def train_model(para):
         sample_list = generate_sample_with_pxtr_bins(sample_list, para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
         test_data_input.append(sample_list)
         test_len_input.append(real_len)
-    test_data_input = np.array(test_data_input)  # [-1, 100, 13+5]
-    test_len_input = np.array(test_len_input)
+    test_data_raw = np.array(test_data_input)  # [-1, 100, 13+5]
+    test_len_raw = np.array(test_len_input)
 
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
@@ -80,7 +81,7 @@ def train_model(para):
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
                     model.real_length: real_len_batch,
-                    model.keep_prob: 1.0,
+                    model.keep_prob: 0.999,
                     model.like_pxtr_list: train_batch_data[:,:,13],
                     model.follow_pxtr_list: train_batch_data[:,:,14],
                     model.comment_pxtr_list: train_batch_data[:,:,15],
@@ -93,8 +94,9 @@ def train_model(para):
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
         ## eval
-        test_data_input = test_data_input[0: para['TEST_USER_BATCH']]  # [-1, 100, 13+5]
-        test_len_input = test_len_input[0: para['TEST_USER_BATCH']]
+        sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
+        test_data_input = test_data_raw[sampling]
+        test_len_input = test_len_raw[sampling]
         pred_list = []
         test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, pred = sess.run(
             [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
@@ -121,7 +123,7 @@ def train_model(para):
         # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
         # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
         # save_ckpt(epoch, sess, saver, save_model_path)
-        # print_pxtr_ndcg(epoch, para, train_data_input, pred_list)
+        # print_pxtr_ndcg(epoch, train_data_input, pred_list)
         print_click_ndcg(epoch, para, train_data_input, pred_list)
         
         if not loss < 10 ** 10:
