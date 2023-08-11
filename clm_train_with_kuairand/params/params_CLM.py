@@ -8,7 +8,7 @@ sim_order_weight = 0.0 # 2.0
 pxtr_reconstruct_weight = 0.0 # 0.1
 bias_weight = 10.0
 layer_num = 5
-decay = 1.0
+decay = 0.5
 
 # model save
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDATE_ITEM_LIST_LENGTH': CANDIDATE_ITEM_LIST_LENGTH, 'LR': LR, 'LAMDA': LAMDA,
