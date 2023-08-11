@@ -127,16 +127,16 @@ def train_model(para):
             print("model save path = ", save_path)
 
         # log
-        # print_value([epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview])
+        # print_value([epoch + 1, loss, loss_like, loss_follow, loss_forward])
         print("\nTraining auc:")
         print("[epoch + 1, loss, loss_like, loss_follow, loss_forward] = ",
                 [epoch + 1, loss, loss_like, loss_follow, loss_forward])
-        print("[epoch + 1, like_auc, follow_auc, comment_auc, forward_auc, longview_auc", 
+        print("[epoch + 1, like_auc, follow_auc, forward_auc", 
                 [epoch + 1, list_auc[0], list_auc[1], list_auc[2]])
         print("\nTest auc:")
-        print("[epoch + 1, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ",
+        print("[epoch + 1, loss, loss_like, loss_follow, loss_forward] = ",
               [epoch + 1, loss_vali, loss_like_vali, loss_follow_vali, loss_forward_vali])
-        print("[epoch + 1, like_auc, follow_auc, comment_auc, forward_auc, longview_auc",
+        print("[epoch + 1, like_auc, follow_auc, forward_auc",
               [epoch + 1, list_auc_vali[0], list_auc_vali[1], list_auc_vali[2]])
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
