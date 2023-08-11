@@ -159,13 +159,13 @@ def evaluation_NDCG(order, top_k, positive_item):
     NDCG = DCG / max(iDCG, epsilon)
     return NDCG
 
-def print_pxtr_ndcg(epoch, para, train_data_input, pred_list):
+def print_pxtr_ndcg(epoch, train_data_input, pred_list):
     # ndcg
     k = 100
     list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
     ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
     click_label_ndcg = []
-    for i in range(para['TEST_USER_BATCH']):  #len(pred_list)):
+    for i in range(len(pred_list)):  #len(pred_list)):
         # pred_list[i]     [max_len]
         # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
         list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
@@ -200,7 +200,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
         f1score.append([])
         ndcg.append([])
     for i in range(len(para['TOP_K'])):
-        for j in range(para['TEST_USER_BATCH']):
+        for j in range(len(pred_list)):
             k = para['TOP_K'][i]
             pos_items = np.where(train_data_input[j][:, 2] > 0.5)[0]
             topk_items = np.argsort(-pred_list[j])[:k]
