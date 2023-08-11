@@ -85,12 +85,11 @@ def train_model(para):
         if ((epoch+1) == 5) or ((epoch+1) == 10):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
-        #                            1              2              0.1                   1
-        print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ",
-                [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
+
+        # print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ",
+        #         [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
         
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
-        # print ("len(pred_list)=", len(pred_list), ", len(train_batch_data)=", len(train_data_input))
 
         # print_pxtr_ndcg(epoch, para, train_data_input, pred_list)
         print_click_ndcg(epoch, para, train_data_input, pred_list)
