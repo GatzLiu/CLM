@@ -56,7 +56,8 @@ def mmoe_prediction_data(para):
         forward_pred = sess.graph.get_tensor_by_name('forward_pred:0')
 
         # opt
-        updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')
+        # updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')  # NOTE: SGD
+        # updates = sess.graph.get_operation_by_name('Adam/Adam/-apply')  # NOTE: Adam
 
         # for
         epoch_label_like_re, epoch_label_follow_re, epoch_label_forward_re = [], [], []

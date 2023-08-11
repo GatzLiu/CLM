@@ -62,7 +62,7 @@ def mmoe_prediction_data(para):
         longview_pred = sess.graph.get_tensor_by_name('longview_pred:0')
 
         # opt
-        updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')
+        # updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')  # NOTE: SGD
 
         # for
         epoch_label_like_re = []
