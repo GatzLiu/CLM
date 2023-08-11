@@ -11,7 +11,7 @@ BATCH_SIZE = 10000
 validate_test = 0   # 0:Validate, 1: Test
 TEST_USER_BATCH = [4096, 4096][dataset]
 SAMPLE_RATE = 1
-N_EPOCH = 1
+N_EPOCH = 70
 BEST_EPOCH = [66, 48][dataset]
 LOSS_WEIGHT = [[1.7, 2.2, 1.4],
                [1.7, 2.2, 1.4]][dataset]
