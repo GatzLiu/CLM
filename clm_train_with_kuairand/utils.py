@@ -141,9 +141,14 @@ def evaluation_F1(order, top_k, positive_item):
     epsilon = 0.1 ** 10
     top_k_items = set(order[0: top_k])
     positive_item = set(positive_item)
+    print(top_k_items)
+    print(positive_item)
+    print(top_k_items & positive_item)
     precision = len(top_k_items & positive_item) / max(len(top_k_items), epsilon)
     recall = len(top_k_items & positive_item) / max(len(positive_item), epsilon)
     F1 = 2 * precision * recall / max(precision + recall, epsilon)
+    print(precision)
+    print(recall)
     return F1
 
 def evaluation_NDCG(order, top_k, positive_item):
@@ -203,7 +208,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
         for j in range(para['TEST_USER_BATCH']):
             k = para['TOP_K'][i]
             pos_items = np.where(train_data_input[j][:, 2] > 0)[0]
-            print(pos_items)
+            print('aaaa', pos_items)
             topk_items = np.argsort(-pred_list[j][:k])
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
             ndcg[i].append(evaluation_NDCG(topk_items, k, pos_items))
