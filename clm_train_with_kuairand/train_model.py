@@ -72,7 +72,7 @@ def train_model(para):
     for epoch in range(para['N_EPOCH']):
         ## train
         for batch_num in range(len(batches)-1):
-            train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
+            train_batch_data = train_data_input[batches[batch_num]: batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
             # preedict first
             _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias = sess.run(

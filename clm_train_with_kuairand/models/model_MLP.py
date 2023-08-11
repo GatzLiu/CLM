@@ -107,7 +107,7 @@ class model_MLP(object):
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pcmtr_dense_list,
                                       self.pftr_dense_list, self.plvtr_dense_list], -1)
 
-        pxtr_input = tf.concat([item_input, pxtr_input], -1)
+        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
         #   5.5 mlp
         with tf.name_scope("mlp"):
             output_size = self.pxtr_dim
