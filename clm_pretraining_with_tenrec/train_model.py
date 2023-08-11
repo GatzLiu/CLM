@@ -121,7 +121,7 @@ def train_model(para):
         #     print ("start save model , epoch+1=", epoch+1)
         #     save_path = saver.save(sess, save_model_path, global_step=epoch+1)
         #     print("model save path = ", save_path)
-        if ((epoch+1) == 20):
+        if ((epoch+1) == 50):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
             print("model save path = ", save_path)
