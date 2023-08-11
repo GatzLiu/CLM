@@ -42,7 +42,7 @@ def mmoe_prediction_data(para):
         # loss  sess.graph.get_tensor_by_name('')
         loss_like = sess.graph.get_tensor_by_name('log_loss/value:0')
         loss_follow = sess.graph.get_tensor_by_name('log_loss_1/value:0')
-        loss_forward = sess.graph.get_tensor_by_name('log_loss_3/value:0')
+        loss_forward = sess.graph.get_tensor_by_name('log_loss_2/value:0')
         loss = sess.graph.get_tensor_by_name('add_3:0')
 
         # label: cal auc
