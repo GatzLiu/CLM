@@ -142,6 +142,12 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
     for i in range(len(para['TOP_K'])):
         for j in range(para['TEST_USER_BATCH']):
             k = para['TOP_K']
+            print(pred_list)
+            print(j)
+            print(k)
+            print(pred_list[j])
+            print(pred_list[j][:k])
+
             pos_items = np.where(train_data_input[j][:, 2] > 0)[0]
             topk_items = np.argsort(-pred_list[j][:k])
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
