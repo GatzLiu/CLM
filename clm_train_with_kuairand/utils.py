@@ -145,6 +145,7 @@ def evaluation_F1(order, top_k, positive_item):
     recall = len(top_k_items & positive_item) / max(len(positive_item), epsilon)
     F1 = 2 * precision * recall / max(precision + recall, epsilon)
     if top_k == 10:
+        print('aaa')
         print(top_k_items)
         print(positive_item)
         print(top_k_items & positive_item)
@@ -163,6 +164,10 @@ def evaluation_NDCG(order, top_k, positive_item):
     for i in range(min(len(positive_item), top_k)):
         iDCG += 1 / np.log2(i + 2)
     NDCG = DCG / max(iDCG, epsilon)
+    if top_k == 10:
+        print('bbb')
+        print(top_k_item)
+        print(positive_item)
     return NDCG
 
 def print_pxtr_ndcg(epoch, para, train_data_input, pred_list):
