@@ -72,11 +72,12 @@ def train_model(para):
     for epoch in range(para['N_EPOCH']):
         ## train
         for batch_num in range(len(batches)-1):
-            train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
+            train_batch_data = train_data_input[batches[batch_num]: batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
             # preedict first
             _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias = sess.run(
-                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias],
+                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct,
+                 model.loss_pxtr_bias],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
@@ -100,7 +101,7 @@ def train_model(para):
         pred_list = []
         test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, pred = sess.run(
             [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
-            model.pred],
+             model.pred],
             feed_dict={
                 model.item_list: test_data_input[:,:,0],
                 model.click_label_list: test_data_input[:,:,2],
@@ -123,8 +124,8 @@ def train_model(para):
         # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
         # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
         # save_ckpt(epoch, sess, saver, save_model_path)
-        # print_pxtr_ndcg(epoch, train_data_input, pred_list)
-        print_click_ndcg(epoch, para, train_data_input, pred_list)
+        # print_pxtr_ndcg(epoch, test_data_input, pred_list)
+        print_click_ndcg(epoch, para, test_data_input, pred_list)
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)

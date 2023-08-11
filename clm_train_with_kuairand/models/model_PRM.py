@@ -115,10 +115,10 @@ class model_PRM(object):
         pxtr_input = pxtr_input * mask           # [-1, max_len, 5, pxtr_dim] * [-1, max_len, 5, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])
 
-        pxtr_input = tf.concat([item_input, pxtr_input], -1)
+        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = False
+            linear_flag = True
             m_size_apply = 32
             head_num = 1
             output_size = self.pxtr_dim
