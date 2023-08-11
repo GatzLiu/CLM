@@ -3,7 +3,7 @@ GPU_INDEX = "0"
 dataset = 0         # 0:Tenrec, 1:KuaiRand
 DATASET = ['Tenrec', 'KuaiRand'][dataset]
 MODEL = 'MMOE'
-LR = [0.02, 0.01][dataset]
+LR = [0.01, 0.01][dataset]
 LAMDA = [0.1, 0.1][dataset]
 ACTION_LIST_MAX_LEN = 50
 EMB_DIM = 64
@@ -13,7 +13,7 @@ TEST_USER_BATCH = [4096, 4096][dataset]
 SAMPLE_RATE = 1
 N_EPOCH = 40
 BEST_EPOCH = [66, 48][dataset]
-LOSS_WEIGHT = [[1.7, 2.2, 2.0],
+LOSS_WEIGHT = [[1.0, 2.2, 3.0],
                [1.7, 2.2, 1.4]][dataset]
 TOP_K = [10, 20, 50, 100]
 DIR = './dataset/'+DATASET+'/'
