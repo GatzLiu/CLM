@@ -75,7 +75,7 @@ def mmoe_prediction_data(para):
             model_like_pred, model_follow_pred, model_forward_pred = \
             sess.run(
                 [loss, loss_like, loss_follow, loss_forward,
-                 label_like_re, label_comment_re, label_forward_re,
+                 label_like_re, label_follow_re, label_forward_re,
                  like_pred, follow_pred, forward_pred],
                 feed_dict = {
                     user: pred_batch_data[:,0],
@@ -96,9 +96,9 @@ def mmoe_prediction_data(para):
 
             if batches[batch_num] % 1000000 == 0:
                 # print ("model_like_pred=", model_like_pred)
-                print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_comment, loss_forward, loss_longview] = ", 
+                print("[batch_start, batch_end, loss, loss_like, loss_follow, loss_forward] = ", 
                 [batches[batch_num], batches[batch_num+1], model_loss,
-                model_loss_like, model_loss_follow, model_loss_comment, model_loss_forward, model_loss_longview])
+                model_loss_like, model_loss_follow, model_loss_forward])
         
         list_auc = cal_auc(sess, epoch_label_like_re, epoch_label_follow_re, epoch_label_forward_re,
                 epoch_like_pred, epoch_follow_pred, epoch_forward_pred)
