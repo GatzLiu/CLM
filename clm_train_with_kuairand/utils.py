@@ -148,20 +148,15 @@ def evaluation_F1(order, top_k, positive_item):
 
 def evaluation_NDCG(order, top_k, positive_item):
     top_k_item = order[0: top_k]
-    print(positive_item)
-    print(top_k_item)
     epsilon = 0.1**10
     DCG = 0
     iDCG = 0
     for i in range(top_k):
         if top_k_item[i] in positive_item:
             DCG += 1 / np.log2(i + 2)
-        else: print(top_k_item[i])
     for i in range(min(len(positive_item), top_k)):
         iDCG += 1 / np.log2(i + 2)
     NDCG = DCG / max(iDCG, epsilon)
-    print(DCG)
-    print(iDCG)
     return NDCG
 
 def print_pxtr_ndcg(epoch, para, train_data_input, pred_list):
@@ -208,6 +203,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
         for j in range(para['TEST_USER_BATCH']):
             k = para['TOP_K'][i]
             pos_items = np.where(train_data_input[j][:, 2] > 0)[0]
+            print(pos_items)
             topk_items = np.argsort(-pred_list[j][:k])
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
             ndcg[i].append(evaluation_NDCG(topk_items, k, pos_items))
