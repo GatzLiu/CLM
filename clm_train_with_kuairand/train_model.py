@@ -11,10 +11,12 @@ from models.model_MUL import model_MUL
 def train_model(para):
     ## paths of data
     train_path = para['DIR'] + 'kuairand_ltr_data_train.json'
+    test_path = para['DIR'] + 'kuairand_ltr_data_test.json'
     save_model_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt'
 
     ## Load data
-    [train_data, item_num] = read_data(train_path)
+    train_data, item_num = read_data(train_path)
+    test_data, _ = read_data(test_path)
     print("len(train_data)=",len(train_data), ", item_num=", item_num)
 
     data = {"item_num": item_num}
@@ -41,7 +43,7 @@ def train_model(para):
     pxtr_bucket_range = np.linspace(0, 1, num=10000)
     for sample in range(len(train_data)):
         sample_list, real_len = generate_sample_with_max_len(train_data[sample], para)  # [100, 13]
-        sample_list = generate_sample_with_pxtr_bins(train_data[sample], para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        sample_list = generate_sample_with_pxtr_bins(sample_list, para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
         train_data_input.append(sample_list)  
         real_len_input.append(real_len)
         real_len_min = min(real_len_min, real_len)
@@ -50,20 +52,30 @@ def train_model(para):
     print ("len(train_data_input)=", len(train_data_input), ", len(real_len_input)=", len(real_len_input))
     print ("real_len_min=", real_len_min)
 
+    test_data_input = []
+    test_len_input = []
+    pxtr_bucket_range = np.linspace(0, 1, num=10000)
+    for sample in range(len(test_data)):
+        sample_list, real_len = generate_sample_with_max_len(test_data[sample], para)  # [100, 13]
+        sample_list = generate_sample_with_pxtr_bins(sample_list, para, pxtr_bucket_range)  # [100, 13+5], [pltr_index, pwtr_index, pcmtr_index, plvtr_index, plvtr_index]
+        test_data_input.append(sample_list)
+        test_len_input.append(real_len)
+    test_data_input = np.array(test_data_input)  # [-1, 100, 13+5]
+    test_len_input = np.array(test_len_input)
+
     ## split the training samples into batches
     batches = list(range(0, len(train_data), para['BATCH_SIZE']))
     batches.append(len(train_data))
 
     ## training iteratively
     for epoch in range(para['N_EPOCH']):
-        pred_list = []
+        ## train
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]:batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
             # preedict first
-            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
-                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
-                model.pred],
+            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias = sess.run(
+                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
@@ -80,17 +92,35 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
-            pred_list.append(pred) # pred = [-1, max_len]
-
-        if ((epoch+1) == 5) or ((epoch+1) == 10):
-            print ("start save model , epoch+1=", epoch+1)
-            save_path = saver.save(sess, save_model_path, global_step=epoch+1)
-
-        # print ("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ",
-        #         [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
-        
+        ## eval
+        test_data_input = test_data_input[0: para['TEST_USER_BATCH']]  # [-1, 100, 13+5]
+        test_len_input = test_len_input[0: para['TEST_USER_BATCH']]
+        pred_list = []
+        test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, pred = sess.run(
+            [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
+            model.pred],
+            feed_dict={
+                model.item_list: test_data_input[:,:,0],
+                model.click_label_list: test_data_input[:,:,2],
+                model.real_length: test_len_input,
+                model.keep_prob: 1.0,
+                model.like_pxtr_list: test_data_input[:,:,13],
+                model.follow_pxtr_list: test_data_input[:,:,14],
+                model.comment_pxtr_list: test_data_input[:,:,15],
+                model.forward_pxtr_list: test_data_input[:,:,16],
+                model.longview_pxtr_list: test_data_input[:,:,17],
+                model.like_pxtr_dense_list: test_data_input[:,:,8],
+                model.follow_pxtr_dense_list: test_data_input[:,:,9],
+                model.comment_pxtr_dense_list: test_data_input[:,:,10],
+                model.forward_pxtr_dense_list: test_data_input[:,:,11],
+                model.longview_pxtr_dense_list: test_data_input[:,:,12],
+        })
+        pred_list.append(pred) # pred = [-1, max_len]
         pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
 
+        # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
+        # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
+        # save_ckpt(epoch, sess, saver, save_model_path)
         # print_pxtr_ndcg(epoch, para, train_data_input, pred_list)
         print_click_ndcg(epoch, para, train_data_input, pred_list)
         
