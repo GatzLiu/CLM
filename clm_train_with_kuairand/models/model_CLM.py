@@ -25,7 +25,7 @@ class model_CLM(object):
         self.e = 0.1 ** 10
         bin_num = 10000
         if_pxtr_interaction = False
-        if_add_position = True
+        if_add_position = False
 
         ## 1 placeholder
         # [-1, max_len]
@@ -139,7 +139,7 @@ class model_CLM(object):
         # 5.3 add position_emb, [-1, max_len, pxtr_dim*5]
         if if_add_position:
             pxtr_input = self.add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
-                                               pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name="biased", decay=para['decay'])
+                                               pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name="biased")
         if if_pxtr_interaction:
             pxtr_input += self.pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
             pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
@@ -239,7 +239,8 @@ class model_CLM(object):
                 H = self.CommonLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
                 H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
                 H = self.CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
-                H_list.append((self.decay ** (l + 1)) * H)
+                H_list.append(H)
+                # H_list.append((self.decay ** (l + 1)) * H)
             H = tf.reduce_sum(H_list, axis=0)
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res
@@ -348,13 +349,14 @@ class model_CLM(object):
             return utils.collect_named_outputs(outputs_collections, sc.name, outputs)
 
 
-    def add_position_emb(self, query_input, pxtr_dense, seq_length, pxtr_num, dim, name, decay=1.0):
+    def add_position_emb(self, query_input, pxtr_dense, seq_length, pxtr_num, dim, name):
         with tf.name_scope(name):
             pos_embeddings = tf.get_variable(name+"_pos_embeddings", (seq_length, dim), initializer=tf.truncated_normal_initializer(stddev=5.0))  # [-1, m_size, col]
             position_in_ranking = tf.contrib.framework.argsort(tf.stop_gradient(pxtr_dense), axis=1)
             order = tf.contrib.framework.argsort(position_in_ranking, axis=1)
             pos_emb = tf.gather(pos_embeddings, order)
-            return decay * tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]) + query_input
+            # return tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]) + query_input
+            return tf.concat([tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]), query_input], -1)
 
     def pxtr_transformer(self, pxtr_input, listwise_len, pxtr_num, dim, name):
         pxtr_input = tf.reshape(pxtr_input, [-1, pxtr_num, dim])
