@@ -155,7 +155,7 @@ class model_CLM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            layer_num = 2
+            layer_num = 5
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
