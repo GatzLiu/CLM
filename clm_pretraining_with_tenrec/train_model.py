@@ -97,13 +97,13 @@ def train_model(para):
                 [model.loss, model.loss_like, model.loss_follow, model.loss_forward,
                 model.label_like_re, model.label_follow_re, model.label_forward_re,
                 model.like_pred, model.follow_pred, model.forward_pred],
-                feed_dict={model.users: validation_data_input[:, 0],
-                        model.items: validation_data_input[:, 1],
-                        model.action_list: validation_data_input[:, 7:],
-                        model.real_length: validation_data_input[:, 6],
-                        model.label_like: validation_data_input[:, 3],
-                        model.label_follow: validation_data_input[:, 4],
-                        model.label_forward: validation_data_input[:, 5],
+                feed_dict={model.users: validation_batch_data[:, 0],
+                        model.items: validation_batch_data[:, 1],
+                        model.action_list: validation_batch_data[:, 7:],
+                        model.real_length: validation_batch_data[:, 6],
+                        model.label_like: validation_batch_data[:, 3],
+                        model.label_follow: validation_batch_data[:, 4],
+                        model.label_forward: validation_batch_data[:, 5],
             })
             epoch_label_like_re_vali.append(label_like_re_vali)
             epoch_label_follow_re_vali.append(label_follow_re_vali)
