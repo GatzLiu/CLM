@@ -146,6 +146,7 @@ def evaluation_F1(order, top_k, positive_item):
     F1 = 2 * precision * recall / max(precision + recall, epsilon)
     if top_k == 10:
         print('aaa')
+        print(order)
         print(top_k_items)
         print(positive_item)
         print(top_k_items & positive_item)
@@ -166,6 +167,7 @@ def evaluation_NDCG(order, top_k, positive_item):
     NDCG = DCG / max(iDCG, epsilon)
     if top_k == 10:
         print('bbb')
+        print(order)
         print(top_k_item)
         print(positive_item)
     return NDCG
@@ -215,6 +217,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
             k = para['TOP_K'][i]
             pos_items = np.where(train_data_input[j][:, 2] > 0)[0]
             topk_items = np.argsort(-pred_list[j][:k])
+            if k == 10: print('AAAA', topk_items)
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
             ndcg[i].append(evaluation_NDCG(topk_items, k, pos_items))
     # ndcg: pred with action-label
