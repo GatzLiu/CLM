@@ -24,6 +24,7 @@ class model_CLM(object):
         self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
         self.e = 0.1 ** 10
         bin_num = 10000
+        decay = 0.001
         if_pxtr_interaction = False
         if_add_position = False
 
@@ -145,7 +146,7 @@ class model_CLM(object):
             pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
-        if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, pxtr_unbias_input], -1)
+        if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, decay * pxtr_unbias_input], -1)
         # pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
