@@ -9,6 +9,7 @@ pxtr_reconstruct_weight = 0.0 # 0.1
 bias_weight = 10.0
 layer_num = 5
 decay = 0.5
+if_debias = [True, False][0]
 
 # model save
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDATE_ITEM_LIST_LENGTH': CANDIDATE_ITEM_LIST_LENGTH, 'LR': LR, 'LAMDA': LAMDA,
@@ -16,4 +17,4 @@ all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDA
             'TEST_VALIDATION': 'Validation', 'TOP_K': TOP_K,
             'OPTIMIZER': 'Adam', 'SAMPLER': 'MMOE', 'AUX_LOSS_WEIGHT': 0, 'DIR': DIR, 'pxtr_weight': pxtr_weight, 'exp_weight': exp_weight,
             'sim_order_weight': sim_order_weight, 'pxtr_reconstruct_weight': pxtr_reconstruct_weight, 'bias_weight': bias_weight,
-            'layer_num': layer_num, 'decay': decay}
+            'layer_num': layer_num, 'decay': decay, 'if_debias': if_debias}
