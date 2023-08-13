@@ -71,13 +71,14 @@ def train_model(para):
     ## training iteratively
     for epoch in range(para['N_EPOCH']):
         ## train
+        pred_list = []
         for batch_num in range(len(batches)-1):
             train_batch_data = train_data_input[batches[batch_num]: batches[batch_num+1]]  # [-1, 100, 13+5]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
             # preedict first
-            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias = sess.run(
+            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
                 [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct,
-                 model.loss_pxtr_bias],
+                 model.loss_pxtr_bias, model.pred],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
@@ -94,12 +95,15 @@ def train_model(para):
                     model.forward_pxtr_dense_list: train_batch_data[:,:,11],
                     model.longview_pxtr_dense_list: train_batch_data[:,:,12],
             })
+            pred_list.append(pred)
+        pred_list = np.concatenate(pred_list, axis=0)
+        print_click_ndcg(epoch, [10], train_data_input, pred_list, 'train')
         ## eval
         sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
         test_data_input = test_data_raw[sampling]
         test_len_input = test_len_raw[sampling]
-        pred_list = []
-        test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, pred = sess.run(
+        test_pred_list = []
+        test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, test_pred = sess.run(
             [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
              model.pred],
             feed_dict={
@@ -118,14 +122,14 @@ def train_model(para):
                 model.forward_pxtr_dense_list: test_data_input[:,:,11],
                 model.longview_pxtr_dense_list: test_data_input[:,:,12],
         })
-        pred_list.append(pred) # pred = [-1, max_len]
-        pred_list = np.concatenate(pred_list, axis=0) # pred_list = [-1, max_len]
+        test_pred_list.append(test_pred) # pred = [-1, max_len]
+        test_pred_list = np.concatenate(test_pred_list, axis=0) # test_pred_list = [-1, max_len]
 
         # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
         # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
         # save_ckpt(epoch, sess, saver, save_model_path)
-        # print_pxtr_ndcg(epoch, test_data_input, pred_list)
-        print_click_ndcg(epoch, para, test_data_input, pred_list)
+        # print_pxtr_ndcg(epoch, test_data_input, test_pred_list)
+        print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test')
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)

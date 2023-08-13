@@ -193,15 +193,15 @@ def print_pxtr_ndcg(epoch, train_data_input, pred_list):
         sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
         sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
 
-def print_click_ndcg(epoch, para, train_data_input, pred_list):
+def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     f1score = []
     ndcg = []
-    for i in range(len(para['TOP_K'])):
+    for i in range(len(top_k)):
         f1score.append([])
         ndcg.append([])
-    for i in range(len(para['TOP_K'])):
+    for i in range(len(top_k)):
         for j in range(len(pred_list)):
-            k = para['TOP_K'][i]
+            k = top_k[i]
             pos_items = np.where(train_data_input[j][:, 2] > 0.5)[0]
             topk_items = np.argsort(-pred_list[j])[:k]
             f1score[i].append(evaluation_F1(topk_items, k, pos_items))
@@ -209,7 +209,7 @@ def print_click_ndcg(epoch, para, train_data_input, pred_list):
     # ndcg: pred with action-label
     f1score = np.array(f1score)
     ndcg = np.array(ndcg)
-    print ("ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1))
+    print (train_test, "ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1))
 
 def print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias):
     print("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ",
