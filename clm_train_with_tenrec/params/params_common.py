@@ -16,4 +16,4 @@ BATCH_SIZE = 10000
 PRED_BATCH_SIZE = 2000
 TEST_USER_BATCH = [1000, 1000][dataset]
 TOP_K = [10, 20, 30, 40, 50]
-DIR = '../clm_pretraining_with_kuairand/dataset/'+DATASET+'/'
+DIR = '../clm_pretraining_with_tenrec/dataset/'+DATASET+'/'
