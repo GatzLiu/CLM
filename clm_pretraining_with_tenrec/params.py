@@ -13,7 +13,7 @@ TEST_USER_BATCH = [4096, 4096][dataset]
 SAMPLE_RATE = 1
 N_EPOCH = 100
 BEST_EPOCH = [66, 48][dataset]
-LOSS_WEIGHT = [[1.7, 7.0, 10.0],
+LOSS_WEIGHT = [[1.7, 10.0, 10.0],
                [1.7, 2.2, 1.4]][dataset]
 TOP_K = [10, 20, 50, 100]
 DIR = './dataset/'+DATASET+'/'
