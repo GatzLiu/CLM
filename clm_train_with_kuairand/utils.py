@@ -192,11 +192,10 @@ def print_pxtr_ndcg(epoch, train_data_input, pred_list, train_test):
     print (train_test, "ep", epoch+1,
         "%.4f"%(sum(click_label_ndcg)/len(click_label_ndcg)), "%.4f"%(sum(ltr_label_ndcg)/len(ltr_label_ndcg)),
         "%.4f"%(sum(wtr_label_ndcg)/len(wtr_label_ndcg)), "%.4f"%(sum(cmtr_label_ndcg)/len(cmtr_label_ndcg)),
-        "%.4f"%(sum(ftr_label_ndcg)/len(ftr_label_ndcg)), "%.4f"%(sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)), end=' ')
-    print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
-        sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
-        sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
-        sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
+        "%.4f"%(sum(ftr_label_ndcg)/len(ftr_label_ndcg)), "%.4f"%(sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)), end='   ')
+    print ("%.4f"%(sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch)), "%.4f"%(sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch)),
+        "%.4f"%(sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch)), "%.4f"%(sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch)),
+        "%.4f"%(sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)))
 
 def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     f1score = []
