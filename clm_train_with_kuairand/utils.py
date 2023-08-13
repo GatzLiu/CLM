@@ -180,13 +180,23 @@ def print_pxtr_ndcg(epoch, train_data_input, pred_list, train_test):
         cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
         ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
         lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
-    list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = \
-        np.array(list_ltr_ndcg_epoch), np.array(list_wtr_ndcg_epoch), np.array(list_cmtr_ndcg_epoch), np.array(list_ftr_ndcg_epoch), np.array(list_lvtr_ndcg_epoch)
-    click_label_ndcg, ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = \
-        np.array(click_label_ndcg), np.array(ltr_label_ndcg), np.array(wtr_label_ndcg), np.array(cmtr_label_ndcg), np.array(ftr_label_ndcg), np.array(lvtr_label_ndcg)
-    pxtr_ndcg = [np.mean(list_ltr_ndcg_epoch, 1), np.mean(list_wtr_ndcg_epoch, 1), np.mean(list_cmtr_ndcg_epoch, 1), np.mean(list_ftr_ndcg_epoch, 1), np.mean(list_lvtr_ndcg_epoch, 1)]
-    label_ndcg = [np.mean(click_label_ndcg, 1), np.mean(ltr_label_ndcg, 1), np.mean(wtr_label_ndcg, 1), np.mean(cmtr_label_ndcg, 1), np.mean(ftr_label_ndcg, 1), np.mean(lvtr_label_ndcg, 1)]
-    print(train_test, "ep", epoch + 1, label_ndcg, pxtr_ndcg)
+    # list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = \
+    #     np.array(list_ltr_ndcg_epoch), np.array(list_wtr_ndcg_epoch), np.array(list_cmtr_ndcg_epoch), np.array(list_ftr_ndcg_epoch), np.array(list_lvtr_ndcg_epoch)
+    # click_label_ndcg, ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = \
+    #     np.array(click_label_ndcg), np.array(ltr_label_ndcg), np.array(wtr_label_ndcg), np.array(cmtr_label_ndcg), np.array(ftr_label_ndcg), np.array(lvtr_label_ndcg)
+    # pxtr_ndcg = [np.mean(list_ltr_ndcg_epoch, 1), np.mean(list_wtr_ndcg_epoch, 1), np.mean(list_cmtr_ndcg_epoch, 1), np.mean(list_ftr_ndcg_epoch, 1), np.mean(list_lvtr_ndcg_epoch, 1)]
+    # label_ndcg = [np.mean(click_label_ndcg, 1), np.mean(ltr_label_ndcg, 1), np.mean(wtr_label_ndcg, 1), np.mean(cmtr_label_ndcg, 1), np.mean(ftr_label_ndcg, 1), np.mean(lvtr_label_ndcg, 1)]
+    # print(train_test, "ep", epoch + 1, label_ndcg, pxtr_ndcg)
+
+    # ndcg: pred with action-label
+    print (train_test, "ep", epoch+1,
+        "%.4f"%(sum(click_label_ndcg)/len(click_label_ndcg)), "%.4f"%(sum(ltr_label_ndcg)/len(ltr_label_ndcg)),
+        "%.4f"%(sum(wtr_label_ndcg)/len(wtr_label_ndcg)), "%.4f"%(sum(cmtr_label_ndcg)/len(cmtr_label_ndcg)),
+        "%.4f"%(sum(ftr_label_ndcg)/len(ftr_label_ndcg)), "%.4f"%(sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)), end=' ')
+    print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
+        sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
+        sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
+        sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
 
 def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     f1score = []
