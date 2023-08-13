@@ -13,10 +13,10 @@ def mmoe_prediction_data(para):
     pred_data_path = DIR + 'tenrec_pred_data.json'
     ltr_data_path = DIR + 'tenrec_ltr_data.json'
 
-    # model_path = 'model_ckpt/mmoe_model.ckpt-{}.meta'.format(all_para['BEST_EPOCH'])
-    # restore_path = 'model_ckpt/mmoe_model.ckpt-{}'.format(all_para['BEST_EPOCH'])
-    model_path = 'model_ckpt/mmoe_model.ckpt-{}.meta'.format('5')
-    restore_path = 'model_ckpt/mmoe_model.ckpt-{}'.format('5')
+    model_path = 'model_ckpt/mmoe_model.ckpt-{}.meta'.format(all_para['BEST_EPOCH'])
+    restore_path = 'model_ckpt/mmoe_model.ckpt-{}'.format(all_para['BEST_EPOCH'])
+    # model_path = 'model_ckpt/mmoe_model.ckpt-{}.meta'.format('5')
+    # restore_path = 'model_ckpt/mmoe_model.ckpt-{}'.format('5')
 
     ## Load data
     pred_data, _, _ = read_data(pred_data_path)
@@ -125,6 +125,9 @@ def mmoe_prediction_data(para):
             file.write(json_ltr_train_data)
         file.close()
         
+        print("model read data -> pred_data_path=", pred_data_path)
+        print("model load path -> restore_path=", restore_path)
+        print("model pred save data -> ltr_data_path=", ltr_data_path)
         # test: read
         ltr_train_data_v1, _, _ = read_data(ltr_data_path)
 
