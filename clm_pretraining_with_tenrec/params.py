@@ -12,7 +12,7 @@ validate_test = 0   # 0:Validate, 1: Test
 TEST_USER_BATCH = [4096, 4096][dataset]
 SAMPLE_RATE = 1
 N_EPOCH = 75
-BEST_EPOCH = [60, 48][dataset]
+BEST_EPOCH = [70, 48][dataset]
 LOSS_WEIGHT = [[1.7, 10.0, 10.0],
                [1.7, 2.2, 1.4]][dataset]
 TOP_K = [10, 20, 50, 100]

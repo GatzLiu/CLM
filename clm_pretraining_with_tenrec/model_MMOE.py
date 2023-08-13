@@ -27,13 +27,13 @@ class model_MMOE(object):
         self.label_follow = tf.placeholder(tf.int32, shape=(None,), name='label_follow')
         self.label_forward = tf.placeholder(tf.int32, shape=(None,), name='label_forward')
 
-        print ("self.users=", self.users)
-        print ("self.items=", self.items)
-        print ("self.action_list=", self.action_list)
-        print ("self.real_length=", self.real_length)
-        print ("self.label_like=", self.label_like)
-        print ("self.label_follow=", self.label_follow)
-        print ("self.label_forward=", self.label_forward)
+        # print ("self.users=", self.users)
+        # print ("self.items=", self.items)
+        # print ("self.action_list=", self.action_list)
+        # print ("self.real_length=", self.real_length)
+        # print ("self.label_like=", self.label_like)
+        # print ("self.label_follow=", self.label_follow)
+        # print ("self.label_forward=", self.label_forward)
 
         # reshape
         self.action_list_re = tf.reshape(self.action_list, [-1, self.max_len],)
@@ -64,7 +64,7 @@ class model_MMOE(object):
         # [-1, list_size_q=1, nh*dim]
         taget_attention_input = self.set_attention_block(self.i_embeddings, self.action_list_embeddings, name="target_attention", mask=mask, 
                                 col=self.emb_dim, nh=1, action_item_size=self.emb_dim, att_emb_size=self.emb_dim, mask_flag_k=True)
-        print("tf.shape(taget_attention_input)=", tf.shape(taget_attention_input))
+        # print("tf.shape(taget_attention_input)=", tf.shape(taget_attention_input))
         taget_attention_input = tf.reshape(taget_attention_input, [-1, self.emb_dim])
 
         # mmoe
@@ -107,7 +107,7 @@ class model_MMOE(object):
 
         ## update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)
+        # print("self.updates=", self.updates)
 
     def inner_product(self, users, items):
         scores = tf.reduce_sum(tf.multiply(users, items), axis=1)

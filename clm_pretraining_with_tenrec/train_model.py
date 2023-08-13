@@ -117,7 +117,7 @@ def train_model(para):
         list_auc_epoch_vali.append(list_auc_vali)
 
         # model save
-        if ((epoch+1) == 60) or ((epoch+1) == para['BEST_EPOCH']):
+        if ((epoch+1) == 30) or ((epoch+1) == 40) or ((epoch+1) == 50) or ((epoch+1) == 60) or ((epoch+1) == para['BEST_EPOCH']):
             print ("start save model , epoch+1=", epoch+1)
             save_path = saver.save(sess, save_model_path, global_step=epoch+1)
             print("model save path = ", save_path)
