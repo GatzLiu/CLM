@@ -156,36 +156,30 @@ def evaluation_NDCG(order, top_k, positive_item):
 def print_pxtr_ndcg(epoch, train_data_input, pred_list):
     # ndcg
     k = 100
-    list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_cmtr_ndcg_epoch, list_ftr_ndcg_epoch, list_lvtr_ndcg_epoch = [], [], [], [], []
-    ltr_label_ndcg, wtr_label_ndcg, cmtr_label_ndcg, ftr_label_ndcg, lvtr_label_ndcg = [], [], [], [], []
+    list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_ftr_ndcg_epoch = [], [], []
+    ltr_label_ndcg, wtr_label_ndcg, ftr_label_ndcg = [], [], []
     click_label_ndcg = []
     for i in range(len(pred_list)):  #len(pred_list)):
         # pred_list[i]     [max_len]
         # train_data_input[i]->[max_len, 13+5]      train_data_input[i][:,13] # [max_len]
-        list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,13], pred_list[i][:k], k)) # bin
-        list_wtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,14], pred_list[i][:k], k))
-        list_cmtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,15], pred_list[i][:k], k))
-        list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,16], pred_list[i][:k], k))
-        list_lvtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,17], pred_list[i][:k], k))
+        list_ltr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,9], pred_list[i][:k], k)) # bin
+        list_wtr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,10], pred_list[i][:k], k))
+        list_ftr_ndcg_epoch.append(ndcg_for_one_samp(train_data_input[i][:k,11], pred_list[i][:k], k))
 
         click_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,2], pred_list[i][:k], k))
         ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
         wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
-        cmtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
-        ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,6], pred_list[i][:k], k))
-        lvtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,7], pred_list[i][:k], k))
+        ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
 
     # ndcg: pxtr-input with pred
     print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
-            sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch),
-            sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), sum(list_cmtr_ndcg_epoch)/len(list_cmtr_ndcg_epoch),
-            sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch), sum(list_lvtr_ndcg_epoch)/len(list_lvtr_ndcg_epoch)])
+            sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch), sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), 
+            sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch)])
 
     # ndcg: pred with action-label
     print ("[ep, label ndcg", ", click, xtr]=", [epoch+1,
         sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
-        sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(cmtr_label_ndcg)/len(cmtr_label_ndcg),
-        sum(ftr_label_ndcg)/len(ftr_label_ndcg), sum(lvtr_label_ndcg)/len(lvtr_label_ndcg)])
+        sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(ftr_label_ndcg)/len(ftr_label_ndcg)])
 
 def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     f1score = []
