@@ -21,7 +21,7 @@ class model_MUL(object):
         self.n_items = data['item_num']
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
-        self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
+        self.pxtr_list = para['PXTR_LIST']
         self.e = 0.1 ** 10
 
         ## 1 placeholder
@@ -34,15 +34,11 @@ class model_MUL(object):
         #   pxtr emb feature
         self.like_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_pxtr_list')   # bin
         self.follow_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_pxtr_list')
-        self.comment_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='comment_pxtr_list')
         self.forward_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_pxtr_list')
-        self.longview_pxtr_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_pxtr_list')
         #   pxtr dense feature
         self.like_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_pxtr_dense_list')
         self.follow_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
-        self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
-        self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
         print ("self.item_list: ", self.item_list)
 
         # 2 reshape
@@ -52,15 +48,11 @@ class model_MUL(object):
         #   pxtr dense
         self.pltr_dense_list = tf.reshape(self.like_pxtr_dense_list, [-1, self.max_len])
         self.pwtr_dense_list = tf.reshape(self.follow_pxtr_dense_list, [-1, self.max_len])
-        self.pcmtr_dense_list = tf.reshape(self.comment_pxtr_dense_list, [-1, self.max_len])
         self.pftr_dense_list = tf.reshape(self.forward_pxtr_dense_list, [-1, self.max_len])
-        self.plvtr_dense_list = tf.reshape(self.longview_pxtr_dense_list, [-1, self.max_len])
 
         logits = (1 + self.pltr_dense_list / para['beta_ltr']) ** para['alpha_ltr']
         logits *= (1 + self.pwtr_dense_list / para['beta_wtr']) ** para['alpha_wtr']
-        logits *= (1 + self.pcmtr_dense_list / para['beta_cmtr']) ** para['alpha_cmtr']
         logits *= (1 + self.pftr_dense_list / para['beta_ftr']) ** para['alpha_ftr']
-        logits *= (1 + self.plvtr_dense_list / para['beta_lvtr']) ** para['alpha_lvtr']
         self.pred = tf.nn.sigmoid(logits)
 
         # 3 define trainable parameters
