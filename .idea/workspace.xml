@@ -140,9 +140,9 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.params_common" />
-      <item itemvalue="Python.params_CLM" />
       <item itemvalue="Python._main" />
+      <item itemvalue="Python.params_CLM" />
+      <item itemvalue="Python.params_common" />
       <item itemvalue="Python.utils" />
     </list>
     <recent_temporary>
