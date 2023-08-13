@@ -25,12 +25,13 @@ def mmoe_prediction_data(para):
     ## split the pred-samples into batches
     batches = list(range(0, len(pred_data), para['PRED_BATCH_SIZE']))
     batches.append(len(pred_data))
-
+    print ("here-0.1")
     with tf.Session() as sess:
+        print ("here-1")
         saver = tf.train.import_meta_graph(model_path)
         saver.restore(sess, restore_path)
 
-        print ("here-1")
+        print ("here-0.2")
         # feed_dict
         user = sess.graph.get_tensor_by_name('users:0')
         item = sess.graph.get_tensor_by_name('items:0')
