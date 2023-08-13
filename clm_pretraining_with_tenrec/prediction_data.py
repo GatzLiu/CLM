@@ -30,6 +30,7 @@ def mmoe_prediction_data(para):
         saver = tf.train.import_meta_graph(model_path)
         saver.restore(sess, restore_path)
 
+        print ("here-1")
         # feed_dict
         user = sess.graph.get_tensor_by_name('users:0')
         item = sess.graph.get_tensor_by_name('items:0')
@@ -54,6 +55,7 @@ def mmoe_prediction_data(para):
         like_pred = sess.graph.get_tensor_by_name('like_pred:0')
         follow_pred = sess.graph.get_tensor_by_name('follow_pred:0')
         forward_pred = sess.graph.get_tensor_by_name('forward_pred:0')
+        print ("here-2")
 
         # opt
         # updates = sess.graph.get_operation_by_name('GradientDescent/GradientDescent/-apply')  # NOTE: SGD
@@ -68,6 +70,7 @@ def mmoe_prediction_data(para):
                 sample_list = generate_sample(pred_data[sample], para)
                 pred_batch_data.append(sample_list)
             pred_batch_data = np.array(pred_batch_data)
+            print ("here-3")
 
 
             model_loss, model_loss_like, model_loss_follow, model_loss_forward, \
