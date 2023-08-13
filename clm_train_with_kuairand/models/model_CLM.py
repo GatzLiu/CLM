@@ -24,7 +24,7 @@ class model_CLM(object):
         self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
         self.e = 0.1 ** 10
         bin_num = 10000
-        decay = 0.001
+        decay = 0.01
         if_pxtr_interaction = False
         if_add_position = True
 
