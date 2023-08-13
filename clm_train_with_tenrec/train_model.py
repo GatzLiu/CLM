@@ -11,8 +11,8 @@ from models.model_MUL import model_MUL
 
 def train_model(para):
     ## paths of data
-    train_path = para['DIR'] + 'kuairand_ltr_data_train.json'
-    test_path = para['DIR'] + 'kuairand_ltr_data_test.json'
+    train_path = para['DIR'] + 'tenrec_ltr_data_train.json'
+    test_path = para['DIR'] + 'tenrec_ltr_data_test.json'
     save_model_path = './model_ckpt/model_' + para["MODEL"] + '/model_' + para["MODEL"] + '.ckpt'
 
     ## Load data
