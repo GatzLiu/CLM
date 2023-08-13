@@ -204,10 +204,16 @@ class model_CLM(object):
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
+        self.loss_primary = tf.losses.log_loss(self.longview_label_list_re, self.pred, mask_data, reduction="weighted_mean")
+        self.multi_object_weight = self.like_label_list_re + self.follow_label_list_re + self.comment_label_list_re + self.forward_label_list_re + self.longview_label_list_re
+        self.multi_object_label = tf.where(self.multi_object_weight > 0.5, tf.ones_like(self.multi_object_weight), tf.zeros_like(self.multi_object_weight))
+        self.loss_multi_object = tf.losses.log_loss(self.multi_object_label, self.pred, mask_data, reduction="weighted_mean")
         self.loss = para['exp_weight'] * self.loss_click + \
                     para['sim_order_weight'] * self.loss_sim_order + \
                     para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct + \
-                    para['bias_weight'] * self.loss_pxtr_bias
+                    para['bias_weight'] * self.loss_pxtr_bias + \
+                    para['primary_weight'] * self.loss_primary + \
+                    para['multi_object_weight'] * self.loss_multi_object
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
