@@ -123,6 +123,7 @@ class model_MLP(object):
             output_size = self.pxtr_dim
             if para['mode'] == 'LR':
                 logits = tf.layers.dense(pxtr_input, 1, name='realshow_predict_lr')
+                logits = tf.squeeze(logits, -1)
             if para['mode'] == 'MLP':
                 pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
                 pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
