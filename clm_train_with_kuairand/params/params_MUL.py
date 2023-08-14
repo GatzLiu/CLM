@@ -5,8 +5,8 @@ LAMDA = [0.0, 0.0][dataset]
 # weight is used to balance the scale and importance of each xtr ranking
 alpha_ltr = 1.0
 alpha_wtr = 1.0
-alpha_cmtr = 5.0
-alpha_ftr = 10.0
+alpha_cmtr = 3.0
+alpha_ftr = 5.0
 alpha_lvtr = 0.5
 beta_ltr = 1.0
 beta_wtr = 1.0
