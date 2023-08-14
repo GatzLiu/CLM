@@ -2,7 +2,7 @@
 
 GPU_INDEX = "0"
 dataset = 0         # 0:Amazon, 1:KuaiRand
-model = 1
+model = 0
 
 DATASET = ['Tenrec', 'KuaiRand'][dataset]
 MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][model]
