@@ -2,7 +2,7 @@
 
 GPU_INDEX = "0"
 dataset = 0         # 0:Amazon, 1:KuaiRand
-model = 3
+model = 0
 
 DATASET = ['Tenrec', 'KuaiRand'][dataset]
 MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][model]
@@ -12,7 +12,7 @@ ITEM_DIM = 64
 PXTR_BINS = 10000
 PXTR_LIST = ['pltr', 'pwtr', 'pftr']
 
-N_EPOCH = 2
+N_EPOCH = 50
 BATCH_SIZE = 10000
 PRED_BATCH_SIZE = 2000
 TEST_USER_BATCH = [1000, 1000][dataset]

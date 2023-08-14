@@ -1,6 +1,6 @@
 from params.params_common import *
 
-LR = [0.001, 0.01][dataset]
+LR = [0.01, 0.01][dataset]
 LAMDA = [0.0, 0.0][dataset]
 pxtr_weight = [1.0, 1.0, 1.0]
 exp_weight = 1.0
