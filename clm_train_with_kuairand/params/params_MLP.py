@@ -3,13 +3,13 @@ from params.params_common import *
 LR = [0.001, 0.01][dataset]
 LAMDA = [0.0, 0.0][dataset]
 loss = ['primary', 'click', 'multi-obj', 'unsuper'][3]
-exp_weight = {'primary': 0.0, 'click': 1.0, 'multi-obj': 1.0, 'unsuper': 1.0}[loss]
+exp_weight = {'primary': 0.0, 'click': 1.0, 'multi-obj': 0.0, 'unsuper': 1.0}[loss]
 sim_order_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 2.0}[loss]
 pxtr_reconstruct_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.1}[loss]
 primary_weight = {'primary': 1.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.0}[loss]
 multi_object_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 1.0, 'unsuper': 0.0}[loss]
 pxtr_weight_for_ranking_sim_loss = [1.0, 1.0, 1.0, 1.0, 1.0]
-pxtr_weight_for_multi_object = [1.0, 1.0, 1.0, 1.0, 1.0]
+pxtr_weight_for_multi_object = [0.2, 0.2, 0.2, 0.5, 0.0] # like, follow, comment, forward, longview
 mode = ['LR', 'MLP'][1]
 # model save
 

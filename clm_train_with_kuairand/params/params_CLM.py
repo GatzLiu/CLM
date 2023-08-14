@@ -3,7 +3,7 @@ from params.params_common import *
 LR = [0.001, 0.01][dataset]
 LAMDA = [0.0, 0.0][dataset]
 loss = ['primary', 'click', 'multi-obj', 'unsuper'][3]
-exp_weight = {'primary': 0.0, 'click': 1.0, 'multi-obj': 1.0, 'unsuper': 1.0}[loss]
+exp_weight = {'primary': 0.0, 'click': 1.0, 'multi-obj': 0.0, 'unsuper': 1.0}[loss]
 sim_order_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 2.0}[loss]
 pxtr_reconstruct_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.1}[loss]
 primary_weight = {'primary': 1.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.0}[loss]
