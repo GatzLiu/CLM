@@ -2,10 +2,11 @@ from params.params_common import *
 
 LR = [0.0, 0.0][dataset]
 LAMDA = [0.0, 0.0][dataset]
+# weight is used to balance the scale and importance of each xtr ranking
 alpha_ltr = 1.0
 alpha_wtr = 0.8
-alpha_cmtr = 0.8
-alpha_ftr = 1.0
+alpha_cmtr = 2.0
+alpha_ftr = 2.0
 alpha_lvtr = 0.5
 beta_ltr = 1.0
 beta_wtr = 1.0
