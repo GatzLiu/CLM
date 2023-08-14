@@ -174,7 +174,7 @@ class model_PRM(object):
         self.multi_object_weight = para['pxtr_prompt'][0] * self.like_label_list_re + para['pxtr_prompt'][1] * self.follow_label_list_re + \
                                    para['pxtr_prompt'][2] * self.comment_label_list_re + para['pxtr_prompt'][3] * self.forward_label_list_re + \
                                    para['pxtr_prompt'][4] * self.longview_label_list_re
-        self.loss_multi_object = tf.losses.log_loss(self.click_label_list_re, self.pred, weights=mask_data+self.multi_object_weight, reduction="weighted_mean")
+        self.loss_multi_object = tf.losses.log_loss(self.click_label_list_re, self.pred, weights=tf.cast(mask_data,tf.float32)+self.multi_object_weight, reduction="weighted_mean")
         self.loss = para['exp_weight'] * self.loss_click + \
                     para['sim_order_weight'] * self.loss_sim_order + \
                     para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct + \
