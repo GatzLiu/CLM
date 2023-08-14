@@ -142,7 +142,7 @@ class model_MLP(object):
         self.loss_primary = tf.losses.log_loss(self.longview_label_list_re, self.pred, weights=self.click_label_list_re*mask_data, reduction="weighted_mean")
         self.multi_object_weight = self.like_label_list_re + self.follow_label_list_re + self.comment_label_list_re + self.forward_label_list_re + self.longview_label_list_re
         self.multi_object_label = tf.where(tf.greater(2 * self.multi_object_weight, 1), tf.ones_like(self.multi_object_weight), tf.zeros_like(self.multi_object_weight))
-        self.loss_multi_object = tf.losses.log_loss(self.multi_object_label, self.pred, weights=self.click_label_list_re*mask_data, reduction="weighted_mean")
+        self.loss_multi_object = tf.losses.log_loss(self.multi_object_label, self.pred, weights=mask_data, reduction="weighted_mean")
         self.loss = para['exp_weight'] * self.loss_click + \
                     para['sim_order_weight'] * self.loss_sim_order + \
                     para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct + \
