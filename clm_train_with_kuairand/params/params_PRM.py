@@ -9,7 +9,7 @@ pxtr_reconstruct_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsu
 primary_weight = {'primary': 1.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.0}[loss]
 multi_object_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 1.0, 'unsuper': 0.0}[loss]
 pxtr_weight_for_ranking_sim_loss = [1.0, 1.0, 1.0, 1.0, 1.0]
-pxtr_weight_for_multi_object = [1.0, 1.0, 1.0, 1.0, 1.0]
+pxtr_weight_for_multi_object = [0.2, 0.3, 0.8, 3.0, 0.0]
 # model save
 
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDATE_ITEM_LIST_LENGTH': CANDIDATE_ITEM_LIST_LENGTH, 'LR': LR, 'LAMDA': LAMDA,
