@@ -33,11 +33,11 @@ class model_CLM(object):
         self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')   # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
-        self.like_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_label_list')
-        self.follow_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_label_list')
-        self.comment_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='comment_label_list')
-        self.forward_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_label_list')
-        self.longview_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_label_list')
+        self.like_label_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_label_list')
+        self.follow_label_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_label_list')
+        self.comment_label_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_label_list')
+        self.forward_label_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_label_list')
+        self.longview_label_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
         # self.is_train = tf.placeholder(tf.bool, shape=[], name='is_train')
         self.keep_prob = tf.placeholder(tf.float32, shape=(), name='keep_prob')
