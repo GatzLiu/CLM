@@ -121,9 +121,13 @@ class model_MLP(object):
         #   5.5 mlp
         with tf.name_scope("mlp"):
             output_size = self.pxtr_dim
-            pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
-            logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
+            if para['mode'] == 'LR':
+                logits = tf.layers.dense(pxtr_input, 1, name='realshow_predict_lr')
+                logits = tf.squeeze(logits, -1)
+            if para['mode'] == 'MLP':
+                pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
+                pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
+                logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
