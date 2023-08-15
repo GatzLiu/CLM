@@ -153,7 +153,7 @@ def evaluation_NDCG(order, top_k, positive_item):
     NDCG = DCG / max(iDCG, epsilon)
     return NDCG
 
-def print_pxtr_ndcg(epoch, train_data_input, pred_list):
+def print_pxtr_ndcg(epoch, train_data_input, pred_list, train_test):
     # ndcg
     k = 100
     list_ltr_ndcg_epoch, list_wtr_ndcg_epoch, list_ftr_ndcg_epoch = [], [], []
@@ -170,16 +170,11 @@ def print_pxtr_ndcg(epoch, train_data_input, pred_list):
         ltr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,3], pred_list[i][:k], k))
         wtr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,4], pred_list[i][:k], k))
         ftr_label_ndcg.append(ndcg_for_one_samp(train_data_input[i][:k,5], pred_list[i][:k], k))
-
-    # ndcg: pxtr-input with pred
-    print ("[ep, pxtr ndcg", ", ltr, wtr, cmtr, ftr, lvtr]=", [epoch+1,
-            sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch), sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch), 
-            sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch)])
-
-    # ndcg: pred with action-label
-    print ("[ep, label ndcg", ", click, xtr]=", [epoch+1,
-        sum(click_label_ndcg)/len(click_label_ndcg), sum(ltr_label_ndcg)/len(ltr_label_ndcg),
-        sum(wtr_label_ndcg)/len(wtr_label_ndcg), sum(ftr_label_ndcg)/len(ftr_label_ndcg)])
+    print (train_test, "ep", epoch+1,
+        "%.4f"%(sum(click_label_ndcg)/len(click_label_ndcg)), "%.4f"%(sum(ltr_label_ndcg)/len(ltr_label_ndcg)),
+        "%.4f"%(sum(wtr_label_ndcg)/len(wtr_label_ndcg)), "%.4f"%(sum(ftr_label_ndcg)/len(ftr_label_ndcg)), end='   ')
+    print ("%.4f"%(sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch)), "%.4f"%(sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch)),
+        "%.4f"%(sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch)))
 
 def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     f1score = []
