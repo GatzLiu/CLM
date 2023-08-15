@@ -1,7 +1,7 @@
 
 
 GPU_INDEX = "0"
-dataset = 1         # 0:Amazon, 1:KuaiRand
+dataset = 1         # 0:KuaiRand, 1:Tenrec
 model = 2
 
 DATASET = ['Tamll', 'KuaiRand'][dataset]

@@ -7,7 +7,7 @@ exp_weight = 1.0
 sim_order_weight = 0.0 # 2.0
 pxtr_reconstruct_weight = 0.0 # 0.1
 bias_weight = 10.0
-layer_num = 5
+layer_num = 2
 decay = 0.5
 if_debias = [True, False][0]
 
