@@ -3,9 +3,9 @@ from params.params_common import *
 LR = [0.001, 0.01][dataset]
 LAMDA = [0.0, 0.0][dataset]
 pxtr_weight = [1.0, 1.0, 1.0]
-exp_weight = 1.0
-sim_order_weight = 0.0 # 2.0
-pxtr_reconstruct_weight = 0.0 # 0.1
+exp_weight = 1.0 # 2.0
+sim_order_weight = 0.0 # 0.1
+pxtr_reconstruct_weight = 0.0 # 0.01
 bias_weight = 10.0
 layer_num = 2
 decay = 0.5
