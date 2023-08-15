@@ -82,6 +82,9 @@ def train_model(para):
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
+                    model.like_label_list: train_batch_data[:, :, 3],
+                    model.follow_label_list: train_batch_data[:, :, 4],
+                    model.forward_label_list: train_batch_data[:, :, 5],
                     model.real_length: real_len_batch,
                     model.keep_prob: 0.999,
                     model.like_pxtr_list: train_batch_data[:,:,9],
@@ -106,6 +109,9 @@ def train_model(para):
             feed_dict={
                 model.item_list: test_data_input[:,:,0],
                 model.click_label_list: test_data_input[:,:,2],
+                model.like_label_list: train_batch_data[:, :, 3],
+                model.follow_label_list: train_batch_data[:, :, 4],
+                model.forward_label_list: train_batch_data[:, :, 5],
                 model.real_length: test_len_input,
                 model.keep_prob: 1.0,
                 model.like_pxtr_list: test_data_input[:,:,9],
