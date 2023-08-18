@@ -133,7 +133,6 @@ class model_CLM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            self.decay = para['decay']
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
@@ -220,7 +219,6 @@ class model_CLM(object):
                 H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
                 H = self.CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
                 H_list.append(H)
-                # H_list.append((self.decay ** (l + 1)) * H)
             H = tf.reduce_sum(H_list, axis=0)
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res

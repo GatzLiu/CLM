@@ -2,9 +2,9 @@ from params.params_common import *
 
 LR = 0.0001
 pxtr_weight = [1.0, 1.0, 1.0]
-exp_weight = 1.0 # 2.0
-sim_order_weight = 0.0 # 0.1
-pxtr_reconstruct_weight = 0.0 # 0.01
+exp_weight = {'click': 1.0, 'unsuper': 2.0}[LOSS]
+sim_order_weight = {'click': 0.0, 'unsuper': 0.1}[LOSS]
+pxtr_reconstruct_weight = {'click': 0.0, 'unsuper': 0.01}[LOSS]
 mode = ['LR', 'MLP'][1]
 # model save
 
