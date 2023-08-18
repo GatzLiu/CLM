@@ -122,55 +122,28 @@ class model_CLM(object):
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
         if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, decay * pxtr_unbias_input], -1)
-        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = True
             m_size_apply = 32
             head_num = 1
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
-
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
-
-            if linear_flag:
-                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
-            else:
-                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
+            pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
+                col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             print("self.pred=", self.pred)
-            min_len = tf.reduce_min(self.real_length_re)
-            
-            self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
-
-            # choose use or not-use Transformer 
-            col = pxtr_input.get_shape()[2]
-            if linear_flag:
-                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
-            else:
-                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
-            
-            pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
-            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
-            pxtr_pred = tf.nn.sigmoid(pxtr_input)
-            self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred, reduction="weighted_mean")
         
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
         self.loss = para['exp_weight'] * self.loss_click + \
-                    para['sim_order_weight'] * self.loss_sim_order + \
-                    para['pxtr_reconstruct_weight'] * self.loss_pxtr_reconstruct + \
                     para['bias_weight'] * self.loss_pxtr_bias
 
         #   5.6 optimizer
