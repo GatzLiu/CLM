@@ -136,7 +136,7 @@ class model_PRM(object):
                 pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
+            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             print("self.pred=", self.pred)
@@ -154,7 +154,7 @@ class model_PRM(object):
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder')
+            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
             self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred, reduction="weighted_mean")
         
