@@ -1,7 +1,7 @@
 ## basic baseline MF_BPR
 
 import tensorflow as tf
-from model_utils import *
+from utils import *
 
 class model_CLM(object):
     def __init__(self, data, para):
