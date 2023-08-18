@@ -1,11 +1,6 @@
 ## basic baseline MF_BPR
 
 import tensorflow as tf
-from tensorflow.contrib.layers.python.layers import utils
-from tensorflow.python.framework import ops
-from tensorflow.python.ops import init_ops
-from tensorflow.python.ops import variable_scope
-from tensorflow.python.ops import nn
 
 class model_MUL(object):
     def __init__(self, data, para):
@@ -19,7 +14,6 @@ class model_MUL(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
 
         ## 1 placeholder
         # [-1, max_len]

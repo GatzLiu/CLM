@@ -1,11 +1,7 @@
 ## basic baseline MF_BPR
 
 import tensorflow as tf
-from tensorflow.contrib.layers.python.layers import utils
-from tensorflow.python.framework import ops
-from tensorflow.python.ops import init_ops
-from tensorflow.python.ops import variable_scope
-from tensorflow.python.ops import nn
+from utils import *
 
 class model_CLM(object):
     def __init__(self, data, para):
@@ -118,11 +114,11 @@ class model_CLM(object):
         
         # 5.3 add position_emb, [-1, max_len, pxtr_dim*3]
         if if_add_position:
-            pxtr_input = self.add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
+            pxtr_input = add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
                                                pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, decay=decay, name="biased")
         if if_pxtr_interaction:
-            pxtr_input += self.pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
-            pxtr_unbias_input += self.pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
+            pxtr_input += pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
+            pxtr_unbias_input += pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
         if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, decay * pxtr_unbias_input], -1)
@@ -140,31 +136,31 @@ class model_CLM(object):
             mask = tf.reshape(mask, [-1, self.max_len])
 
             if linear_flag:
-                pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
+                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
             else:
-                pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
+                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
+            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
             
-            self.loss_sim_order = self.sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
+            self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
             # choose use or not-use Transformer 
             col = pxtr_input.get_shape()[2]
             if linear_flag:
-                pxtr_input = self.linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
+                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
             else:
-                pxtr_input = self.set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
+                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
             
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
-            pxtr_input = self.CommonLayerNorm(pxtr_input, scope='ln_decoder')
+            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
             self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred, reduction="weighted_mean")
         
@@ -255,118 +251,3 @@ class model_CLM(object):
             result = tf.transpose(result, perm=[1, 2, 0, 3])
             mha_result = tf.reshape(result, [batch_size, list_size, nh * att_emb_size])
         return mha_result
-
-
-    def CommonLayerNorm(self, inputs,
-                    center=True,
-                    scale=True,
-                    activation_fn=None,
-                    reuse=None,
-                    variables_collections=None,
-                    outputs_collections=None,
-                    trainable=True,
-                    begin_norm_axis=1,
-                    begin_params_axis=-1,
-                    scope=None):
-        with variable_scope.variable_scope(
-                scope, 'LayerNorm', [inputs], reuse=reuse) as sc:
-            inputs = ops.convert_to_tensor(inputs)
-            inputs_shape = inputs.shape
-            inputs_rank = inputs_shape.ndims
-            if inputs_rank is None:
-                raise ValueError('Inputs %s has undefined rank.' % inputs.name)
-            dtype = inputs.dtype.base_dtype
-            if begin_norm_axis < 0:
-                begin_norm_axis = inputs_rank + begin_norm_axis
-            if begin_params_axis >= inputs_rank or begin_norm_axis >= inputs_rank:
-                raise ValueError('begin_params_axis (%d) and begin_norm_axis (%d) '
-                            'must be < rank(inputs) (%d)' %
-                            (begin_params_axis, begin_norm_axis, inputs_rank))
-            params_shape = inputs_shape[begin_params_axis:]
-            if not params_shape.is_fully_defined():
-                raise ValueError(
-                    'Inputs %s: shape(inputs)[%s:] is not fully defined: %s' %
-                    (inputs.name, begin_params_axis, inputs_shape))
-            # Allocate parameters for the beta and gamma of the normalization.
-            beta, gamma = None, None
-            if center:
-                beta_collections = utils.get_variable_collections(variables_collections,
-                                                                    'beta')
-                beta = tf.get_variable(
-                    'beta',
-                    shape=params_shape,
-                    dtype=dtype,
-                    initializer=init_ops.zeros_initializer(),
-                    collections=beta_collections,
-                    trainable=trainable)
-            if scale:
-                gamma_collections = utils.get_variable_collections(
-                    variables_collections, 'gamma')
-                gamma = tf.get_variable(
-                    'gamma',
-                    shape=params_shape,
-                    dtype=dtype,
-                    initializer=init_ops.ones_initializer(),
-                    collections=gamma_collections,
-                    trainable=trainable)
-            # Calculate the moments on the last axis (layer activations).
-            norm_axes = list(range(begin_norm_axis, inputs_rank))
-            mean, variance = nn.moments(inputs, norm_axes, keep_dims=True)
-            # Compute layer normalization using the batch_normalization function.
-            variance_epsilon = 1e-12
-            outputs = nn.batch_normalization(
-                inputs,
-                mean,
-                variance,
-                offset=beta,
-                scale=gamma,
-                variance_epsilon=variance_epsilon)
-            outputs.set_shape(inputs_shape)
-            if activation_fn is not None:
-                outputs = activation_fn(outputs)
-            return utils.collect_named_outputs(outputs_collections, sc.name, outputs)
-
-
-    def add_position_emb(self, query_input, pxtr_dense, seq_length, pxtr_num, dim, decay, name):
-        with tf.name_scope(name):
-            pos_embeddings = tf.get_variable(name+"_pos_embeddings", (seq_length, dim), initializer=tf.truncated_normal_initializer(stddev=5.0))  # [-1, m_size, col]
-            position_in_ranking = tf.contrib.framework.argsort(tf.stop_gradient(pxtr_dense), axis=1)
-            order = tf.contrib.framework.argsort(position_in_ranking, axis=1)
-            pos_emb = tf.gather(pos_embeddings, order)
-            return decay * tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]) + query_input
-            # return tf.concat([tf.reshape(pos_emb, [-1, seq_length, pxtr_num * dim]), query_input], -1)
-
-    def pxtr_transformer(self, pxtr_input, listwise_len, pxtr_num, dim, name):
-        pxtr_input = tf.reshape(pxtr_input, [-1, pxtr_num, dim])
-        pxtr_input = self.set_attention_block(pxtr_input, pxtr_input, name + "_pxtr_transformer", 0, dim, 1, dim, dim, False, False)
-        return tf.reshape(pxtr_input, [-1, listwise_len, pxtr_num * dim])
-
-    def sigmoid(self, x):
-        return 2 * tf.nn.sigmoid(x) - 1
-
-    def sim_order_reg_core(self, seq_1, seq_2, if_norm, length):
-        seq_conc = tf.concat([tf.expand_dims(seq_1, -1), tf.expand_dims(seq_2, -1)], -1)
-        seq_cut = seq_conc[:, 0: length, :]
-        random_index = tf.random.uniform((1, 200), minval=0, maxval=tf.cast(length, dtype=tf.float32))
-        random_index = tf.squeeze(tf.cast(tf.floor(random_index), dtype=tf.int64))
-        seq_samp = tf.gather(seq_cut, random_index, axis=1)
-        seq = tf.reshape(seq_samp, [-1, 2])
-        if if_norm:
-            seq_mean, seq_var = tf.nn.moments(tf.stop_gradient(seq), axes=0)
-            seq_norm = (seq - tf.expand_dims(seq_mean, 0)) / (tf.sqrt(tf.expand_dims(seq_var, 0)) + self.e)
-        else:
-            seq_norm = seq
-        seq_resh = tf.reshape(seq_norm, [-1, 2, 2])
-        # attention! sigmoid(x) = 2 * tf.nn.sigmoid(x) - 1
-        # TODO: replace with tanh(x)
-        reg_loss = tf.multiply(self.sigmoid(seq_resh[:, 0, 0] - seq_resh[:, 1, 0]), self.sigmoid(seq_resh[:, 0, 1] - seq_resh[:, 1, 1]))
-        return -tf.reduce_mean(reg_loss)
-
-    def sim_order_reg(self, pred, pxtr, weight, length):
-        reg_loss = 0
-        for i, w in enumerate(weight):
-            reg_loss += w * self.sim_order_reg_core(pred, pxtr[:, :, i], True, length)
-            # reg_loss += weaken_bad_pxtr_weight * w * self.sim_order_reg_core(pred, -1 / (pxtr[:, :, i] + e), True, length)
-        return reg_loss
-
-
