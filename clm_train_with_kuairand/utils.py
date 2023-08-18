@@ -37,7 +37,6 @@ def read_data(path):
     f.close()
     row_num = len(data)
     print ("sample number=", row_num, ", data_path=", path)
-    print("data[:1]=", data[:1])
 
     item_num = 0
     for sample in data:
