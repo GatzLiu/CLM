@@ -18,7 +18,7 @@ class model_MLP(object):
         self.n_items = data['item_num']
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
-        self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
+        self.pxtr_list = para['PXTR_LIST']
         self.e = 0.1 ** 10
 
         ## 1 placeholder

@@ -1,10 +1,7 @@
 
-
 GPU_INDEX = "0"
-model = 0
-
+MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][0]
 DATASET = 'Tenrec'
-MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][model]
 CANDIDATE_ITEM_LIST_LENGTH = 100
 PXTR_DIM = 16
 ITEM_DIM = 64

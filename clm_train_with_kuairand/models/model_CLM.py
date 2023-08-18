@@ -18,7 +18,7 @@ class model_CLM(object):
         self.n_items = data['item_num']
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
-        self.pxtr_list = ['pltr', 'pwtr', 'pcmtr', 'pftr', 'plvtr']
+        self.pxtr_list = para['PXTR_LIST']
         self.e = 0.1 ** 10
         bin_num = 10000
         decay = 0.01
@@ -161,7 +161,6 @@ class model_CLM(object):
             linear_flag = True
             m_size_apply = 32
             head_num = 1
-            self.decay = para['decay']
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
 
@@ -255,7 +254,6 @@ class model_CLM(object):
                 H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
                 H = self.CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
                 H_list.append(H)
-                # H_list.append((self.decay ** (l + 1)) * H)
             H = tf.reduce_sum(H_list, axis=0)
             res = self.set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
         return res
