@@ -149,7 +149,6 @@ class model_CLM(object):
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
         if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, decay * pxtr_unbias_input], -1)
-        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
