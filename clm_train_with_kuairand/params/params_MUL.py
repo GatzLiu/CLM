@@ -16,7 +16,7 @@ beta_lvtr = 1.0
 
 all_para = {'GPU_INDEX': GPU_INDEX, 'DATASET': DATASET, 'MODEL': MODEL, 'CANDIDATE_ITEM_LIST_LENGTH': CANDIDATE_ITEM_LIST_LENGTH, 'LR': LR,
             'PXTR_DIM': PXTR_DIM, 'ITEM_DIM': ITEM_DIM, 'PXTR_BINS': PXTR_BINS, 'BATCH_SIZE': BATCH_SIZE, 'PRED_BATCH_SIZE': PRED_BATCH_SIZE,
-            'TEST_USER_BATCH': TEST_USER_BATCH, 'N_EPOCH': N_EPOCH, 'TEST_VALIDATION': 'Validation', 'TOP_K': TOP_K,
+            'TEST_USER_BATCH': TEST_USER_BATCH, 'N_EPOCH': N_EPOCH, 'TOP_K': TOP_K,
             'OPTIMIZER': 'SGD', 'DIR': DIR, 'alpha_ltr': alpha_ltr,  'alpha_wtr': alpha_wtr, 'alpha_cmtr': alpha_cmtr,
             'alpha_ftr': alpha_ftr, 'alpha_lvtr': alpha_lvtr, 'beta_ltr': beta_ltr, 'beta_wtr': beta_wtr, 'beta_cmtr': beta_cmtr,
             'beta_ftr': beta_ftr, 'beta_lvtr': beta_lvtr}
