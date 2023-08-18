@@ -103,7 +103,6 @@ class model_MLP(object):
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
-            print("self.pred=", self.pred)
 
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
@@ -118,4 +117,3 @@ class model_MLP(object):
 
         #   5.7 update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)

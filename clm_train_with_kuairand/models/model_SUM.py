@@ -14,7 +14,6 @@ class model_SUM(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
 
         ## 1 placeholder
         # [-1, max_len]
@@ -40,7 +39,6 @@ class model_SUM(object):
         self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
         self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
         self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
@@ -71,4 +69,3 @@ class model_SUM(object):
 
         self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)

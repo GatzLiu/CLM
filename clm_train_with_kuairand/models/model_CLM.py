@@ -45,7 +45,6 @@ class model_CLM(object):
         self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
         self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
         self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
@@ -142,7 +141,7 @@ class model_CLM(object):
         # 5.3 add position_emb, [-1, max_len, pxtr_dim*5]
         if if_add_position:
             pxtr_input = add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
-                                               pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, decay=decay, name="biased")
+                                          pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, decay=decay, name="biased")
         if if_pxtr_interaction:
             pxtr_input += pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
             pxtr_unbias_input += pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
@@ -164,8 +163,7 @@ class model_CLM(object):
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
-            print("self.pred=", self.pred)
-        
+
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
@@ -180,4 +178,3 @@ class model_CLM(object):
 
         #   5.7 update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)

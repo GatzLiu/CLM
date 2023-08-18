@@ -70,4 +70,3 @@ class model_MUL(object):
 
         self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)

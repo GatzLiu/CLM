@@ -15,7 +15,6 @@ class model_MLP(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
 
         ## 1 placeholder
         #   label
@@ -90,4 +89,3 @@ class model_MLP(object):
 
         #   5.7 update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)
