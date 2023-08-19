@@ -128,7 +128,7 @@ class model_CLM(object):
         pxtr_unbias_emb = tf.nn.embedding_lookup(pxtr_unbias_emb_matrix, pxtr_index)  # [-1, max_len, 5, pxtr_dim]
 
         # 5.2 dropout
-        mask = tf.ones_like(pxtr_input)   # [-1, max_len, 5]
+        mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, self.keep_prob)
         mask = tf.expand_dims(mask, -1) # [-1, max_len, 5, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*5]->[-1, max_len, 5, pxtr_dim]->

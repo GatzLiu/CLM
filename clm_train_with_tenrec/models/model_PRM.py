@@ -73,7 +73,7 @@ class model_PRM(object):
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pftr_dense_list], -1)
 
         #   5.2 dropout
-        mask = tf.ones_like(pxtr_input)   # [-1, max_len, 3]
+        mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 3]
         mask = tf.nn.dropout(mask, self.keep_prob)
         mask = tf.expand_dims(mask, -1) # [-1, max_len, 3, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*3]->[-1, max_len, 3, pxtr_dim]->
