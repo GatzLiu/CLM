@@ -1,5 +1,4 @@
 from model_MMOE import *
-from test_model import *
 from utils_mmoe import *
 from params import DIR
 
