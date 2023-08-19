@@ -2,11 +2,8 @@ from utils import *
 import numpy as np
 import random as rd
 
-from models.model_CLM import model_CLM
 from models.model_PRM import model_PRM
 from models.model_MLP import model_MLP
-from models.model_SUM import model_SUM
-from models.model_MUL import model_MUL
 
 def train_model(para):
     ## paths of data
