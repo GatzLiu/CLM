@@ -86,7 +86,6 @@ class model_MLP(object):
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             min_len = tf.reduce_min(self.real_length_re)
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
-
             # decoder
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')

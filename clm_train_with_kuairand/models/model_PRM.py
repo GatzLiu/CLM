@@ -114,7 +114,6 @@ class model_PRM(object):
             head_num = 1
             output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
-
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
             # encoder
@@ -126,7 +125,6 @@ class model_PRM(object):
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
             min_len = tf.reduce_min(self.real_length_re)
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
-
             # decoder
             col = pxtr_input.get_shape()[2]
             pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
