@@ -18,6 +18,7 @@ class model_MLP(object):
 
         ## 1 placeholder
         # [-1, max_len]
+        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')  # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
