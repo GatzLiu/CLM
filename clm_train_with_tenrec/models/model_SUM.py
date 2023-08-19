@@ -17,7 +17,6 @@ class model_SUM(object):
 
         ## 1 placeholder
         # [-1, max_len]
-        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')   # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
@@ -32,7 +31,6 @@ class model_SUM(object):
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
 
         # 2 reshape
-        self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
         self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
         #   pxtr dense
@@ -44,19 +42,7 @@ class model_SUM(object):
         logits += para['alpha_wtr'] * self.pwtr_dense_list
         logits += para['alpha_ftr'] * self.pftr_dense_list
         self.pred = tf.nn.sigmoid(logits)
-
-        # 3 define trainable parameters
-        self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
-        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
-        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
-        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
         
         #   5.5 loss
-        self.loss = tf.nn.l2_loss(self.item_list_embeddings)
-        self.loss_click = tf.constant(0)
-        self.loss_sim_order = tf.constant(0)
-        self.loss_pxtr_reconstruct = tf.constant(0)
-        self.loss_pxtr_bias = tf.constant(0)
-
-        self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
-        self.updates = self.opt.minimize(self.loss)
+        self.loss = tf.constant(0)
+        self.updates = tf.constant(0)

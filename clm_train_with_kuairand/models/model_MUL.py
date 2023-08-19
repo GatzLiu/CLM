@@ -17,7 +17,6 @@ class model_MUL(object):
 
         ## 1 placeholder
         # [-1, max_len]
-        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')   # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.like_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_label_list')
@@ -39,10 +38,8 @@ class model_MUL(object):
         self.comment_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='comment_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
         self.longview_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='longview_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
-        self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
         self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
         #   pxtr dense
@@ -59,14 +56,6 @@ class model_MUL(object):
         logits *= (1 + self.plvtr_dense_list / para['beta_lvtr']) ** para['alpha_lvtr']
         self.pred = tf.nn.sigmoid(logits)
 
-        # 3 define trainable parameters
-        self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
-        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
-        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
-        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
-        
         #   5.5 loss
-        self.loss = tf.nn.l2_loss(self.item_list_embeddings)
-
-        self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
-        self.updates = self.opt.minimize(self.loss)
+        self.loss = tf.constant(0)
+        self.updates = tf.constant(0)
