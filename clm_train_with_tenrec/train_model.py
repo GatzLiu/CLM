@@ -1,4 +1,3 @@
-from test_model import *
 from utils import *
 import numpy as np
 import random as rd
