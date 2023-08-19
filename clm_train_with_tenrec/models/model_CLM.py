@@ -113,7 +113,7 @@ class model_CLM(object):
         # 5.3 add position_emb, [-1, max_len, pxtr_dim*3]
         if if_add_position:
             pxtr_input = add_position_emb(query_input=pxtr_input, pxtr_dense=pxtr_dense_input, seq_length=self.max_len,
-                                               pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, decay=decay, name="biased")
+                                          pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, decay=decay, name="biased")
         if if_pxtr_interaction:
             pxtr_input += pxtr_transformer(pxtr_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='pxtr')
             pxtr_unbias_input += pxtr_transformer(pxtr_unbias_input, listwise_len=self.max_len, pxtr_num=len(self.pxtr_list), dim=self.pxtr_dim, name='unbiased_pxtr')
