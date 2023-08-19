@@ -140,7 +140,7 @@ class model_CLM(object):
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss_click = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
-        self.loss = para['exp_weight'] * self.loss_click + \
+        self.loss = self.loss_click + \
                     para['bias_weight'] * self.loss_pxtr_bias
 
         #   5.6 optimizer

@@ -126,5 +126,3 @@ def train_model(para):
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
             break
-
-
