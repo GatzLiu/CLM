@@ -42,7 +42,7 @@ class model_SUM(object):
         logits += para['alpha_wtr'] * self.pwtr_dense_list
         logits += para['alpha_ftr'] * self.pftr_dense_list
         self.pred = tf.nn.sigmoid(logits)
-        
+
         #   5.5 loss
         self.loss = tf.constant(0)
         self.updates = tf.constant(0)

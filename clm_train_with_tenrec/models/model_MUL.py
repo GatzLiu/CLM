@@ -42,7 +42,7 @@ class model_MUL(object):
         logits *= (1 + self.pwtr_dense_list / para['beta_wtr']) ** para['alpha_wtr']
         logits *= (1 + self.pftr_dense_list / para['beta_ftr']) ** para['alpha_ftr']
         self.pred = tf.nn.sigmoid(logits)
-        
+
         #   5.5 loss
         self.loss = tf.constant(0)
         self.updates = tf.constant(0)

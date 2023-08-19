@@ -19,11 +19,6 @@ class model_SUM(object):
         # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
-        self.like_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='like_label_list')
-        self.follow_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='follow_label_list')
-        self.comment_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='comment_label_list')
-        self.forward_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='forward_label_list')
-        self.longview_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='longview_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
         self.keep_prob = tf.placeholder(tf.float32, shape=(), name='keep_prob')
         #   pxtr emb feature
@@ -55,7 +50,7 @@ class model_SUM(object):
         logits += para['alpha_ftr'] * self.pftr_dense_list
         logits += para['alpha_lvtr'] * self.plvtr_dense_list
         self.pred = tf.nn.sigmoid(logits)
-        
+
         #   5.5 loss
         self.loss = tf.constant(0)
         self.updates = tf.constant(0)
