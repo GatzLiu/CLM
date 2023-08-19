@@ -91,7 +91,7 @@ def train_model(para):
             })
             pred_list.append(pred)
         pred_list = np.concatenate(pred_list, axis=0)
-        print_pxtr_ndcg(epoch, train_data_input, pred_list, 'train')
+        print_click_ndcg(epoch, train_data_input, pred_list, 'train')
         ## eval
         sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
         test_data_input = test_data_raw[sampling]
@@ -113,7 +113,7 @@ def train_model(para):
         })
         test_pred_list.append(test_pred) # pred = [-1, max_len]
         test_pred_list = np.concatenate(test_pred_list, axis=0) # test_pred_list = [-1, max_len]
-        print_pxtr_ndcg(epoch, test_data_input, test_pred_list, 'test')
+        print_click_ndcg(epoch, test_data_input, test_pred_list, 'test')
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
