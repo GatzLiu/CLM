@@ -7,11 +7,12 @@
 
 There are two steps to conduct the experiment: 1. pretraining and 2. training.
 Step 1 is to train mmoe model to predict xtr scores and step 2 is to train ranking ensemble models.
-Dir of pretraining step is clm_pretraining_with_${dataset} and of training step clm_training_with_${dataset}.
+Dir of pretraining step is clm_pretraining_with_${dataset} and of training step is clm_training_with_${dataset}.
 We provide xtr rankings in the datasets thus step 1 can be skipped.
-Download ${dataset}.zip, unzip, and put in clm_pretraining_with_${dataset}/dataset/${dataset}
 ${dataset} indicate "KuaiRand"/"kuaiRand"/"kuai" and "Tenrec"/"tenrec"
 
+* Preparation：
+    1. Download ${dataset}.zip, unzip, and put in clm_pretraining_with_${dataset}/dataset/${dataset}
 * Pretraining (can be skipped):
     1. download raw data from https://kuairand.com/ and https://static.qblv.qq.com/qblv/h5/algo-frontend/tenrec_dataset.html
     2. For dataset Tenrec, run tenrec_data_extraction.ipynb for pre-processing.
