@@ -86,7 +86,9 @@ class model_PRM(object):
         # [-1, max_len, pxtr_dim*5]
         pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pcmtr_list_embeddings, 
                                 self.pftr_list_embeddings, self.plvtr_list_embeddings], -1)
-
+        # [-1, max_len, 5]
+        pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pcmtr_dense_list,
+                                      self.pftr_dense_list, self.plvtr_dense_list], -1)
         #   5.2 dropout
         mask = tf.ones_like(pxtr_dense_input)   # [-1, max_len, 5]
         mask = tf.nn.dropout(mask, self.keep_prob)
