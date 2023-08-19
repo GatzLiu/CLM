@@ -133,7 +133,7 @@ class model_PRM(object):
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
             self.loss_pxtr_reconstruct = tf.losses.log_loss(pxtr_dense_input, pxtr_pred, reduction="weighted_mean")
-        
+
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
