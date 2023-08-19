@@ -15,7 +15,6 @@ class model_MLP(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
 
         ## 1 placeholder
         # [-1, max_len]
@@ -33,7 +32,6 @@ class model_MLP(object):
         self.like_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_pxtr_dense_list')
         self.follow_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
         self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
@@ -55,10 +53,6 @@ class model_MLP(object):
         self.pftr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pftr_embeddings_table')
 
         # 4 lookup
-        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
-        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
-        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
-
         #   1) [-1, self.max_len, 1] -> [bs*max_len]
         self.pltr_list = tf.reshape(self.pltr_list, [-1])  
         self.pwtr_list = tf.reshape(self.pwtr_list, [-1])
@@ -76,13 +70,11 @@ class model_MLP(object):
 
 
         # 5 start ---------------------
-        item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
         # [-1, max_len, pxtr_dim*5]
         pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pftr_list_embeddings], -1)
         # [-1, max_len, 5]
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pftr_dense_list], -1)
 
-        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
         #   5.5 mlp
         with tf.name_scope("mlp"):
             output_size = self.pxtr_dim
@@ -94,7 +86,6 @@ class model_MLP(object):
                 pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
                 logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
-            print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
@@ -121,4 +112,3 @@ class model_MLP(object):
 
         #   5.7 update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)
