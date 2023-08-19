@@ -14,11 +14,9 @@ class model_MUL(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
 
         ## 1 placeholder
         # [-1, max_len]
-        self.item_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='item_list')   # [-1, max_len]
         #   label
         self.click_label_list = tf.placeholder(tf.int32, shape=[None, self.max_len], name='click_label_list')
         self.real_length = tf.placeholder(tf.int32, shape=(None,), name='real_length')
@@ -31,10 +29,8 @@ class model_MUL(object):
         self.like_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_pxtr_dense_list')
         self.follow_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
-        self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
         self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
         #   pxtr dense
@@ -47,19 +43,11 @@ class model_MUL(object):
         logits *= (1 + self.pftr_dense_list / para['beta_ftr']) ** para['alpha_ftr']
         self.pred = tf.nn.sigmoid(logits)
 
-        # 3 define trainable parameters
-        self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
-        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
-        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
-        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
-        
         #   5.5 loss
-        self.loss = tf.nn.l2_loss(self.item_list_embeddings)
+        self.loss = tf.constant(0)
         self.loss_click = tf.constant(0)
         self.loss_sim_order = tf.constant(0)
         self.loss_pxtr_reconstruct = tf.constant(0)
         self.loss_pxtr_bias = tf.constant(0)
 
-        self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
-        self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)
+        self.updates = tf.constant(0)

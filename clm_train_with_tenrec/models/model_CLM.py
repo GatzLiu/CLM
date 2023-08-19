@@ -15,7 +15,6 @@ class model_CLM(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
-        self.e = 0.1 ** 10
         bin_num = 10000
         decay = 0.01
         if_pxtr_interaction = False
@@ -37,7 +36,6 @@ class model_CLM(object):
         self.like_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='like_pxtr_dense_list')
         self.follow_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='follow_pxtr_dense_list')
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
-        print ("self.item_list: ", self.item_list)
 
         # 2 reshape
         self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
@@ -122,11 +120,9 @@ class model_CLM(object):
         
         #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
         if para['if_debias']: pxtr_input = tf.concat([item_input, pxtr_input, decay * pxtr_unbias_input], -1)
-        # pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 transformer
         with tf.name_scope("sab1"):
-            linear_flag = True
             m_size_apply = 32
             head_num = 1
             output_size = self.pxtr_dim
@@ -134,31 +130,20 @@ class model_CLM(object):
 
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
-
-            if linear_flag:
-                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
-            else:
-                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_encoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
+            # encoder
+            pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
+                col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=para['layer_num'])  # [-1, max_len, nh*pxtr_dim]
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
             self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
-            print("self.pred=", self.pred)
             min_len = tf.reduce_min(self.real_length_re)
-            
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
-            # choose use or not-use Transformer 
+            # decoder
             col = pxtr_input.get_shape()[2]
-            if linear_flag:
-                pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
-            else:
-                pxtr_input = set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="trans_decoder", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, mask_flag_k=True)
-            
+            pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
+                col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=0)  # [-1, listwise_len, nh*dim]
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
@@ -181,4 +166,3 @@ class model_CLM(object):
 
         #   5.7 update parameters
         self.updates = self.opt.minimize(self.loss)
-        print("self.updates=", self.updates)
