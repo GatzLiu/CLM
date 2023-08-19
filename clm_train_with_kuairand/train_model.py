@@ -19,11 +19,8 @@ def train_model(para):
     data = {"item_num": item_num}
 
     ## define the model
-    if para["MODEL"] == 'CLM': model = model_CLM(data=data, para=para)
     if para["MODEL"] == 'PRM': model = model_PRM(data=data, para=para)
     if para["MODEL"] == 'MLP': model = model_MLP(data=data, para=para)
-    if para["MODEL"] == 'SUM': model = model_SUM(data=data, para=para)
-    if para["MODEL"] == 'MUL': model = model_MUL(data=data, para=para)
 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
