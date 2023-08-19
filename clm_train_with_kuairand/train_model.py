@@ -32,7 +32,7 @@ def train_model(para):
     config.gpu_options.allow_growth = True
 
     # saver
-    saver = tf.train.Saver(max_to_keep = 5)
+    # saver = tf.train.Saver(max_to_keep = 5)
     sess = tf.Session(config=config)
     sess.run(tf.global_variables_initializer())
 
