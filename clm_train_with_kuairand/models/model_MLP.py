@@ -103,6 +103,7 @@ class model_MLP(object):
         #   5.5 mlp
         with tf.name_scope("mlp"):
             output_size = self.pxtr_dim
+            # encoder
             if para['mode'] == 'LR':
                 logits = tf.layers.dense(pxtr_input, 1, name='realshow_predict_lr')
                 logits = tf.squeeze(logits, -1)
@@ -114,7 +115,7 @@ class model_MLP(object):
             min_len = tf.reduce_min(self.real_length_re)
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
 
-            # choose use or not-use Transformer
+            # decoder
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
             pxtr_pred = tf.nn.sigmoid(pxtr_input)
