@@ -1,6 +1,6 @@
 from params.params_common import *
 
-LR = 0.015
+LR = 0.01
 exp_weight = {'primary': 0.0, 'click': 1.0, 'multi-obj': 0.0, 'unsuper': 1.0}[LOSS]
 sim_order_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 2.0}[LOSS]
 pxtr_reconstruct_weight = {'primary': 0.0, 'click': 0.0, 'multi-obj': 0.0, 'unsuper': 0.1}[LOSS]
