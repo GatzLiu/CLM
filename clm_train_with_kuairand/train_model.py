@@ -101,7 +101,7 @@ def train_model(para):
             })
             pred_list.append(pred)
         pred_list = np.concatenate(pred_list, axis=0)
-        # print_click_ndcg(epoch, [10], train_data_input, pred_list, 'train')
+        print_click_ndcg(epoch, [10], train_data_input, pred_list, 'train')
         # print_pxtr_ndcg(epoch, train_data_input, pred_list, 'train')
         ## eval
         sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
