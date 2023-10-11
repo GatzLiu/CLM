@@ -120,8 +120,8 @@ def train_model(para):
         # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
         # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
         # save_ckpt(epoch, sess, saver, save_model_path)
-        # print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test')
-        print_pxtr_ndcg(epoch, test_data_input, test_pred_list, 'test')
+        print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test')
+        # print_pxtr_ndcg(epoch, test_data_input, test_pred_list, 'test')
         
         if not loss < 10 ** 10:
             print ("ERROR, loss big, loss=", loss)
