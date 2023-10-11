@@ -34,6 +34,7 @@ class model_MLP(object):
         self.forward_pxtr_dense_list = tf.placeholder(tf.float32, shape=[None, self.max_len], name='forward_pxtr_dense_list')
 
         # 2 reshape
+        self.item_list_re = tf.reshape(self.item_list, [-1, self.max_len])
         self.click_label_list_re = tf.reshape(self.click_label_list, [-1, self.max_len])
         self.real_length_re = tf.reshape(self.real_length, [-1, 1])
         #   pxtr emb
@@ -46,11 +47,16 @@ class model_MLP(object):
         self.pftr_dense_list = tf.reshape(self.forward_pxtr_dense_list, [-1, self.max_len, 1])
 
         # 3 define trainable parameters
+        self.item_embeddings_table = tf.Variable(tf.random_normal([self.n_items, self.item_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='item_embeddings_table')
         self.pltr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pltr_embeddings_table')
         self.pwtr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pwtr_embeddings_table')
         self.pftr_embeddings_table = tf.Variable(tf.random_normal([self.n_pxtr_bins, self.pxtr_dim], mean=0.01, stddev=0.02, dtype=tf.float32), name='pftr_embeddings_table')
 
         # 4 lookup
+        self.item_list_re = tf.reshape(self.item_list_re, [-1])  # [-1, max_len] -> [bs*max_len]
+        self.item_list_embeddings = tf.nn.embedding_lookup(self.item_embeddings_table, self.item_list_re)  # [bs*max_len, item_dim]
+        self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
+
         #   1) [-1, self.max_len, 1] -> [bs*max_len]
         self.pltr_list = tf.reshape(self.pltr_list, [-1])  
         self.pwtr_list = tf.reshape(self.pwtr_list, [-1])
@@ -68,10 +74,14 @@ class model_MLP(object):
 
 
         # 5 start ---------------------
+        item_input = self.item_list_embeddings[:, :, 16:]  # [-1, max_len, 48]
         # [-1, max_len, pxtr_dim*5]
         pxtr_input = tf.concat([self.pltr_list_embeddings, self.pwtr_list_embeddings, self.pftr_list_embeddings], -1)
         # [-1, max_len, 5]
         pxtr_dense_input = tf.concat([self.pltr_dense_list, self.pwtr_dense_list, self.pftr_dense_list], -1)
+
+        #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
+        pxtr_input = tf.concat([item_input, pxtr_input], -1)
 
         #   5.5 mlp
         with tf.name_scope("mlp"):
