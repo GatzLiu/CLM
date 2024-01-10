@@ -265,6 +265,81 @@ def DC2IN(query_input, action_list_input, name, mask, col, nh=8, action_item_siz
         res = transformer(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
     return res
 
+def SoGCN(query_input, action_list_input, name, mask, col, nh=1, action_item_size=152, att_emb_size=64,
+    if_mask=True, if_l2=False, if_activate=False, if_norm=0):
+    with tf.name_scope("mha_" + name):
+        batch_size = tf.shape(query_input)[0]
+        list_size = tf.shape(query_input)[1]
+        Q = tf.get_variable(name + '_q_trans_matrix', (col, att_emb_size * nh))
+        K = tf.get_variable(name + '_k_trans_matrix', (action_item_size, att_emb_size * nh))
+        V = tf.get_variable(name + '_v_trans_matrix', (action_item_size, att_emb_size * nh))
+        b_Q = tf.get_variable(name + '_q_bias_matrix', (att_emb_size * nh))
+        b_K = tf.get_variable(name + '_k_bias_matrix', (att_emb_size * nh))
+        b_V = tf.get_variable(name + '_v_bias_matrix', (att_emb_size * nh))
+        querys = tf.tensordot(query_input, Q, axes=(-1, 0)) + b_Q       # [bs, len, nh*dim]
+        keys = tf.tensordot(action_list_input, K, axes=(-1, 0)) + b_K
+        values = tf.tensordot(action_list_input, V, axes=(-1, 0)) + b_V
+        if if_mask:
+            trans_mask = tf.expand_dims(mask, axis=-1)          # [bs, len] -> [bs, len, 1]
+            querys = tf.multiply(querys, trans_mask)
+            keys = tf.multiply(keys, trans_mask)
+            values = tf.multiply(values, trans_mask)
+        if if_l2:
+            keys = tf.nn.l2_normalize(keys, 1)
+            querys = tf.nn.l2_normalize(querys, 1)
+        if if_activate:
+            keys = tf.nn.softplus(keys)
+            querys = tf.nn.softplus(querys)
+        if if_norm > 0.5:
+            e = tf.reduce_sum(keys, axis=1, keep_dims=True)                 # [bs, len, dim] -> [bs, 1, dim]
+            d = tf.matmul(querys, e, transpose_a=False, transpose_b=True)   # [bs, len, dim] * [bs, dim, 1] -> [bs, len, 1]
+            D = tf.tile(d, [1, 1, att_emb_size * nh])
+            if not if_activate:                                             # if not activated, sim score can be negative or near to 0
+                D = tf.where(tf.greater(tf.math.abs(D), tf.ones_like(D)), tf.math.abs(D), tf.ones_like(D))
+            if if_norm == 1: querys = querys / D                            # left normalization
+            if if_norm == 2:                                                # symmetry normalization
+                querys = querys / tf.pow(D, 0.5)
+                keys = keys / tf.pow(D, 0.5)
+        kTv = tf.matmul(keys, values, transpose_a=True)         # [bs, nh*dim, len] * [bs, len, nh*dim] -> [bs, nh*dim, nh*dim]
+        qkTv = tf.matmul(querys, kTv)                           # [bs, len, nh*dim] * [bs, nh*dim, nh*dim] -> [bs, len, nh*dim]
+        if if_norm == 0: qkTv = qkTv / 64                       # normalize by hyperparameter
+        mha_result = tf.reshape(qkTv, [batch_size, list_size, nh * att_emb_size])
+    return mha_result
+
+def orth_transformer(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64,
+                     if_mask=True, mask_flag_k=True, if_activate=1):
+    with tf.name_scope("mha_" + name):
+        batch_size = tf.shape(query_input)[0]
+        list_size = tf.shape(query_input)[1]
+        list_size_k = tf.shape(action_list_input)[1]
+        Q = tf.get_variable(name + '_q_trans_matrix', (col, att_emb_size * nh))
+        K = tf.get_variable(name + '_k_trans_matrix', (action_item_size, att_emb_size * nh))
+        V = tf.get_variable(name + '_v_trans_matrix', (action_item_size, att_emb_size * nh))
+
+        querys = tf.tensordot(query_input, Q, axes=(-1, 0))
+        keys = tf.tensordot(action_list_input, K, axes=(-1, 0))
+        values = tf.tensordot(action_list_input, V, axes=(-1, 0))
+
+        querys = tf.stack(tf.split(querys, nh, axis=2))
+        keys = tf.stack(tf.split(keys, nh, axis=2))
+        values = tf.stack(tf.split(values, nh, axis=2))
+
+        inner_product = tf.matmul(querys, keys, transpose_b=True) / 8.0
+        if if_mask:
+            trans_mask = tf.tile(tf.expand_dims(mask, axis=0),[nh, 1, 1])
+            if mask_flag_k: trans_mask = tf.tile(tf.expand_dims(trans_mask, axis=2), [1,1,list_size,1])
+            else: trans_mask = tf.tile(tf.expand_dims(trans_mask, axis=3), [1, 1, 1, list_size_k])
+            paddings = tf.ones_like(trans_mask) * (-2 ** 32 + 1)
+            inner_product = tf.where(tf.equal(trans_mask, 0), paddings, inner_product)
+        if if_activate == 0: normalized_att_scores = tf.nn.softmax(inner_product)
+        if if_activate == 1: normalized_att_scores = tf.nn.softmax(tf.nn.relu(inner_product))
+        if if_activate == 1: normalized_att_scores = tf.nn.softmax(tf.nn.softplus(inner_product))
+        result = tf.matmul(normalized_att_scores, values)
+        result = tf.transpose(result, perm=[1, 2, 0, 3])
+        mha_result = tf.reshape(result, [batch_size, list_size, nh * att_emb_size])
+    return mha_result
+
+
 
 
 
