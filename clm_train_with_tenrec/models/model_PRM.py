@@ -15,6 +15,7 @@ class model_PRM(object):
         self.n_pxtr_bins = para['PXTR_BINS']
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
+        self.transformer = para['transformer']
 
         ## 1 placeholder
         # [-1, max_len]
@@ -100,8 +101,21 @@ class model_PRM(object):
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
             # encoder
-            pxtr_input = set_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
-                col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, max_len, nh*pxtr_dim]
+            if self.transformer == 'transformer':
+                pxtr_input = transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="transformer", mask=mask,
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size)  # [-1, max_len, nh*pxtr_dim]
+            if self.transformer == 'set_transformer':
+                pxtr_input = set_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="set_transformer", mask=mask,
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, max_len, nh*pxtr_dim]
+            if self.transformer == 'DC2IN':
+                pxtr_input = DC2IN(query_input=pxtr_input, action_list_input=pxtr_input, name="DC2IN", mask=mask,
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=2)  # [-1, max_len, nh*pxtr_dim]
+            if self.transformer == 'SoGCN':
+                pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask,
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size)  # [-1, max_len, nh*pxtr_dim]
+            if self.transformer == 'orth_transformer':
+                pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer", mask=mask,
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, if_activate=1)  # [-1, max_len, nh*pxtr_dim]
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
