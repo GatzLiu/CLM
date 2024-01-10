@@ -208,26 +208,7 @@ def save_ckpt(epoch, sess, saver, save_model_path):
 ########################################## model utils ##############################################
 ########################################## model utils ##############################################
 
-def linear_set_attention_block(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, m_size=32, iter_num=0):
-    ## poly encoder
-    with tf.name_scope(name):
-        I = tf.get_variable(name + "_i_trans_matrix",(1, m_size, col), initializer=tf.truncated_normal_initializer(stddev=5.0)) # [-1, m_size, col]
-        I = tf.tile(I, [tf.shape(query_input)[0],1,1])
-        H = set_attention_block(I, action_list_input, name + "_ele2clus", mask, col, 1, action_item_size, att_emb_size, True, True)    #[-1, m_size, nh*dim]
-        H_list = [H]
-        for l in range(iter_num):
-            H += set_attention_block(H, H, name + "_sa_clus2clus_{}".format(l), mask, att_emb_size, 1, att_emb_size, att_emb_size, False, False)
-            H = CommonLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
-            H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
-            H = CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
-            H_list.append(H)
-        H = tf.reduce_sum(H_list, axis=0)
-        res = set_attention_block(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
-    return res
-
-# query_input =》 [-1, list_size_q=1, dim]     k=v=[-1, list_size_k, dim]
-# retun : [-1, list_size_q=1, nh*dim]
-def set_attention_block(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, if_mask=True, mask_flag_k=True):
+def transformer(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, if_mask=True, mask_flag_k=True):
     with tf.name_scope("mha_" + name):
         batch_size = tf.shape(query_input)[0]
         list_size = tf.shape(query_input)[1]
@@ -257,6 +238,34 @@ def set_attention_block(query_input, action_list_input, name, mask, col, nh=8, a
         result = tf.transpose(result, perm=[1, 2, 0, 3])
         mha_result = tf.reshape(result, [batch_size, list_size, nh * att_emb_size])
     return mha_result
+
+def set_transformer(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, m_size=32, iter_num=0):
+    ## poly encoder
+    with tf.name_scope(name):
+        I = tf.get_variable(name + "_i_trans_matrix",(1, m_size, col), initializer=tf.truncated_normal_initializer(stddev=5.0)) # [-1, m_size, col]
+        I = tf.tile(I, [tf.shape(query_input)[0],1,1])
+        H = transformer(I, action_list_input, name + "_ele2clus", mask, col, 1, action_item_size, att_emb_size, True, True)    #[-1, m_size, nh*dim]
+        res = transformer(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
+    return res
+
+def DC2IN(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64, m_size=32, iter_num=0):
+    ## poly encoder
+    with tf.name_scope(name):
+        I = tf.get_variable(name + "_i_trans_matrix",(1, m_size, col), initializer=tf.truncated_normal_initializer(stddev=5.0)) # [-1, m_size, col]
+        I = tf.tile(I, [tf.shape(query_input)[0],1,1])
+        H = transformer(I, action_list_input, name + "_ele2clus", mask, col, 1, action_item_size, att_emb_size, True, True)    #[-1, m_size, nh*dim]
+        H_list = [H]
+        for l in range(iter_num):
+            H += transformer(H, H, name + "_sa_clus2clus_{}".format(l), mask, att_emb_size, 1, att_emb_size, att_emb_size, False, False)
+            H = CommonLayerNorm(H, scope='ln1_clus2clus_{}'.format(l))
+            H += tf.layers.dense(tf.nn.relu(H), att_emb_size, name='ffn_clus2clus_{}'.format(l))
+            H = CommonLayerNorm(H, scope='ln2_clus2clus_{}'.format(l))
+            H_list.append(H)
+        H = tf.reduce_sum(H_list, axis=0)
+        res = transformer(query_input, H, name + "_clus2ele", mask, col, nh, att_emb_size, att_emb_size, True, False)
+    return res
+
+
 
 
 def CommonLayerNorm(inputs,
@@ -340,7 +349,7 @@ def add_position_emb(query_input, pxtr_dense, seq_length, pxtr_num, dim, decay, 
 
 def pxtr_transformer(pxtr_input, listwise_len, pxtr_num, dim, name):
     pxtr_input = tf.reshape(pxtr_input, [-1, pxtr_num, dim])
-    pxtr_input = set_attention_block(pxtr_input, pxtr_input, name + "_pxtr_transformer", 0, dim, 1, dim, dim, False, False)
+    pxtr_input = transformer(pxtr_input, pxtr_input, name + "_pxtr_transformer", 0, dim, 1, dim, dim, False, False)
     return tf.reshape(pxtr_input, [-1, listwise_len, pxtr_num * dim])
 
 def sigmoid(x):

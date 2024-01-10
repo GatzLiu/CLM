@@ -128,7 +128,7 @@ class model_PRM(object):
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
             # encoder
-            pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
+            pxtr_input = set_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_encoder", mask=mask,
                 col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, max_len, nh*pxtr_dim]
             pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
@@ -138,7 +138,7 @@ class model_PRM(object):
             self.loss_sim_order = sim_order_reg(logits, pxtr_dense_input, para['pxtr_weight'], min_len)
             # decoder
             col = pxtr_input.get_shape()[2]
-            pxtr_input = linear_set_attention_block(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
+            pxtr_input = set_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="li_trans_decoder", mask=mask,
                 col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, listwise_len, nh*dim]
             pxtr_input = tf.layers.dense(pxtr_input, len(self.pxtr_list), name='pxtr_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_decoder')
