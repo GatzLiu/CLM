@@ -92,7 +92,7 @@ def train_model(para):
             })
             pred_list.append(pred)
         pred_list = np.concatenate(pred_list, axis=0)
-        print_click_ndcg(epoch, [10], train_data_input, pred_list, 'train')
+        print_click_ndcg(epoch, para['TOP_K'], train_data_input, pred_list, 'train', '\t')
         # print_pxtr_ndcg(epoch, train_data_input, pred_list, 'train')
         ## eval
         sampling = rd.sample(list(range(len(test_data_input))), para['TEST_USER_BATCH'])
@@ -128,7 +128,7 @@ def train_model(para):
         # print_loss(epoch, loss)
         # print_loss(epoch, test_loss)
         # save_ckpt(epoch, sess, saver, save_model_path)
-        print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test')
+        print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test', '\n')
         # print_pxtr_ndcg(epoch, test_data_input, test_pred_list, 'test')
         
         if not loss < 10 ** 10:

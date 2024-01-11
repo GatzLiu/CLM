@@ -179,7 +179,7 @@ def print_pxtr_ndcg(epoch, train_data_input, pred_list, train_test):
     print ("%.4f"%(sum(list_ltr_ndcg_epoch)/len(list_ltr_ndcg_epoch)), "%.4f"%(sum(list_wtr_ndcg_epoch)/len(list_wtr_ndcg_epoch)),
         "%.4f"%(sum(list_ftr_ndcg_epoch)/len(list_ftr_ndcg_epoch)))
 
-def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
+def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test, end_str):
     f1score = []
     ndcg = []
     for i in range(len(top_k)):
@@ -195,7 +195,7 @@ def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     # ndcg: pred with action-label
     f1score = np.array(f1score)
     ndcg = np.array(ndcg)
-    print (train_test, "ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1))
+    print (train_test, "ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1), end=end_str)
 
 def print_loss(epoch, loss):
     print("[epoch+1, loss] = ", [epoch+1, loss])
