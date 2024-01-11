@@ -209,9 +209,9 @@ def print_click_ndcg(epoch, top_k, train_data_input, pred_list, train_test):
     ndcg = np.array(ndcg)
     print (train_test, "ep", epoch+1, np.mean(f1score, 1), np.mean(ndcg, 1))
 
-def print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias):
-    print("[epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias] = ",
-          [epoch+1, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias])
+def print_loss(epoch, loss):
+    print("[epoch+1, loss] = ", [epoch+1, loss])
+
 def save_ckpt(epoch, sess, saver, save_model_path):
     if ((epoch+1) == 5) or ((epoch+1) == 10):
         print ("start save model , epoch+1=", epoch+1)

@@ -67,9 +67,8 @@ def train_model(para):
             train_batch_data = train_data_input[batches[batch_num]: batches[batch_num+1]]  # [-1, 100, 9+3]
             real_len_batch = real_len_input[batches[batch_num]: batches[batch_num+1]] # [-1]
             # preedict first
-            _, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias, pred = sess.run(
-                [model.updates, model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct,
-                 model.loss_pxtr_bias, model.pred],
+            _, loss, pred = sess.run(
+                [model.updates, model.loss, model.pred],
                 feed_dict={
                     model.item_list: train_batch_data[:,:,0],
                     model.click_label_list: train_batch_data[:,:,2],
@@ -91,9 +90,8 @@ def train_model(para):
         test_data_input = test_data_raw[sampling]
         test_len_input = test_len_raw[sampling]
         test_pred_list = []
-        test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias, test_pred = sess.run(
-            [model.loss, model.loss_click, model.loss_sim_order, model.loss_pxtr_reconstruct, model.loss_pxtr_bias,
-             model.pred],
+        test_loss, test_pred = sess.run(
+            [model.loss, model.pred],
             feed_dict={
                 model.item_list: test_data_input[:,:,0],
                 model.click_label_list: test_data_input[:,:,2],
@@ -109,8 +107,8 @@ def train_model(para):
         test_pred_list.append(test_pred) # pred = [-1, max_len]
         test_pred_list = np.concatenate(test_pred_list, axis=0) # test_pred_list = [-1, max_len]
 
-        # print_loss(epoch, loss, loss_click, loss_sim_order, loss_pxtr_reconstruct, loss_pxtr_bias)
-        # print_loss(epoch, test_loss, test_loss_click, test_loss_sim_order, test_loss_pxtr_reconstruct, test_loss_pxtr_bias)
+        # print_loss(epoch, loss)
+        # print_loss(epoch, test_loss)
         # save_ckpt(epoch, sess, saver, save_model_path)
         print_click_ndcg(epoch, para['TOP_K'], test_data_input, test_pred_list, 'test')
         # print_pxtr_ndcg(epoch, test_data_input, test_pred_list, 'test')
