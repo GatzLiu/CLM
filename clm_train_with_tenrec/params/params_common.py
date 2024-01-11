@@ -1,7 +1,6 @@
 
 GPU_INDEX = "0"
 MODEL = ['CLM', 'PRM', 'MLP', 'SUM', 'MUL'][0]
-LOSS = ['click', 'unsuper'][1]
 DATASET = 'Tenrec'
 CANDIDATE_ITEM_LIST_LENGTH = 100
 PXTR_DIM = 16
