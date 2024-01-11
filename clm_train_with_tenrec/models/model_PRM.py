@@ -9,6 +9,8 @@ class model_PRM(object):
         self.model_name = 'PRM'
         self.pxtr_dim = para['PXTR_DIM']
         self.item_dim = para['ITEM_DIM']
+        self.att_emb_size = self.item_dim
+        self.output_size = self.pxtr_dim
         self.lr = para['LR']
         self.optimizer = para['OPTIMIZER']
         self.n_items = data['item_num']
@@ -83,7 +85,7 @@ class model_PRM(object):
         mask = tf.ones_like(pxtr_dense_input)                       # [-1, max_len, 3]
         mask = tf.nn.dropout(mask, self.keep_prob)
         mask = tf.expand_dims(mask, -1)                             # [-1, max_len, 3, 1]
-        pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim]) # [-1, max_len, pxtr_dim*3]->[-1, max_len, 3, pxtr_dim]->
+        pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list), self.pxtr_dim])                     # [-1, max_len, pxtr_dim*3]->[-1, max_len, 3, pxtr_dim]->
         pxtr_input = pxtr_input * mask                              # [-1, max_len, 3, pxtr_dim] * [-1, max_len, 3, 1]
         pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, len(self.pxtr_list) * self.pxtr_dim])
         pxtr_input = tf.concat([item_input, pxtr_input], -1)        #   5.4 pxtr_input  [-1, max_len, 48 + pxtr_dim*5 + pxtr_dim*5]
@@ -92,34 +94,33 @@ class model_PRM(object):
         with tf.name_scope("sab1"):
             m_size_apply = 32
             head_num = 1
-            output_size = self.pxtr_dim
             col = pxtr_input.get_shape()[2]
             mask = tf.sequence_mask(self.real_length_re, maxlen=self.max_len, dtype=tf.float32)
             mask = tf.reshape(mask, [-1, self.max_len])
-            if self.transformer == 'transformer':
+            if self.transformer == 'transformer':           # [-1, max_len, nh*pxtr_dim]
                 pxtr_input = transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="transformer", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size)
             if self.transformer == 'set_transformer':
                 pxtr_input = set_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="set_transformer", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, m_size=m_size_apply)
             if self.transformer == 'DC2IN':
                 pxtr_input = DC2IN(query_input=pxtr_input, action_list_input=pxtr_input, name="DC2IN", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, m_size=m_size_apply, iter_num=2)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, m_size=m_size_apply, iter_num=2)
             if self.transformer == 'SoGCN':
                 pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size)  # [-1, max_len, nh*pxtr_dim]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size)
             if self.transformer == 'orth_transformer':
                 pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=output_size, if_activate=1)  # [-1, max_len, nh*pxtr_dim]
-            pxtr_input = tf.layers.dense(pxtr_input, output_size, name='realshow_predict_mlp')
-            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')  # [-1, max_len, pxtr_dim]
-            logits = tf.reduce_sum(pxtr_input, axis=2)   # [-1, max_len]
-            self.pred = tf.nn.sigmoid(logits)                 # [-1, max_len]
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=1)
+            pxtr_input = tf.layers.dense(pxtr_input, self.output_size, name='realshow_predict_mlp')
+            pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')    # [-1, max_len, pxtr_dim]
+            logits = tf.reduce_sum(pxtr_input, axis=2)                      # [-1, max_len]
+            self.pred = tf.nn.sigmoid(logits)                               # [-1, max_len]
 
         #   5.5 loss
-        mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)         #序列长度mask
+        mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)                                  #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
-        self.loss = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")     # loss [-1, max_len]
+        self.loss = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")       # loss [-1, max_len]
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
