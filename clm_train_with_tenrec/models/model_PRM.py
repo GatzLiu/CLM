@@ -9,7 +9,7 @@ class model_PRM(object):
         self.model_name = 'PRM'
         self.pxtr_dim = para['PXTR_DIM']
         self.item_dim = para['ITEM_DIM']
-        self.att_emb_size = self.item_dim
+        self.att_emb_size = self.pxtr_dim
         self.output_size = self.pxtr_dim
         self.lr = para['LR']
         self.optimizer = para['OPTIMIZER']
@@ -61,7 +61,7 @@ class model_PRM(object):
         self.item_list_embeddings = tf.reshape(self.item_list_embeddings, [-1, self.max_len, self.item_dim])  #[-1, max_len, item_dim]
 
         #   1) [-1, self.max_len, 1] -> [bs*max_len]
-        self.pltr_list = tf.reshape(self.pltr_list, [-1])  
+        self.pltr_list = tf.reshape(self.pltr_list, [-1])
         self.pwtr_list = tf.reshape(self.pwtr_list, [-1])
         self.pftr_list = tf.reshape(self.pftr_list, [-1])
 

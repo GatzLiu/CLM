@@ -9,7 +9,7 @@ class model_PRM(object):
         self.model_name = 'PRM'
         self.pxtr_dim = para['PXTR_DIM']
         self.item_dim = para['ITEM_DIM']
-        self.att_emb_size = self.item_dim
+        self.att_emb_size = self.pxtr_dim
         self.output_size = self.pxtr_dim
         self.lr = para['LR']
         self.optimizer = para['OPTIMIZER']
