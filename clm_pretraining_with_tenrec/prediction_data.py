@@ -8,6 +8,7 @@ import tensorflow as tf
 import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def mmoe_prediction_data(para):
     pred_data_path = DIR + 'tenrec_pred_data.json'

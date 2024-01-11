@@ -9,6 +9,7 @@ import tensorflow as tf
 import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = all_para['GPU_INDEX']
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def prediction_data(para):
     print ("Model Name = ", para["MODEL"] )
