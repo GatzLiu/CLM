@@ -297,8 +297,10 @@ def SoGCN(query_input, action_list_input, name, mask, col, nh=1, action_item_siz
             keys = tf.multiply(keys, trans_mask)
             values = tf.multiply(values, trans_mask)
         if if_l2:
-            keys = tf.nn.l2_normalize(keys, 1)
-            querys = tf.nn.l2_normalize(querys, 1)
+            # keys = tf.nn.l2_normalize(keys, 1)
+            # querys = tf.nn.l2_normalize(querys, 1)
+            keys = tf.nn.softmax(keys, axis=1)
+            querys = tf.nn.softmax(querys)
         if if_activate:
             keys = tf.nn.softplus(keys)
             querys = tf.nn.softplus(querys)
