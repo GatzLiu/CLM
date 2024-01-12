@@ -333,7 +333,7 @@ def orth_transformer(query_input, action_list_input, name, mask, col, nh=8, acti
             inner_product = tf.where(tf.equal(trans_mask, 0), paddings, inner_product)
         if if_activate == 0: normalized_att_scores = tf.nn.softmax(inner_product)
         if if_activate == 1: normalized_att_scores = tf.nn.softmax(tf.nn.relu(inner_product))
-        if if_activate == 1: normalized_att_scores = tf.nn.softmax(tf.nn.softplus(inner_product))
+        if if_activate == 2: normalized_att_scores = tf.nn.softmax(tf.nn.softplus(inner_product))
         result = tf.matmul(normalized_att_scores, values)
         result = tf.transpose(result, perm=[1, 2, 0, 3])
         mha_result = tf.reshape(result, [batch_size, list_size, nh * att_emb_size])
