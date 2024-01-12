@@ -138,7 +138,7 @@ class model_PRM(object):
                     col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=True, if_norm=2)
             if self.transformer == 'orth_transformer':
                 pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=1)
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=2)
             pxtr_input = tf.layers.dense(pxtr_input, self.output_size, name='realshow_predict_mlp')
             pxtr_input = CommonLayerNorm(pxtr_input, scope='ln_encoder')    # [-1, max_len, pxtr_dim]
             logits = tf.reduce_sum(pxtr_input, axis=2)                      # [-1, max_len]
