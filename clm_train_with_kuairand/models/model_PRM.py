@@ -135,7 +135,7 @@ class model_PRM(object):
                     col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, m_size=m_size_apply, iter_num=2)
             if self.transformer == 'SoGCN':
                 pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask,
-                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=True, if_activate=False, if_norm=0)
+                    col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=True, if_activate=False, if_norm=2)
             if self.transformer == 'orth_transformer':
                 pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer", mask=mask,
                     col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=2)
