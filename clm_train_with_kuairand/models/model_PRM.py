@@ -156,7 +156,7 @@ class model_PRM(object):
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)                                  #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
         self.loss = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean") \
-                    + orth_loss + 0.1 * pos_loss
+                    + 0.00001 * (orth_loss + 0.1 * pos_loss)
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)
