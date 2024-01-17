@@ -18,6 +18,7 @@ class model_PRM(object):
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
         self.transformer = para['transformer']
+        self.if_flatten = True
 
         ## 1 placeholder
         # [-1, max_len]
@@ -134,8 +135,11 @@ class model_PRM(object):
                 pxtr_input = DC2IN(query_input=pxtr_input, action_list_input=pxtr_input, name="DC2IN", mask=mask, col=col,
                     nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, m_size=m_size_apply, iter_num=2)
             if self.transformer == 'SoGCN':
+                if self.if_flatten:
+                    mask = tf.reshape(mask, [1, -1])
+                    pxtr_input = tf.reshape(pxtr_input, [1, -1, col])
                 pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask, col=col,
-                    nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=False, if_activate=False, if_norm=0)
+                    nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=False, if_activate=False, if_norm=2)
             if self.transformer == 'orth_transformer':
                 pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer",
                     mask=mask, col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=2)
