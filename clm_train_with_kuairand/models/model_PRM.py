@@ -140,6 +140,9 @@ class model_PRM(object):
                     pxtr_input = tf.reshape(pxtr_input, [1, -1, col])
                 pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask, col=col,
                     nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=False, if_activate=False, if_norm=2)
+                if self.if_flatten:
+                    mask = tf.reshape(mask, [-1, self.max_len])
+                    pxtr_input = tf.reshape(pxtr_input, [-1, self.max_len, col])
             if self.transformer == 'orth_transformer':
                 pxtr_input = orth_transformer(query_input=pxtr_input, action_list_input=pxtr_input, name="orth_transformer",
                     mask=mask, col=col, nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_activate=2)
