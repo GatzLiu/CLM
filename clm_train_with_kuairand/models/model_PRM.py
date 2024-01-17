@@ -18,7 +18,7 @@ class model_PRM(object):
         self.max_len = para['CANDIDATE_ITEM_LIST_LENGTH']
         self.pxtr_list = para['PXTR_LIST']
         self.transformer = para['transformer']
-        self.if_flatten = True
+        self.if_flatten = False
 
         ## 1 placeholder
         # [-1, max_len]
@@ -139,7 +139,7 @@ class model_PRM(object):
                     k = 2
                     mask = tf.reshape(mask, [-1, k * self.max_len])
                     pxtr_input = tf.reshape(pxtr_input, [-1, k * self.max_len, col])
-                pxtr_input = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask, col=col,
+                pxtr_input, orth_loss, pos_loss = SoGCN(query_input=pxtr_input, action_list_input=pxtr_input, name="SoGCN", mask=mask, col=col,
                     nh=head_num, action_item_size=col, att_emb_size=self.att_emb_size, if_l2=False, if_activate=False, if_norm=2)
                 if self.if_flatten:
                     mask = tf.reshape(mask, [-1, self.max_len])
@@ -155,7 +155,8 @@ class model_PRM(object):
         #   5.5 loss
         mask_data = tf.sequence_mask(lengths=self.real_length_re, maxlen=self.max_len)                                  #序列长度mask
         mask_data = tf.reshape(tf.cast(mask_data, dtype=tf.int32), [-1, self.max_len])
-        self.loss = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean")       # loss [-1, max_len]
+        self.loss = tf.losses.log_loss(self.click_label_list_re, self.pred, mask_data, reduction="weighted_mean") \
+                    + orth_loss + 0.1 * pos_loss
 
         #   5.6 optimizer
         if self.optimizer == 'SGD': self.opt = tf.train.GradientDescentOptimizer(learning_rate=self.lr)

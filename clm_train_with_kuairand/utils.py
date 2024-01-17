@@ -318,7 +318,12 @@ def SoGCN(query_input, action_list_input, name, mask, col, nh=1, action_item_siz
         qkTv = tf.matmul(querys, kTv)                           # [bs, len, nh*dim] * [bs, nh*dim, nh*dim] -> [bs, len, nh*dim]
         if if_norm == 0: qkTv = qkTv / 64                       # normalize by hyperparameter
         mha_result = tf.reshape(qkTv, [batch_size, list_size, nh * att_emb_size])
-    return mha_result
+        querys_orth = tf.nn.l2_normalize(querys[:, 0: 99, :], -1)
+        keys_orth = tf.nn.l2_normalize(keys[:, 1: 100, :], -1)
+        sim_score = tf.reduce_sum(tf.multiply(querys_orth, keys_orth), -1)
+        orth_loss = tf.nn.l2_loss(tf.nn.relu(-sim_score))
+        pos_loss = tf.reduce_sum(tf.nn.tanh(10 * tf.nn.relu(sim_score)))
+    return mha_result, orth_loss, pos_loss
 
 def orth_transformer(query_input, action_list_input, name, mask, col, nh=8, action_item_size=152, att_emb_size=64,
                      if_mask=True, mask_flag_k=True, if_activate=1):
